@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/VSWorkspaceState.json
+/.vs/ugcs-ppk/v16/.suo
+/.vs/ugcs-ppk/v16
+/.vs/slnx.sqlite
+/UgcsPPK/App/obj
+/UgcsPPK/App/bin/Debug/netcoreapp3.1
+/UgcsPPK/App/bin/Release/netcoreapp3.1/win-x64
+/UgcsPPK/.vs/UgcsPPK
+/UgcsPPK/FileParsers/bin/Release/netstandard2.0
+/UgcsPPK/FileParsers/obj
+/UgcsPPK/FileParsers/bin/Debug/netstandard2.0
