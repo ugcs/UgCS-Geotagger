@@ -54,7 +54,7 @@
         <DataGridTemplateColumn  Header="Name of File">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding Name}"/>
+              <TextBlock Text="{Binding FileName}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -99,7 +99,7 @@
         <DataGridTemplateColumn  Header="Name of File">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding Name}"/>
+              <TextBlock Text="{Binding FileName}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -154,7 +154,7 @@
     </Grid>
     <DockPanel Grid.Row="6" Grid.Column="0">
       <Button HorizontalAlignment="Left" Margin="6 0 6 6" Width="90" Command="{Binding BrowseFolder}">Browse Folder</Button>
-      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90">Process Files</Button>
+      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding ProcessFiles}">Process Files</Button>
     </DockPanel>
     
   </Grid>

@@ -97,12 +97,12 @@ namespace FileParsers.SegYLog
             return (int)Math.Round(value * SecondsInDegree * 1000);
         }
 
-        public void WritePpkCoordintates(string oldSegyLog, string newSegyLog, List<GeoCoordinates> coordinates)
+        public void CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
         {
             var position = HeadersOffset;
-            byte[] bytes = File.ReadAllBytes(oldSegyLog);
-            byte[] lonToBytes = null;
-            byte[] latToBytes = null;
+            byte[] bytes = File.ReadAllBytes(oldFile);
+            byte[] lonToBytes;
+            byte[] latToBytes;
             foreach (var coordinate in coordinates)
             {
                 var scalar = BitConverter.ToInt16(bytes, position + ScalarOffset);
@@ -137,7 +137,7 @@ namespace FileParsers.SegYLog
                 }
                 position += TraceHeaderOffset + TracesLength * 2;
             }
-            File.WriteAllBytes(newSegyLog, bytes);
+            File.WriteAllBytes(newFile, bytes);
         }
 
         public SegYLogParser()

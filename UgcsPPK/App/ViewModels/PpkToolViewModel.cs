@@ -1,6 +1,7 @@
 ﻿using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using log4net;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace UgCSPPK.ViewModels
 {
     public class PpkToolViewModel : ViewModelBase
     {
-        private const string positioningSolutionFilesTemplatesFolder = "./Mapping/PSFTemplates";
-        private const string filesToUpdateTemplatesFolder = "./Mapping/FTUTemplates";
+        private const string PositioningSolutionFilesTemplatesFolder = "./Mapping/PSFTemplates";
+        private const string FilesToUpdateTemplatesFolder = "./Mapping/FTUTemplates";
         private string lastOpenedFolder = "";
         private bool isDialogOpen = false;
         private Deserializer deserializer = new Deserializer();
@@ -89,7 +90,12 @@ namespace UgCSPPK.ViewModels
         private void RemovePositioningSolutionFile()
         {
             if (Data.Contains(SelectedPositioningSolutionFile))
+            {
+                foreach (var f in filesToUpdate)
+                    if (f.CoverageFile == SelectedPositioningSolutionFile)
+                        f.UnsetCoverageFile();
                 Data.Remove(SelectedPositioningSolutionFile);
+            }          
         }
 
         private async void AddFileToUpdate()
@@ -130,8 +136,10 @@ namespace UgCSPPK.ViewModels
             if (isDialogOpen)
                 return;
             isDialogOpen = true;
-            OpenFolderDialog openDialog = new OpenFolderDialog();
-            openDialog.Directory = "";
+            OpenFolderDialog openDialog = new OpenFolderDialog
+            {
+                Directory = ""
+            };
             var folder = await openDialog.ShowAsync(new Window());
             if (folder != null)
             {
@@ -166,9 +174,9 @@ namespace UgCSPPK.ViewModels
 
         private void CreateTemplates()
         {
-            if (!Directory.Exists(positioningSolutionFilesTemplatesFolder))
+            if (!Directory.Exists(PositioningSolutionFilesTemplatesFolder))
                 return;
-            var files = Directory.GetFiles(positioningSolutionFilesTemplatesFolder, "*.yaml");
+            var files = Directory.GetFiles(PositioningSolutionFilesTemplatesFolder, "*.yaml");
             foreach (var file in files)
             {
                 try
@@ -182,9 +190,9 @@ namespace UgCSPPK.ViewModels
                 }
             }
 
-            if (!Directory.Exists(filesToUpdateTemplatesFolder))
+            if (!Directory.Exists(FilesToUpdateTemplatesFolder))
                 return;
-            files = Directory.GetFiles(filesToUpdateTemplatesFolder, "*.yaml");
+            files = Directory.GetFiles(FilesToUpdateTemplatesFolder, "*.yaml");
             foreach (var file in files)
             {
                 try
@@ -216,6 +224,10 @@ namespace UgCSPPK.ViewModels
 
         private void ProcessFiles()
         {
+            foreach (var ftu in filesToUpdate)
+            {
+                ftu.UpdateCoordinates();
+            }
         }
     }
 }

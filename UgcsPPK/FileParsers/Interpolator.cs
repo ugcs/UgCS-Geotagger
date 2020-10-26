@@ -5,10 +5,10 @@ namespace FileParsers
 {
     public static class Interpolator
     {
-        public static List<GeoCoordinates> SetPpkCorrectedCoordinates(List<GeoCoordinates> segyCoordinates, List<GeoCoordinates> ppkCoordinates)
+        public static List<GeoCoordinates> SetPpkCorrectedCoordinates(List<GeoCoordinates> csvCoordinates, List<GeoCoordinates> ppkCoordinates)
         {
             var correctedTraces = new List<GeoCoordinates>();
-            foreach (var coordinates in segyCoordinates)
+            foreach (var coordinates in csvCoordinates)
             {
                 if (coordinates.TimeInMs < ppkCoordinates.First().TimeInMs || coordinates.TimeInMs > ppkCoordinates.Last().TimeInMs)
                     continue;
@@ -18,7 +18,7 @@ namespace FileParsers
                 var rightBorderIndex = leftBorderIndex + 1;
                 var correctedLat = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
                 var correctedLon = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                correctedTraces.Add(new GeoCoordinates(correctedLat, correctedLon));
+                correctedTraces.Add(new GeoCoordinates(coordinates.Date, correctedLat, correctedLon, coordinates.TraceNumber));
             }
             return correctedTraces;
         }
