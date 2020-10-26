@@ -1,6 +1,8 @@
-﻿using FileParsers;
+﻿using App.ViewModels;
+using FileParsers;
 using FileParsers.CSV;
 using FileParsers.FixedColumnWidth;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,19 +11,23 @@ using UgCSPPK.Models.Yaml;
 
 namespace UgCSPPK.Models
 {
-    public class DataFile : IDataFile
+    public class DataFile : ViewModelBase, IDataFile
     {
-        protected List<GeoCoordinates> coordinates;
-        protected Parser parser;
-        public string Name { get; protected set; }
+        private static ILog log = LogManager.GetLogger(typeof(DataFile));
+        public const string PPK = "PPK";
+        public List<GeoCoordinates> Coordinates { get; }
+        public string FileName { get; protected set; }
+        public string FilePath { get; protected set; }
         public string TypeOfFile { get; protected set; }
         public DateTime StartTime { get; protected set; }
         public DateTime EndTime { get; protected set; }
         public bool IsValid { get; protected set; }
+        protected Parser parser;
 
         protected DataFile(string filePath, Template template)
         {
-            Name = Path.GetFileName(filePath);
+            FileName = Path.GetFileName(filePath);
+            FilePath = filePath;
             parser = CreateParser(template.FileType);
             if (parser != null)
             {
@@ -29,19 +35,28 @@ namespace UgCSPPK.Models
                 parser.DateIndex = template.Columns.Timestamp.Index;
                 parser.LatitudeIndex = template.Columns.Latitude.Index;
                 parser.LongitudeIndex = template.Columns.Longitude.Index;
+                parser.TraceNumberIndex = 0;
                 parser.ColumnLengths = template.Format.ColumnLengths;
                 parser.DecimalSeparator = template.Format.DecimalSeparator;
                 parser.DateColumnName = template.Columns.Timestamp.Header;
                 parser.LatitudeColumnName = template.Columns.Latitude.Header;
                 parser.LongitudeColumnName = template.Columns.Longitude.Header;
+                parser.TraceNumberColumnName = "GPR:Trace";
                 parser.HasHeader = template.Format.HasHeader;
                 parser.Separator = template.Format.Separator;
-                coordinates = parser.Parse(filePath);
-                if (coordinates != null)
+                try
+                {
+                    Coordinates = parser.Parse(filePath);
+                }
+                catch(Exception e)
+                {
+                    log.Error(e.StackTrace);
+                }
+                if (Coordinates != null)
                 {
                     SetTypeOfFile(template);
-                    SetStartTime(coordinates);
-                    SetEndTime(coordinates);
+                    SetStartTime(Coordinates);
+                    SetEndTime(Coordinates);
                     IsValid = true;
                 }
                 else
@@ -51,18 +66,12 @@ namespace UgCSPPK.Models
 
         private Parser CreateParser(FileType fileType)
         {
-            switch (fileType)
+            return fileType switch
             {
-                case FileType.ColumnsFixedWidth:
-                    return new FixedColumnWidthParser();
-
-                case FileType.CSV:
-                    return new CsvParser();
-
-                case FileType.Unknown:
-                default:
-                    return null;
-            }
+                FileType.ColumnsFixedWidth => new FixedColumnWidthParser(),
+                FileType.CSV => new CsvParser(),
+                _ => null,
+            };
         }
 
         private void SetTypeOfFile(Template template)

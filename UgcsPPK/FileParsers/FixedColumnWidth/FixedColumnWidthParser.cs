@@ -49,5 +49,10 @@ namespace FileParsers.FixedColumnWidth
                 return null;
             }
         }
+
+        public override void CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        {
+            
+        }
     }
 }
