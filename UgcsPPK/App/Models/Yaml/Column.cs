@@ -8,6 +8,6 @@ namespace UgCSPPK.Models.Yaml
         public string Header { get; set; }
 
         [YamlMember(Alias = "index")]
-        public ushort Index { get; set; }
+        public int? Index { get; set; }
     }
 }

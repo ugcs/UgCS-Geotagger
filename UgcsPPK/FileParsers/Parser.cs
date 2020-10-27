@@ -4,7 +4,7 @@ namespace FileParsers
 {
     public abstract class Parser : IGeoCoordinateParser
     {
-        public string CommentPrefix { get; set; } = "#";
+        public string CommentPrefix { get; set; }
         public string DecimalSeparator { get; set; }
         public int DateIndex { get; set; }
         public int LongitudeIndex { get; set; }
@@ -17,7 +17,9 @@ namespace FileParsers
         public string TraceNumberColumnName { get; set; }
         public bool HasHeader { get; set; }
         public List<ushort> ColumnLengths { get; set; }
+
         public abstract List<GeoCoordinates> Parse(string path);
-        public  abstract void CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates);
+
+        public abstract Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates);
     }
 }

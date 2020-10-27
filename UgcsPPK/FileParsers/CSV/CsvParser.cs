@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -24,19 +25,11 @@ namespace FileParsers.CSV
             using (StreamReader reader = File.OpenText(logPath))
             {
                 string line;
-                List<string> headers;
                 if (HasHeader)
                 {
                     line = reader.ReadLine();
-                    headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
-                    LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName) == true);          
-                    LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName) == true);
-                    DateIndex = headers.FindIndex(h => h.Equals(DateColumnName) == true);
-                    TraceNumberIndex = headers.FindIndex(h => h.Equals("GPR:Trace") == true);
-                    if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1 || TraceNumberIndex == -1)
-                        throw new Exception("Column names are not matched"); 
+                    FindIndexesByHeaders(line);
                 }
-                
                 var format = new CultureInfo("en-US", false);
                 format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
                 while ((line = reader.ReadLine()) != null)
@@ -44,7 +37,7 @@ namespace FileParsers.CSV
                     if (line.StartsWith(CommentPrefix))
                         continue;
                     double previousTime = 0;
-                    var data = line.Split(new[] {Separator}, StringSplitOptions.None);
+                    var data = line.Split(new[] { Separator }, StringSplitOptions.None);
                     var lat = double.Parse(data[LatitudeIndex], NumberStyles.Float, format);
                     var lon = double.Parse(data[LongitudeIndex], NumberStyles.Float, format);
                     var traceNumber = int.Parse(data[TraceNumberIndex]);
@@ -56,7 +49,7 @@ namespace FileParsers.CSV
                     var currentDateAndTime = currentDate.AddMilliseconds(totalMS);
                     previousTime = totalMS;
                     coordinates.Add(new GeoCoordinates(currentDateAndTime, lat, lon, traceNumber));
-                }              
+                }
             }
             return coordinates;
         }
@@ -76,48 +69,68 @@ namespace FileParsers.CSV
             return date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
         }
 
-        public override void CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
         {
             if (!File.Exists(oldFile))
                 throw new Exception($"File {oldFile} does not exist");
-
-            using (StreamWriter outputFile = new StreamWriter(newFile, true))
-            {
-                outputFile.WriteLine("Fourth Line");
-            }
-
+            var result = new Result();
             var text = new StringBuilder();
+            var format = new CultureInfo("en-US", false);
+            format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
             using (StreamReader reader = File.OpenText(oldFile))
             {
                 string line;
-                List<string> headers;
-
                 if (HasHeader)
                 {
                     line = reader.ReadLine();
-                    headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
+                    FindIndexesByHeaders(line);
                     text.Append(line + "\n");
-                    LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName) == true);
-                    LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName) == true);
-                    DateIndex = headers.FindIndex(h => h.Equals(DateColumnName) == true);
-                    if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1)
-                        throw new Exception("Column names are not matched");
                 }
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line.StartsWith(CommentPrefix))
+                    try
+                    {
+                        if (line.StartsWith(CommentPrefix))
+                        {
+                            text.Append(line);
+                            continue;
+                        }
+                        var data = line.Split(new[] { Separator }, StringSplitOptions.None);
+                        var traceNumber = int.Parse(data[TraceNumberIndex]);
+                        var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                        var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                        if (lat != null && lon != null)
+                        {
+                            data[LongitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString(format);
+                            data[LatitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString(format);
+                            text.Append(string.Join(Separator, data) + "\n");
+                            result.CountOfReplacedLines++;
+                        }
+                    }
+                    catch(Exception)
                     {
                         text.Append(line);
-                        continue;
                     }
-                    var data = line.Split(new[] { Separator }, StringSplitOptions.None);
-                    var traceNumber = int.Parse(data[TraceNumberIndex]);
-                    data[LongitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString();
-                    data[LatitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString();
-                    text.Append(string.Join(Separator, data) + "\n");
+                    finally
+                    {
+                        result.CountOfLines++;
+                    }
                 }
                 File.WriteAllText(newFile, text.ToString());
+                return result;
             }
+        }
+
+        private void FindIndexesByHeaders(string line)
+        {
+            List<string> headers;
+            headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
+            LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName) == true);
+            LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName) == true);
+            DateIndex = headers.FindIndex(h => h.Equals(DateColumnName) == true);
+            TraceNumberIndex = headers.FindIndex(h => h.Equals(TraceNumberColumnName) == true);
+            if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1 || TraceNumberIndex == -1)
+                throw new Exception("Column names are not matched");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace UgCSPPK.Models
 {
     public class DataFile : ViewModelBase, IDataFile
     {
-        private static ILog log = LogManager.GetLogger(typeof(DataFile));
+        protected static ILog log = LogManager.GetLogger(typeof(DataFile));
         public const string PPK = "PPK";
         public List<GeoCoordinates> Coordinates { get; }
         public string FileName { get; protected set; }
@@ -32,35 +32,36 @@ namespace UgCSPPK.Models
             if (parser != null)
             {
                 parser.CommentPrefix = template.Format.CommentPrefix;
-                parser.DateIndex = template.Columns.Timestamp.Index;
-                parser.LatitudeIndex = template.Columns.Latitude.Index;
-                parser.LongitudeIndex = template.Columns.Longitude.Index;
-                parser.TraceNumberIndex = template.Columns.TraceNumber.Index;
+                parser.DateIndex = template.Columns.Timestamp?.Index ?? 0;
+                parser.LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
+                parser.LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
+                parser.TraceNumberIndex = template.Columns.TraceNumber?.Index ?? 0;
                 parser.ColumnLengths = template.Format.ColumnLengths;
                 parser.DecimalSeparator = template.Format.DecimalSeparator;
-                parser.DateColumnName = template.Columns.Timestamp.Header;
-                parser.LatitudeColumnName = template.Columns.Latitude.Header;
-                parser.LongitudeColumnName = template.Columns.Longitude.Header;
-                parser.TraceNumberColumnName = template.Columns.TraceNumber.Header;
+                parser.DateColumnName = template.Columns.Timestamp?.Header;
+                parser.LatitudeColumnName = template.Columns.Latitude?.Header;
+                parser.LongitudeColumnName = template.Columns.Longitude?.Header;
+                parser.TraceNumberColumnName = template.Columns.TraceNumber?.Header;
                 parser.HasHeader = template.Format.HasHeader;
                 parser.Separator = template.Format.Separator;
                 try
                 {
                     Coordinates = parser.Parse(filePath);
+
+                    if (Coordinates != null)
+                    {
+                        SetTypeOfFile(template);
+                        SetStartTime(Coordinates);
+                        SetEndTime(Coordinates);
+                        IsValid = true;
+                    }
+                    else
+                        IsValid = false;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    log.Error(e.StackTrace);
+                    log.Error(e.Message);
                 }
-                if (Coordinates != null)
-                {
-                    SetTypeOfFile(template);
-                    SetStartTime(Coordinates);
-                    SetEndTime(Coordinates);
-                    IsValid = true;
-                }
-                else
-                    IsValid = false;
             }
         }
 
@@ -81,12 +82,26 @@ namespace UgCSPPK.Models
 
         private void SetStartTime(List<GeoCoordinates> posLogData)
         {
-            StartTime = posLogData.Min(d => d.Date);
+            try
+            {
+                StartTime = posLogData.Min(d => d.Date);
+            }
+            catch (ArgumentNullException e)
+            {
+                log.Error(e.Message);
+            }
         }
 
         private void SetEndTime(List<GeoCoordinates> posLogData)
         {
-            EndTime = posLogData.Max(d => d.Date);
+            try
+            {
+                EndTime = posLogData.Max(d => d.Date);
+            }
+            catch (ArgumentNullException e)
+            {
+                log.Error(e.Message);
+            }
         }
     }
 }

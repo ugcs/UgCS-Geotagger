@@ -19,4 +19,4 @@
     timestamp:
       header: Time
     trace-number:
-      header: 'GPR:Trace'
+      header: "GPR:Trace"

@@ -11,6 +11,7 @@ namespace FileParsers.SegYLog
         private const int TextBytesOffset = 3200;
         private const int SamplesPerTraceOffset = 3222;
         private const int HeadersOffset = 3600;
+        private const int TraceNumberOffset = 8;
         private const int ScalarOffset = 70;
         private const int LongitudeOffset = 72;
         private const int LatitudeOffset = 76;
@@ -97,47 +98,59 @@ namespace FileParsers.SegYLog
             return (int)Math.Round(value * SecondsInDegree * 1000);
         }
 
-        public void CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        private int DeserializeTraceNumber(byte[] data, int i)
         {
-            var position = HeadersOffset;
+            return BitConverter.ToInt32(data, i);
+        }
+
+        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        {
+            var result = new Result();
+            var startPosition = HeadersOffset;
             byte[] bytes = File.ReadAllBytes(oldFile);
             byte[] lonToBytes;
             byte[] latToBytes;
-            foreach (var coordinate in coordinates)
+            for (int i = startPosition; i < bytes.Length; i += TraceHeaderOffset + TracesLength * 2)
             {
-                var scalar = BitConverter.ToInt16(bytes, position + ScalarOffset);
-                switch (PayloadType)
+                var traceNumber = DeserializeTraceNumber(bytes, i + TraceNumberOffset);
+                var coordinate = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                if (coordinate != null)
                 {
-                    case Gpr:
-                        lonToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Longitude));
-                        latToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Latitude));
-                        for (int j = 0; j < sizeof(double); j++)
-                            bytes[position + LongitudeGprOffset + j] = lonToBytes[j];
-                        for (int j = 0; j < sizeof(double); j++)
-                            bytes[position + LatitudeGprOffset + j] = latToBytes[j];
-                        lonToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Longitude));
-                        latToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Latitude));
-                        for (int j = 0; j < sizeof(float); j++)
-                            bytes[position + LongitudeOffset + j] = lonToBytes[j];
-                        for (int j = 0; j < sizeof(float); j++)
-                            bytes[position + LatitudeOffset + j] = latToBytes[j];
-                        break;
+                    switch (PayloadType)
+                    {
+                        case Gpr:
+                            lonToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Longitude));
+                            latToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Latitude));
+                            for (int j = 0; j < sizeof(double); j++)
+                                bytes[i + LongitudeGprOffset + j] = lonToBytes[j];
+                            for (int j = 0; j < sizeof(double); j++)
+                                bytes[i + LatitudeGprOffset + j] = latToBytes[j];
+                            lonToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Longitude));
+                            latToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Latitude));
+                            for (int j = 0; j < sizeof(float); j++)
+                                bytes[i + LongitudeOffset + j] = lonToBytes[j];
+                            for (int j = 0; j < sizeof(float); j++)
+                                bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            break;
 
-                    case EchoSounder:
-                        lonToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Longitude));
-                        latToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Latitude));
-                        for (int j = 0; j < sizeof(int); j++)
-                            bytes[position + LongitudeOffset + j] = lonToBytes[j];
-                        for (int j = 0; j < sizeof(int); j++)
-                            bytes[position + LatitudeOffset + j] = latToBytes[j];
-                        break;
+                        case EchoSounder:
+                            lonToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Longitude));
+                            latToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Latitude));
+                            for (int j = 0; j < sizeof(int); j++)
+                                bytes[i + LongitudeOffset + j] = lonToBytes[j];
+                            for (int j = 0; j < sizeof(int); j++)
+                                bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            break;
 
-                    default:
-                        throw new Exception($"Not supported SEG-Y type: {PayloadType}");
+                        default:
+                            throw new Exception($"Not supported SEG-Y type: {PayloadType}");
+                    }
+                    result.CountOfReplacedLines++;
                 }
-                position += TraceHeaderOffset + TracesLength * 2;
+                result.CountOfLines++;
             }
             File.WriteAllBytes(newFile, bytes);
+            return result;
         }
 
         public SegYLogParser()

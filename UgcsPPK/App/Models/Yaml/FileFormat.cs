@@ -19,5 +19,29 @@ namespace UgCSPPK.Models.Yaml
 
         [YamlMember(Alias = "column-lengths")]
         public List<ushort> ColumnLengths { get; set; }
+
+        public bool IsFormatValid(FileType type, Columns columns)
+        {
+            switch (type)
+            {
+                case FileType.CSV:
+                    return IsDecimalSeparatorValid() && Separator != null && CommentPrefix != null && columns != null && (HasHeader ? !string.IsNullOrWhiteSpace(columns.Latitude?.Header)
+                        && !string.IsNullOrWhiteSpace(columns.Longitude?.Header) && !string.IsNullOrWhiteSpace(columns.TraceNumber?.Header) && !string.IsNullOrWhiteSpace(columns.Timestamp?.Header)
+                        : columns.Latitude?.Index != null && columns.Longitude?.Index != null && columns.Timestamp?.Index != null && columns.TraceNumber?.Index != null);
+
+                case FileType.ColumnsFixedWidth:
+                    return IsDecimalSeparatorValid() && ColumnLengths != null && CommentPrefix != null && columns != null && columns.Latitude?.Index != null &&
+                        columns.Longitude?.Index != null && columns.Timestamp?.Index != null;
+
+                case FileType.Unknown:
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsDecimalSeparatorValid()
+        {
+            return DecimalSeparator != null && (DecimalSeparator.Equals(".") || DecimalSeparator.Equals(","));
+        }
     }
 }

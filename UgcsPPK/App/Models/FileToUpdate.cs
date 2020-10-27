@@ -1,18 +1,19 @@
-﻿using FileParsers.SegYLog;
+﻿using FileParsers;
+using FileParsers.SegYLog;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using UgCSPPK.Models.Yaml;
-using ReactiveUI;
-using FileParsers;
 
 namespace UgCSPPK.Models
 {
     public class FileToUpdate : DataFile
-    {   
+    {
         private CoveringStatus _coveringStatus = CoveringStatus.NotCovered;
+
         public CoveringStatus CoveringStatus
         {
             get => _coveringStatus;
@@ -32,38 +33,45 @@ namespace UgCSPPK.Models
 
         private void FindLinkedFile(string filePath)
         {
-            var directory = Path.GetDirectoryName(filePath);
-            var files = Directory.GetFiles(directory, "*.sgy");
-            Regex r = new Regex(@"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}");
-            Match csvFileDateMatch = r.Match(filePath);
-            if (csvFileDateMatch.Success)
+            try
             {
-                var csvFileDate = DateTime.ParseExact(csvFileDateMatch.Value, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                foreach (var f in files)
+                var directory = Path.GetDirectoryName(filePath);
+                var files = Directory.GetFiles(directory, "*.sgy");
+                Regex r = new Regex(@"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}");
+                Match csvFileDateMatch = r.Match(filePath);
+                if (csvFileDateMatch.Success)
                 {
-                    Match m = r.Match(f);
-                    var linkedFileDate = DateTime.ParseExact(m.Value, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                    if (linkedFileDate == csvFileDate)
+                    var csvFileDate = DateTime.ParseExact(csvFileDateMatch.Value, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+                    foreach (var f in files)
                     {
-                        LinkedFile = Path.GetFileName(f);
-                        break;
+                        Match m = r.Match(f);
+                        var linkedFileDate = DateTime.ParseExact(m.Value, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+                        if (linkedFileDate == csvFileDate)
+                        {
+                            LinkedFile = f;
+                            break;
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
             }
         }
 
         public void CheckCoveringStatus(List<PositioningSolutionFile> psfFiles)
         {
-            if (CoverageFile != null)
+            if (CoverageFile != null && CoveringStatus == CoveringStatus.Covered)
                 return;
             foreach (var f in psfFiles)
             {
-                if (f.EndTime >= EndTime && f.StartTime <= StartTime)
+                if (f.StartTime <= StartTime && f.EndTime >= EndTime)
                 {
                     CoverageFile = f;
                     CoveringStatus = CoveringStatus.Covered;
                 }
-                else if ((f.EndTime >= EndTime && f.StartTime > StartTime) || (f.EndTime < EndTime && f.StartTime <= StartTime))
+                else if ((f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime))
                 {
                     CoverageFile = f;
                     CoveringStatus = CoveringStatus.PartiallyCovered;
@@ -77,15 +85,32 @@ namespace UgCSPPK.Models
         {
             if (CoverageFile == null)
                 return;
-            var correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, CoverageFile.Coordinates);
-            var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
-            parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates);
-            if (LinkedFile != null)
+            List<GeoCoordinates> correctedCoordinates = new List<GeoCoordinates>();
+            try
             {
-                var segy = new SegYLogParser();
-                segy.Parse(LinkedFile);
-                var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
-                segy.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates);
+                correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, CoverageFile.Coordinates);
+                var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
+                var result = parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates);
+                log.Info($"{result.CountOfReplacedLines} of {result.CountOfLines} were replaced");
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+            }
+            try
+            {
+                if (LinkedFile != null)
+                {
+                    var segy = new SegYLogParser();
+                    segy.Parse(LinkedFile);
+                    var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
+                    var result = segy.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates);
+                    log.Info($"{result.CountOfReplacedLines} of {result.CountOfLines} were replaced");
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
             }
         }
 
