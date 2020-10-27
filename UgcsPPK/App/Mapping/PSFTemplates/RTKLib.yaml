@@ -18,3 +18,5 @@
       index: 2
     timestamp:
       index: 0
+    trace-number:
+      index: 33

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UgCSPPK.Models;
 using UgCSPPK.Models.Yaml;
 using YamlDotNet.Serialization;
@@ -222,11 +223,11 @@ namespace UgCSPPK.ViewModels
             return null;
         }
 
-        private void ProcessFiles()
+        private async void ProcessFiles()
         {
             foreach (var ftu in filesToUpdate)
             {
-                ftu.UpdateCoordinates();
+                await Task.Run(() => ftu.UpdateCoordinates());
             }
         }
     }
