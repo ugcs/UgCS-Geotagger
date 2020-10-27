@@ -35,13 +35,13 @@ namespace UgCSPPK.Models
                 parser.DateIndex = template.Columns.Timestamp.Index;
                 parser.LatitudeIndex = template.Columns.Latitude.Index;
                 parser.LongitudeIndex = template.Columns.Longitude.Index;
-                parser.TraceNumberIndex = 0;
+                parser.TraceNumberIndex = template.Columns.TraceNumber.Index;
                 parser.ColumnLengths = template.Format.ColumnLengths;
                 parser.DecimalSeparator = template.Format.DecimalSeparator;
                 parser.DateColumnName = template.Columns.Timestamp.Header;
                 parser.LatitudeColumnName = template.Columns.Latitude.Header;
                 parser.LongitudeColumnName = template.Columns.Longitude.Header;
-                parser.TraceNumberColumnName = "GPR:Trace";
+                parser.TraceNumberColumnName = template.Columns.TraceNumber.Header;
                 parser.HasHeader = template.Format.HasHeader;
                 parser.Separator = template.Format.Separator;
                 try

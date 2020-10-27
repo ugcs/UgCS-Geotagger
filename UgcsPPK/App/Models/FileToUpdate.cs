@@ -80,13 +80,13 @@ namespace UgCSPPK.Models
             var correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, CoverageFile.Coordinates);
             var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
             parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates);
-            //if (LinkedFile != null)
-            //{
-            //    var segy = new SegYLogParser();
-            //    segy.Parse(LinkedFile);
-            //    var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
-            //    segy.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates);
-            //}
+            if (LinkedFile != null)
+            {
+                var segy = new SegYLogParser();
+                segy.Parse(LinkedFile);
+                var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
+                segy.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates);
+            }
         }
 
         public void UnsetCoverageFile()

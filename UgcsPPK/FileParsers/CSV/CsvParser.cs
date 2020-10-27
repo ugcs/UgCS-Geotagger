@@ -87,7 +87,7 @@ namespace FileParsers.CSV
             }
 
             var text = new StringBuilder();
-            using (StreamReader reader = File.OpenText(newFile))
+            using (StreamReader reader = File.OpenText(oldFile))
             {
                 string line;
                 List<string> headers;
@@ -96,7 +96,7 @@ namespace FileParsers.CSV
                 {
                     line = reader.ReadLine();
                     headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
-                    text.Append(line);
+                    text.Append(line + "\n");
                     LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName) == true);
                     LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName) == true);
                     DateIndex = headers.FindIndex(h => h.Equals(DateColumnName) == true);
