@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
+using System.IO;
 using UgCSPPK.Models;
 
 namespace UgCSPPK.Converters
@@ -43,6 +44,14 @@ namespace UgCSPPK.Converters
                     break;
             }
             return result;
+        }
+    }
+
+    public class FileNameConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Path.GetFileName((string)value);
         }
     }
 }

@@ -27,7 +27,6 @@ namespace FileParsers
             Longitude = longitude;
         }
 
-
         public GeoCoordinates(double latitide, double longitude)
         {
             Latitude = latitide;

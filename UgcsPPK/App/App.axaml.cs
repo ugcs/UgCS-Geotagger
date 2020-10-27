@@ -16,6 +16,7 @@ namespace App
     public class App : Application
     {
         private static ILog log = LogManager.GetLogger(typeof(App));
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -23,7 +24,6 @@ namespace App
 
         public override void OnFrameworkInitializationCompleted()
         {
-
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 XmlDocument log4netConfig = new XmlDocument();

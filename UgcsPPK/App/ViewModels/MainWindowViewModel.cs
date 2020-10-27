@@ -1,10 +1,4 @@
-﻿using log4net;
-using log4net.Config;
-using log4net.Repository.Hierarchy;
-using ReactiveUI;
-using System.IO;
-using System.Reflection;
-using System.Xml;
+﻿using ReactiveUI;
 using UgCSPPK.ViewModels;
 
 namespace App.ViewModels

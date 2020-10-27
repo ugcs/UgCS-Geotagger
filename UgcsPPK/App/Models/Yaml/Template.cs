@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using YamlDotNet.Serialization;
 
 namespace UgCSPPK.Models.Yaml
@@ -22,6 +24,30 @@ namespace UgCSPPK.Models.Yaml
 
         [YamlMember(Alias = "columns")]
         public Columns Columns { get; set; }
+
+        public bool IsTemplateValid()
+        {
+            return IsValidRegex() && !string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Code) && FileType != FileType.Unknown && IsFormatValid();
+        }
+
+        private bool IsValidRegex()
+        {
+            if (string.IsNullOrWhiteSpace(MatchRegex)) return false;
+            try
+            {
+                Regex.Match("", MatchRegex);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsFormatValid()
+        {
+            return Format == null ? false : Format.IsFormatValid(FileType, Columns);
+        }
     }
 
     [DefaultValue(Unknown)]

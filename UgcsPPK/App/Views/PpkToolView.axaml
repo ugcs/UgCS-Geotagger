@@ -7,6 +7,7 @@
              x:Class="UgCSPPK.Views.PpkToolView">
   <UserControl.Resources>
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
+    <conv:FileNameConverter x:Key="FileNameConverter" />
   </UserControl.Resources>
   <UserControl.Styles>
     <Style Selector="Button">
@@ -49,7 +50,7 @@
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Positioning Solutions Files:</TextBlock>
-    <DataGrid Grid.Row="1" Grid.Column="0" Items="{Binding Data}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
+    <DataGrid Grid.Row="1" Grid.Column="0" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name of File">
           <DataGridTemplateColumn.CellTemplate>
@@ -90,8 +91,8 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddPositioningSolutionFile}" ></Button>
-      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" ></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddPositioningSolutionFile}" IsEnabled="{Binding IsButtonsEnabled}" ></Button>
+      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
     <DataGrid Grid.Row="4" Grid.Column="0" Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
@@ -113,7 +114,7 @@
         <DataGridTemplateColumn Header="Linked File">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding LinkedFile}"/>
+              <TextBlock Text="{Binding LinkedFile, Converter={StaticResource FileNameConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -131,7 +132,7 @@
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="Covered">
+        <DataGridTemplateColumn  Header="Coverage Status">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding CoveringStatus, Converter={StaticResource CoveringStatusConverter}}"/>
@@ -149,12 +150,12 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" ></Button>
-      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}"></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
+      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
     </Grid>
     <DockPanel Grid.Row="6" Grid.Column="0">
-      <Button HorizontalAlignment="Left" Margin="6 0 6 6" Width="90" Command="{Binding BrowseFolder}">Browse Folder</Button>
-      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding ProcessFiles}">Process Files</Button>
+      <Button HorizontalAlignment="Left" Margin="9 0 6 6" Width="90" Command="{Binding BrowseFolder}" IsEnabled="{Binding IsButtonsEnabled}">Browse Folder</Button>
+      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding ProcessFiles}" IsEnabled="{Binding IsButtonsEnabled}">Process Files</Button>
     </DockPanel>
     
   </Grid>

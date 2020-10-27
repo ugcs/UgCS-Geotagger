@@ -12,6 +12,7 @@ namespace UgCSPPK.Models.Yaml
 
         [YamlMember(Alias = "timestamp")]
         public Column Timestamp { get; set; }
+
         [YamlMember(Alias = "trace-number")]
         public Column TraceNumber { get; set; }
     }

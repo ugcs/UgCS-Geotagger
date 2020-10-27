@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System.Reflection;
 
 namespace App.Views
 {
@@ -17,6 +18,7 @@ namespace App.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            this.Title = "UgCS-PPK " + Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         }
     }
 }

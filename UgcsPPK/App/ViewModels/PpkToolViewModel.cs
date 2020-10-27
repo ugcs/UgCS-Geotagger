@@ -18,6 +18,7 @@ namespace UgCSPPK.ViewModels
 {
     public class PpkToolViewModel : ViewModelBase
     {
+        private static ILog log = LogManager.GetLogger(typeof(PpkToolViewModel));
         private const string PositioningSolutionFilesTemplatesFolder = "./Mapping/PSFTemplates";
         private const string FilesToUpdateTemplatesFolder = "./Mapping/FTUTemplates";
         private string lastOpenedFolder = "";
@@ -30,7 +31,7 @@ namespace UgCSPPK.ViewModels
 
         public DataGridCollectionView FilesToUpdate { get; }
 
-        public DataGridCollectionView Data { get; }
+        public DataGridCollectionView PositionSolutionFiles { get; }
 
         private PositioningSolutionFile _selectedPositioningSolutionFile;
 
@@ -54,9 +55,20 @@ namespace UgCSPPK.ViewModels
             }
         }
 
+        private bool _isButtonsEnabled = true;
+
+        public bool IsButtonsEnabled
+        {
+            get => _isButtonsEnabled;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isButtonsEnabled, value);
+            }
+        }
+
         public PpkToolViewModel()
         {
-            Data = new DataGridCollectionView(positioningSolutionFiles);
+            PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
             FilesToUpdate = new DataGridCollectionView(filesToUpdate);
             CreateTemplates();
         }
@@ -90,13 +102,13 @@ namespace UgCSPPK.ViewModels
 
         private void RemovePositioningSolutionFile()
         {
-            if (Data.Contains(SelectedPositioningSolutionFile))
+            if (PositionSolutionFiles.Contains(SelectedPositioningSolutionFile))
             {
                 foreach (var f in filesToUpdate)
                     if (f.CoverageFile == SelectedPositioningSolutionFile)
                         f.UnsetCoverageFile();
-                Data.Remove(SelectedPositioningSolutionFile);
-            }          
+                PositionSolutionFiles.Remove(SelectedPositioningSolutionFile);
+            }
         }
 
         private async void AddFileToUpdate()
@@ -142,12 +154,21 @@ namespace UgCSPPK.ViewModels
                 Directory = ""
             };
             var folder = await openDialog.ShowAsync(new Window());
+            string[] files = new string[0];
             if (folder != null)
             {
                 try
                 {
-                    var files = Directory.GetFiles(folder);
-                    foreach (var file in files)
+                    files = Directory.GetFiles(folder);
+                }
+                catch (Exception e)
+                {
+                    log.Error(e.Message);
+                    return;
+                }
+                foreach (var file in files)
+                {
+                    try
                     {
                         var template = FindTemplate(file);
                         if (template?.FileType == FileType.ColumnsFixedWidth)
@@ -165,9 +186,10 @@ namespace UgCSPPK.ViewModels
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());
                         }
                     }
-                }
-                catch (Exception)
-                {
+                    catch (Exception e)
+                    {
+                        log.Error(e.Message);
+                    }
                 }
             }
             isDialogOpen = false;
@@ -175,35 +197,72 @@ namespace UgCSPPK.ViewModels
 
         private void CreateTemplates()
         {
+            var templatesCount = 0;
             if (!Directory.Exists(PositioningSolutionFilesTemplatesFolder))
+            {
+                log.Info($"Directory is not existing: {PositioningSolutionFilesTemplatesFolder.Substring(2)}");
                 return;
-            var files = Directory.GetFiles(PositioningSolutionFilesTemplatesFolder, "*.yaml");
+            }
+            string[] files = new string[0];
+            try
+            {
+                files = Directory.GetFiles(PositioningSolutionFilesTemplatesFolder, "*.yaml");
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+            }
+
             foreach (var file in files)
             {
                 try
                 {
                     var data = File.ReadAllText(file);
                     var tempalte = deserializer.Deserialize<Template>(data);
-                    psfTemplates.Add(tempalte);
+                    if (tempalte.IsTemplateValid())
+                    {
+                        psfTemplates.Add(tempalte);
+                        templatesCount++;
+                    }
+                    else
+                        log.Info($"Template is not valid: {file}");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    log.Error(e.Message);
                 }
             }
 
             if (!Directory.Exists(FilesToUpdateTemplatesFolder))
+            {
+                log.Info($"Directory is not existing: {FilesToUpdateTemplatesFolder.Substring(2)}");
                 return;
-            files = Directory.GetFiles(FilesToUpdateTemplatesFolder, "*.yaml");
+            }
+            try
+            {
+                files = Directory.GetFiles(FilesToUpdateTemplatesFolder, "*.yaml");
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+            }
             foreach (var file in files)
             {
                 try
                 {
                     var data = File.ReadAllText(file);
                     var tempalte = deserializer.Deserialize<Template>(data);
-                    ftuTemplates.Add(tempalte);
+                    if (tempalte.IsTemplateValid())
+                    {
+                        ftuTemplates.Add(tempalte);
+                        templatesCount++;
+                    }
+                    else
+                        log.Info($"Template is not valid: {file}");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    log.Error($"Template is not valid: {e.Message}");
                 }
             }
         }
@@ -212,12 +271,19 @@ namespace UgCSPPK.ViewModels
         {
             foreach (var t in psfTemplates.Union(ftuTemplates))
             {
-                var firstNonEmptyLines = File.ReadLines(file).Take(10).ToList();
-                foreach (var l in firstNonEmptyLines)
+                try
                 {
-                    var regex = new Regex(t.MatchRegex);
-                    if (regex.IsMatch(l))
-                        return t;
+                    var firstNonEmptyLines = File.ReadLines(file).Take(10).ToList();
+                    foreach (var l in firstNonEmptyLines)
+                    {
+                        var regex = new Regex(t.MatchRegex);
+                        if (regex.IsMatch(l))
+                            return t;
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.Error(e.Message);
                 }
             }
             return null;
@@ -225,10 +291,12 @@ namespace UgCSPPK.ViewModels
 
         private async void ProcessFiles()
         {
+            IsButtonsEnabled = false;
             foreach (var ftu in filesToUpdate)
             {
                 await Task.Run(() => ftu.UpdateCoordinates());
             }
+            IsButtonsEnabled = true;
         }
     }
 }
