@@ -1,6 +1,8 @@
-﻿using App.ViewModels;
+﻿using App;
+using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using log4net;
 using ReactiveUI;
 using System;
@@ -12,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UgCSPPK.Models;
 using UgCSPPK.Models.Yaml;
+using UgCSPPK.Views;
 using YamlDotNet.Serialization;
 
 namespace UgCSPPK.ViewModels
@@ -144,6 +147,12 @@ namespace UgCSPPK.ViewModels
                 FilesToUpdate.Remove(SelectedFileToUpdate);
         }
 
+        private void Clear()
+        {
+            filesToUpdate.Clear();
+            positioningSolutionFiles.Clear();
+        }
+
         private async void BrowseFolder()
         {
             if (isDialogOpen)
@@ -195,9 +204,9 @@ namespace UgCSPPK.ViewModels
             isDialogOpen = false;
         }
 
-        private void CreateTemplates()
+        private async void CreateTemplates()
         {
-            var templatesCount = 0;
+            var nonValidTemplates = new List<string>();
             if (!Directory.Exists(PositioningSolutionFilesTemplatesFolder))
             {
                 log.Info($"Directory is not existing: {PositioningSolutionFilesTemplatesFolder.Substring(2)}");
@@ -220,16 +229,17 @@ namespace UgCSPPK.ViewModels
                     var data = File.ReadAllText(file);
                     var tempalte = deserializer.Deserialize<Template>(data);
                     if (tempalte.IsTemplateValid())
-                    {
                         psfTemplates.Add(tempalte);
-                        templatesCount++;
-                    }
                     else
+                    {
                         log.Info($"Template is not valid: {file}");
+                        nonValidTemplates.Add(file);
+                    }
                 }
                 catch (Exception e)
                 {
                     log.Error(e.Message);
+                    nonValidTemplates.Add(file);
                 }
             }
 
@@ -253,18 +263,23 @@ namespace UgCSPPK.ViewModels
                     var data = File.ReadAllText(file);
                     var tempalte = deserializer.Deserialize<Template>(data);
                     if (tempalte.IsTemplateValid())
-                    {
                         ftuTemplates.Add(tempalte);
-                        templatesCount++;
-                    }
                     else
+                    {
                         log.Info($"Template is not valid: {file}");
+                        nonValidTemplates.Add(file);
+                    }
                 }
                 catch (Exception e)
                 {
                     log.Error($"Template is not valid: {e.Message}");
+                    nonValidTemplates.Add(file);
                 }
             }
+            string text = "";
+            foreach (var t in nonValidTemplates)
+                text += $"Template {t} is not valid";
+            await MessageBoxView.Show(App.App.CurrentWindow, text, "Info", MessageBoxView.MessageBoxButtons.Ok);
         }
 
         private Template FindTemplate(string file)

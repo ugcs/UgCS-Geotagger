@@ -1,6 +1,7 @@
 ﻿using App.ViewModels;
 using App.Views;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using log4net;
@@ -16,6 +17,7 @@ namespace App
     public class App : Application
     {
         private static ILog log = LogManager.GetLogger(typeof(App));
+        public static Window CurrentWindow { get; private set; }
 
         public override void Initialize()
         {
@@ -35,6 +37,7 @@ namespace App
                 {
                     DataContext = new MainWindowViewModel(),
                 };
+                CurrentWindow = desktop.MainWindow;
                 AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
             }
 
