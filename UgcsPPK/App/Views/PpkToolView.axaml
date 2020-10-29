@@ -20,11 +20,9 @@
       <Setter Property="Margin" Value="12 6 6 6"/>
       <Setter Property="FontSize" Value="14"/>
       <Setter Property="TextAlignment" Value="Left"/>
- 
     </Style>
-
     <Style Selector="Button.Add">
-      <Setter Property="Content" Value="Add Files"/>
+      <Setter Property="Content" Value="Add"/>
       <Setter Property="Margin" Value="12 6 6 6"/>
     </Style>
     <Style Selector="Button.Remove">
@@ -52,31 +50,31 @@
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Positioning Solutions Files:</TextBlock>
     <DataGrid Grid.Row="1" Grid.Column="0" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
       <DataGrid.Columns>
-        <DataGridTemplateColumn  Header="Name of File">
+        <DataGridTemplateColumn  Header="Name" Width="0.3*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding FileName}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn Header="Type of File">
+        <DataGridTemplateColumn Header="Type" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding TypeOfFile}"/>
+              <TextBlock Text="{Binding TypeOfFile}" Margin="0 0 0 12"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="Start Time">
+        <DataGridTemplateColumn  Header="Start Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding StartTime}"/>
+              <TextBlock Text="{Binding StartTime}" Margin="0 0 0 12"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="End Time">
+        <DataGridTemplateColumn  Header="End Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding EndTime}"/>
+              <TextBlock Text="{Binding EndTime}" Margin="0 0 0 12"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -97,42 +95,42 @@
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
     <DataGrid Grid.Row="4" Grid.Column="0" Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
       <DataGrid.Columns>
-        <DataGridTemplateColumn  Header="Name of File">
+        <DataGridTemplateColumn  Header="Name" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding FileName}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn Header="Type of File">
+        <DataGridTemplateColumn Header="Type" Width="0.1*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding TypeOfFile}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn Header="Linked File">
+        <DataGridTemplateColumn Header="Linked File" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding LinkedFile, Converter={StaticResource FileNameConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="Start Time">
+        <DataGridTemplateColumn  Header="Start Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding StartTime}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="End Time">
+        <DataGridTemplateColumn  Header="End Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding EndTime}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn  Header="Coverage Status">
+        <DataGridTemplateColumn  Header="Coverage Status" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding CoveringStatus, Converter={StaticResource CoveringStatusConverter}}"/>
@@ -153,8 +151,9 @@
       <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
     </Grid>
-    <DockPanel Grid.Row="6" Grid.Column="0">
-      <Button HorizontalAlignment="Left" Margin="9 0 6 6" Width="90" Command="{Binding BrowseFolder}" IsEnabled="{Binding IsButtonsEnabled}">Browse Folder</Button>
+    <DockPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2">
+      <Button HorizontalAlignment="Left" Margin="9 0 6 6" Width="90" Command="{Binding BrowseFolder}" IsEnabled="{Binding IsButtonsEnabled}">Add Folder</Button>
+      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding Clear}" IsEnabled="{Binding IsButtonsEnabled}">Clear</Button>
       <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding ProcessFiles}" IsEnabled="{Binding IsButtonsEnabled}">Process Files</Button>
     </DockPanel>
     
