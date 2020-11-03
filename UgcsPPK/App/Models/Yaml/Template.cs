@@ -46,7 +46,7 @@ namespace UgCSPPK.Models.Yaml
 
         private bool IsFormatValid()
         {
-            return Format == null ? false : Format.IsFormatValid(FileType, Columns);
+            return Format != null && Format.IsFormatValid(FileType, Columns);
         }
     }
 

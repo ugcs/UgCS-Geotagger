@@ -50,7 +50,7 @@ namespace FileParsers.FixedColumnWidth
             }
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
         {
             return new Result();
         }

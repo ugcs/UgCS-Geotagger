@@ -1,22 +1,39 @@
   # Mapping for positioning solution file
+  # Displayable name of Template
   name: "SkyHub"
-  code: "skyhub"
-  file-type: CSV
-  # Applied to the first 10 not empty lines of the file
+  # Code of template
+  code: "skyhub" 
+  # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
+  file-type: CSV 
+  # Applied to the first 10 not empty lines of the file to detect template
   match-regex: >-
     ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,GPR:Trace$
   file-format:
+  # Applies to CSV type. 'true' if the first line of file has headers, otherwise false
     has-header: true
+    # The symbol which uses to make a comment
     comment-prefix: '#'
+    # The symbol used to separate the integer part from the fractional part of a number written in decimal form. Options are ',' and '.'
     decimal-separator: '.'
+    # Applies to CSV type. The symbol to separate values from line in CSV file;
     separator: ','
-  # Column name or index
-  columns:     
+    # Applies to CSV type (especially for skyhub). Regular expression to get date from name of file;
+    date-regex: '\d{4}-\d{2}-\d{2}'
+  # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
+  columns:
+  # Latitude column
     latitude:
       header: Latitude
+      #index: 0 if has-header is 'false'
+  # Longitude column
     longitude:
       header: Longitude
+      #index: 0 if has-header is 'false'
+  # Timestamp column
     timestamp:
       header: Time
+      #index: 0 if has-header is 'false'
+  # Tracenumber
     trace-number:
       header: "GPR:Trace"
+      #index: 0 if has-header is 'false'
