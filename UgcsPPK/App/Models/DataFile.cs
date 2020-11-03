@@ -22,31 +22,32 @@ namespace UgCSPPK.Models
         public DateTime StartTime { get; protected set; }
         public DateTime EndTime { get; protected set; }
         public bool IsValid { get; protected set; }
-        protected Parser parser;
+        public Parser Parser { get; protected set; }
 
         protected DataFile(string filePath, Template template)
         {
             FileName = Path.GetFileName(filePath);
             FilePath = filePath;
-            parser = CreateParser(template.FileType);
-            if (parser != null)
+            Parser = CreateParser(template.FileType);
+            if (Parser != null)
             {
-                parser.CommentPrefix = template.Format.CommentPrefix;
-                parser.DateIndex = template.Columns.Timestamp?.Index ?? 0;
-                parser.LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
-                parser.LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
-                parser.TraceNumberIndex = template.Columns.TraceNumber?.Index ?? 0;
-                parser.ColumnLengths = template.Format.ColumnLengths;
-                parser.DecimalSeparator = template.Format.DecimalSeparator;
-                parser.DateColumnName = template.Columns.Timestamp?.Header;
-                parser.LatitudeColumnName = template.Columns.Latitude?.Header;
-                parser.LongitudeColumnName = template.Columns.Longitude?.Header;
-                parser.TraceNumberColumnName = template.Columns.TraceNumber?.Header;
-                parser.HasHeader = template.Format.HasHeader;
-                parser.Separator = template.Format.Separator;
+                Parser.CommentPrefix = template.Format.CommentPrefix;
+                Parser.DateIndex = template.Columns.Timestamp?.Index ?? 0;
+                Parser.LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
+                Parser.LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
+                Parser.TraceNumberIndex = template.Columns.TraceNumber?.Index ?? 0;
+                Parser.ColumnLengths = template.Format.ColumnLengths;
+                Parser.DecimalSeparator = template.Format.DecimalSeparator;
+                Parser.DateColumnName = template.Columns.Timestamp?.Header;
+                Parser.LatitudeColumnName = template.Columns.Latitude?.Header;
+                Parser.LongitudeColumnName = template.Columns.Longitude?.Header;
+                Parser.TraceNumberColumnName = template.Columns.TraceNumber?.Header;
+                Parser.HasHeader = template.Format.HasHeader;
+                Parser.Separator = template.Format.Separator;
+                Parser.DateTimeRegex = template.Format.DateFormatRegex?.ToString();
                 try
                 {
-                    Coordinates = parser.Parse(filePath);
+                    Coordinates = Parser.Parse(filePath);
 
                     if (Coordinates != null)
                     {

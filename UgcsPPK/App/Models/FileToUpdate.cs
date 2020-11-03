@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using UgCSPPK.Models.Yaml;
 
 namespace UgCSPPK.Models
@@ -23,6 +25,7 @@ namespace UgCSPPK.Models
             }
         }
 
+        public string ResultMessage { get; private set; } = "";
         public PositioningSolutionFile CoverageFile { get; private set; }
         public string LinkedFile { get; set; }
 
@@ -31,6 +34,7 @@ namespace UgCSPPK.Models
             FindLinkedFile(filePath);
         }
 
+        public SegYLogParser SegyParser { get; } = new SegYLogParser();
         private void FindLinkedFile(string filePath)
         {
             try
@@ -81,37 +85,49 @@ namespace UgCSPPK.Models
             }
         }
 
-        public void UpdateCoordinates()
+        public Task<string> UpdateCoordinates(CancellationTokenSource source)
         {
+            string message;
             if (CoverageFile == null)
-                return;
+            {
+                message = "Coverage file does not set";
+                return Task.FromResult(message);
+            }
+
             List<GeoCoordinates> correctedCoordinates = new List<GeoCoordinates>();
             try
             {
                 correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, CoverageFile.Coordinates);
                 var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
-                var result = parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates);
-                log.Info($"{result.CountOfReplacedLines} of {result.CountOfLines} were replaced");
+                var result = Parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates, source);
+                message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";
+                log.Info(message);
             }
             catch (Exception e)
             {
+                message = $"Error during updating {FilePath}: {e.Message}";
                 log.Error(e.Message);
             }
+            if (source.IsCancellationRequested)
+                return Task.FromResult(message);
             try
             {
                 if (LinkedFile != null)
                 {
-                    var segy = new SegYLogParser();
-                    segy.Parse(LinkedFile);
+                    SegyParser.Parse(LinkedFile);
                     var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
-                    var result = segy.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates);
-                    log.Info($"{result.CountOfReplacedLines} of {result.CountOfLines} were replaced");
+                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
+                    message += $"\n{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
+                    log.Info(message);
+                    return Task.FromResult(message);
                 }
             }
             catch (Exception e)
             {
+                message += $"\nError during updating {LinkedFile}: {e.Message}";
                 log.Error(e.Message);
             }
+            return Task.FromResult(message);
         }
 
         public void UnsetCoverageFile()
@@ -128,6 +144,11 @@ namespace UgCSPPK.Models
             if (File.Exists(newName))
                 File.Delete(newName);
             return newName;
+        }
+
+        public int CalculateCountOfLines()
+        {
+            return LinkedFile != null ? Coordinates.Count * 2 : Coordinates.Count;
         }
     }
 

@@ -1,0 +1,23 @@
+  # Mapping for positioning solution file
+  name: "SkyHub"
+  code: "skyhub"
+  file-type: CSV
+  # Applied to the first 10 not empty lines of the file
+  match-regex: >-
+    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,GPR:Trace$
+  file-format:
+    has-header: true
+    comment-prefix: '#'
+    decimal-separator: '.'
+    separator: ','
+    date-regex: '\d{4}-\d{2}-\d{2}'
+  # Column name or index
+  columns:     
+    latitude:
+      header: Latitude
+    longitude:
+      header: Longitude
+    timestamp:
+      header: Time
+    trace-number:
+      header: "GPR:Trace"

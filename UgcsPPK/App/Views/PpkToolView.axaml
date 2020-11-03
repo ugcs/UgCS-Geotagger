@@ -8,12 +8,18 @@
   <UserControl.Resources>
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
     <conv:FileNameConverter x:Key="FileNameConverter" />
+    <conv:ProcessFilesButtonTextConverter x:Key="ProcessFilesButtonTextConverter" />
   </UserControl.Resources>
   <UserControl.Styles>
     <Style Selector="Button">
-      <Setter Property="Width" Value="66"/>
+      <Setter Property="Width" Value="90"/>
       <Setter Property="Height" Value="30"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Width" Value="240"/>
+      <Setter Property="Height" Value="30"/>
     </Style>
 
     <Style Selector="TextBlock.Header">
@@ -27,7 +33,7 @@
     </Style>
     <Style Selector="Button.Remove">
       <Setter Property="Content" Value="Remove"/>
-      <Setter Property="Margin" Value="6 6 6 6"/>
+      <Setter Property="Margin" Value="0 6 6 6"/>
     </Style>
     <Style Selector="DataGrid">
       <Setter Property="Margin" Value="12 6 6 6"/>
@@ -43,7 +49,6 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="200" />
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
@@ -82,15 +87,15 @@
     </DataGrid>
     <Grid Grid.Row="2" Grid.Column="0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="60" />
-        <ColumnDefinition Width="60" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddPositioningSolutionFile}" IsEnabled="{Binding IsButtonsEnabled}" ></Button>
-      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddPositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}" ></Button>
+      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}"></Button>
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
     <DataGrid Grid.Row="4" Grid.Column="0" Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
@@ -141,21 +146,22 @@
     </DataGrid>
     <Grid Grid.Row="5" Grid.Column="0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="60" />
-        <ColumnDefinition Width="60" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
-      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding IsButtonsEnabled}"></Button>
-    </Grid>
-    <DockPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2">
-      <Button HorizontalAlignment="Left" Margin="9 0 6 6" Width="90" Command="{Binding BrowseFolder}" IsEnabled="{Binding IsButtonsEnabled}">Add Folder</Button>
-      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding Clear}" IsEnabled="{Binding IsButtonsEnabled}">Clear</Button>
-      <Button HorizontalAlignment="Right" Margin="6 0 6 6" Width="90" Command="{Binding ProcessFiles}" IsEnabled="{Binding IsButtonsEnabled}">Process Files</Button>
-    </DockPanel>
-    
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
+      <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
+      <Button Grid.Row="1" Grid.Column="0" Classes="Add" Command="{Binding BrowseFolder}" IsEnabled="{Binding !IsProcessFiles}">Add Folder</Button>
+      <Button Grid.Row="1" Grid.Column="1" Classes="Remove" Command="{Binding Clear}" IsEnabled="{Binding !IsProcessFiles}">Clear</Button>
+      <Button Grid.Row="1" Grid.Column="3" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
+      <ProgressBar  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="12 0 0 0"  Value="{Binding UpdatingFileProgressBarValue}"  IsVisible="{Binding IsProcessFiles}"></ProgressBar>
+    </Grid>    
   </Grid>
 </UserControl>

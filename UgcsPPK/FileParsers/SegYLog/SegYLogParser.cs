@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace FileParsers.SegYLog
 {
@@ -45,7 +46,7 @@ namespace FileParsers.SegYLog
             }
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))
             {
-                TracesLength = BitConverter.ToInt16(reader.ReadBytes(SamplesPerTraceOffset).Skip(SamplesPerTraceOffset - sizeof(short)).Take(sizeof(short)).ToArray(), 0); // have to check
+                TracesLength = BitConverter.ToInt16(reader.ReadBytes(SamplesPerTraceOffset).Skip(SamplesPerTraceOffset - sizeof(short)).Take(sizeof(short)).ToArray(), 0);
             }
             var coordinates = new List<GeoCoordinates>();
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))
@@ -103,7 +104,7 @@ namespace FileParsers.SegYLog
             return BitConverter.ToInt32(data, i);
         }
 
-        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
         {
             var result = new Result();
             var startPosition = HeadersOffset;
@@ -112,6 +113,8 @@ namespace FileParsers.SegYLog
             byte[] latToBytes;
             for (int i = startPosition; i < bytes.Length; i += TraceHeaderOffset + TracesLength * 2)
             {
+                if (token.IsCancellationRequested)
+                    break;
                 var traceNumber = DeserializeTraceNumber(bytes, i + TraceNumberOffset);
                 var coordinate = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
                 if (coordinate != null)

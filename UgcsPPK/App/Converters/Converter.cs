@@ -16,14 +16,6 @@ namespace UgCSPPK.Converters
         }
     }
 
-    public class ReverseBoolConverter : Converter
-    {
-        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return !(bool)value;
-        }
-    }
-
     public class CoveringStatusConverter : Converter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -52,6 +44,14 @@ namespace UgCSPPK.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Path.GetFileName((string)value);
+        }
+    }
+
+    public class ProcessFilesButtonTextConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? "Cancel" : "Process Files";
         }
     }
 }

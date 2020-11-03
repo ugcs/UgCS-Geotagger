@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace FileParsers.CSV
 {
@@ -31,11 +32,11 @@ namespace FileParsers.CSV
                 }
                 var format = new CultureInfo("en-US", false);
                 format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
+                double previousTime = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (line.StartsWith(CommentPrefix))
                         continue;
-                    double previousTime = 0;
                     var data = line.Split(new[] { Separator }, StringSplitOptions.None);
                     var lat = double.Parse(data[LatitudeIndex], NumberStyles.Float, format);
                     var lon = double.Parse(data[LongitudeIndex], NumberStyles.Float, format);
@@ -44,7 +45,6 @@ namespace FileParsers.CSV
                     var totalMS = timeOfTheCurrentDay.Second * 1000 + timeOfTheCurrentDay.Minute * 60000 + timeOfTheCurrentDay.Hour * 3600000 + timeOfTheCurrentDay.Millisecond;
                     if (previousTime > totalMS)
                         currentDate.AddDays(1);
-                    double dateInMs = CalculateMsInCurrentDay(currentDate);
                     var currentDateAndTime = currentDate.AddMilliseconds(totalMS);
                     previousTime = totalMS;
                     coordinates.Add(new GeoCoordinates(currentDateAndTime, lat, lon, traceNumber));
@@ -55,20 +55,15 @@ namespace FileParsers.CSV
 
         private DateTime ParseCurrentDate(string logName)
         {
-            Regex r = new Regex(@"\d{4}-\d{2}-\d{2}");
+            Regex r = DateTimeRegex != null ? new Regex(DateTimeRegex) : new Regex(@"\d{4}-\d{2}-\d{2}");
             Match m = r.Match(logName);
             if (!m.Success)
-                throw new Exception("Incorrect file name. Set date of logging. The Format is: yyyy-MM-dd");
+                throw new Exception("Incorrect file name. Set date of logging.");
 
             return DateTime.ParseExact(m.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
-        private double CalculateMsInCurrentDay(DateTime date)
-        {
-            return date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-        }
-
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
                 throw new Exception($"File {oldFile} does not exist");
@@ -87,6 +82,8 @@ namespace FileParsers.CSV
                 }
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (token.IsCancellationRequested)
+                        break;
                     try
                     {
                         if (line.StartsWith(CommentPrefix))
@@ -108,13 +105,14 @@ namespace FileParsers.CSV
                         else
                             text.Append(line);
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         text.Append(line);
                     }
                     finally
                     {
                         result.CountOfLines++;
+                        CountOfReplacedLines++;
                     }
                 }
                 File.WriteAllText(newFile, text.ToString());
@@ -126,10 +124,10 @@ namespace FileParsers.CSV
         {
             List<string> headers;
             headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
-            LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName) == true);
-            LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName) == true);
-            DateIndex = headers.FindIndex(h => h.Equals(DateColumnName) == true);
-            TraceNumberIndex = headers.FindIndex(h => h.Equals(TraceNumberColumnName) == true);
+            LongitudeIndex = headers.FindIndex(h => h.Equals(LongitudeColumnName));
+            LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName));
+            DateIndex = headers.FindIndex(h => h.Equals(DateColumnName));
+            TraceNumberIndex = headers.FindIndex(h => h.Equals(TraceNumberColumnName));
             if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1 || TraceNumberIndex == -1)
                 throw new Exception("Column names are not matched");
         }

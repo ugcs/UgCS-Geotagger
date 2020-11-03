@@ -16,7 +16,7 @@ namespace App
 {
     public class App : Application
     {
-        private static ILog log = LogManager.GetLogger(typeof(App));
+        private static readonly ILog log = LogManager.GetLogger(typeof(App));
         public static Window CurrentWindow { get; private set; }
 
         public override void Initialize()

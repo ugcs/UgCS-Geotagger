@@ -1,8 +1,6 @@
-﻿using App;
-using App.ViewModels;
+﻿using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using log4net;
 using ReactiveUI;
 using System;
@@ -11,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using UgCSPPK.Models;
 using UgCSPPK.Models.Yaml;
@@ -21,17 +20,18 @@ namespace UgCSPPK.ViewModels
 {
     public class PpkToolViewModel : ViewModelBase
     {
-        private static ILog log = LogManager.GetLogger(typeof(PpkToolViewModel));
+        private static readonly ILog log = LogManager.GetLogger(typeof(PpkToolViewModel));
         private const string PositioningSolutionFilesTemplatesFolder = "./Mapping/PSFTemplates";
         private const string FilesToUpdateTemplatesFolder = "./Mapping/FTUTemplates";
         private string lastOpenedFolder = "";
         private bool isDialogOpen = false;
-        private Deserializer deserializer = new Deserializer();
-        private ObservableCollection<PositioningSolutionFile> positioningSolutionFiles = new ObservableCollection<PositioningSolutionFile>();
-        private ObservableCollection<FileToUpdate> filesToUpdate = new ObservableCollection<FileToUpdate>();
-        private List<Template> psfTemplates = new List<Template>();
-        private List<Template> ftuTemplates = new List<Template>();
-
+        private readonly Deserializer deserializer = new Deserializer();
+        private readonly ObservableCollection<PositioningSolutionFile> positioningSolutionFiles = new ObservableCollection<PositioningSolutionFile>();
+        private readonly ObservableCollection<FileToUpdate> filesToUpdate = new ObservableCollection<FileToUpdate>();
+        private readonly List<Template> psfTemplates = new List<Template>();
+        private readonly List<Template> ftuTemplates = new List<Template>();
+        private CancellationTokenSource source;
+        private int fileToUpdateTotalLines;
         public DataGridCollectionView FilesToUpdate { get; }
 
         public DataGridCollectionView PositionSolutionFiles { get; }
@@ -58,14 +58,25 @@ namespace UgCSPPK.ViewModels
             }
         }
 
-        private bool _isButtonsEnabled = true;
+        private bool _isProcessFiles = false;
 
-        public bool IsButtonsEnabled
+        public bool IsProcessFiles
         {
-            get => _isButtonsEnabled;
+            get => _isProcessFiles;
             set
             {
-                this.RaiseAndSetIfChanged(ref _isButtonsEnabled, value);
+                this.RaiseAndSetIfChanged(ref _isProcessFiles, value);
+            }
+        }
+
+        private double _updatingFileProgressBarValue = 0.00;
+
+        public double UpdatingFileProgressBarValue
+        {
+            get => _updatingFileProgressBarValue;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _updatingFileProgressBarValue, value);
             }
         }
 
@@ -82,13 +93,13 @@ namespace UgCSPPK.ViewModels
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "PPK Log", Extensions = { "pos" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "PPK Log", Extensions = { "pos", "csv" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             if (chosenFiles != null)
             {
                 foreach (var file in chosenFiles)
                 {
-                    var template = FindTemplate(file);
+                    var template = FindTemplate(psfTemplates,file);
                     if (template != null)
                     {
                         var psf = new PositioningSolutionFile(file, template);
@@ -99,6 +110,7 @@ namespace UgCSPPK.ViewModels
                         }
                     }
                 }
+                GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
             }
             isDialogOpen = false;
         }
@@ -111,6 +123,10 @@ namespace UgCSPPK.ViewModels
                     if (f.CoverageFile == SelectedPositioningSolutionFile)
                         f.UnsetCoverageFile();
                 PositionSolutionFiles.Remove(SelectedPositioningSolutionFile);
+            }
+            foreach (var f in filesToUpdate)
+            {
+                f.CheckCoveringStatus(positioningSolutionFiles.ToList());
             }
         }
 
@@ -126,7 +142,7 @@ namespace UgCSPPK.ViewModels
             {
                 foreach (var file in chosenFiles)
                 {
-                    var template = FindTemplate(file);
+                    var template = FindTemplate(ftuTemplates, file);
                     if (template != null)
                     {
                         var ftu = new FileToUpdate(file, template);
@@ -137,6 +153,7 @@ namespace UgCSPPK.ViewModels
                         }
                     }
                 }
+                GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
             }
             isDialogOpen = false;
         }
@@ -163,7 +180,7 @@ namespace UgCSPPK.ViewModels
                 Directory = ""
             };
             var folder = await openDialog.ShowAsync(new Window());
-            string[] files = new string[0];
+            string[] files;
             if (folder != null)
             {
                 try
@@ -173,13 +190,14 @@ namespace UgCSPPK.ViewModels
                 catch (Exception e)
                 {
                     log.Error(e.Message);
+                    isDialogOpen = false;
                     return;
                 }
                 foreach (var file in files)
                 {
                     try
                     {
-                        var template = FindTemplate(file);
+                        var template = FindTemplate(psfTemplates.Union(ftuTemplates).ToList(), file);
                         if (template?.FileType == FileType.ColumnsFixedWidth)
                         {
                             var psf = new PositioningSolutionFile(file, template);
@@ -200,16 +218,17 @@ namespace UgCSPPK.ViewModels
                         log.Error(e.Message);
                     }
                 }
+                GetLastOpenedDirectory(folder);
             }
             isDialogOpen = false;
         }
 
-        private async void CreateTemplates()
+        private void CreateTemplates()
         {
             var nonValidTemplates = new List<string>();
             if (!Directory.Exists(PositioningSolutionFilesTemplatesFolder))
             {
-                log.Info($"Directory is not existing: {PositioningSolutionFilesTemplatesFolder.Substring(2)}");
+                log.Info($"Directory is not existing: {PositioningSolutionFilesTemplatesFolder[2..]}");
                 return;
             }
             string[] files = new string[0];
@@ -245,7 +264,7 @@ namespace UgCSPPK.ViewModels
 
             if (!Directory.Exists(FilesToUpdateTemplatesFolder))
             {
-                log.Info($"Directory is not existing: {FilesToUpdateTemplatesFolder.Substring(2)}");
+                log.Info($"Directory is not existing: {FilesToUpdateTemplatesFolder[2..]}");
                 return;
             }
             try
@@ -279,12 +298,12 @@ namespace UgCSPPK.ViewModels
             string text = "";
             foreach (var t in nonValidTemplates)
                 text += $"Template {t} is not valid";
-            await MessageBoxView.Show(App.App.CurrentWindow, text, "Info", MessageBoxView.MessageBoxButtons.Ok);
+            // await MessageBoxView.Show(App.App.CurrentWindow, text, "Info", MessageBoxView.MessageBoxButtons.Ok);
         }
 
-        private Template FindTemplate(string file)
+        private Template FindTemplate(List<Template> templates, string file)
         {
-            foreach (var t in psfTemplates.Union(ftuTemplates))
+            foreach (var t in templates)
             {
                 try
                 {
@@ -304,14 +323,61 @@ namespace UgCSPPK.ViewModels
             return null;
         }
 
+        private void GetLastOpenedDirectory(string file)
+        {
+            try
+            {
+                lastOpenedFolder = Path.GetDirectoryName(file);
+            }
+            catch (Exception e)
+            {
+                log.Error(e.Message);
+                lastOpenedFolder = "";
+            }
+        }
+
         private async void ProcessFiles()
         {
-            IsButtonsEnabled = false;
-            foreach (var ftu in filesToUpdate)
+            if (IsProcessFiles)
+                CancelProcessing();
+            else
             {
-                await Task.Run(() => ftu.UpdateCoordinates());
+
+                UpdatingFileProgressBarValue = 0.00;
+                IsProcessFiles = true;
+                source = new CancellationTokenSource();
+                fileToUpdateTotalLines = 0;
+                foreach (var ftu in filesToUpdate)
+                {
+                    if (ftu.CoveringStatus != CoveringStatus.NotCovered)
+                        fileToUpdateTotalLines += ftu.CalculateCountOfLines(); 
+                }
+                foreach (var ftu in filesToUpdate)
+                {
+                    if (ftu.CoveringStatus != CoveringStatus.NotCovered)
+                    {
+                        fileToUpdateTotalLines = ftu.Coordinates.Count;
+                        ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
+                        var message = await Task.Run(() => ftu.UpdateCoordinates(source));
+                        ftu.Parser.OnOneHundredLinesReplaced -= UpdateProgressbar;
+                        await MessageBoxView.Show(App.App.CurrentWindow, message, "Info", MessageBoxView.MessageBoxButtons.Ok);
+                    }
+                }
+                IsProcessFiles = false;
             }
-            IsButtonsEnabled = true;
+        }
+
+        private void UpdateProgressbar(int lines)
+        {
+            UpdatingFileProgressBarValue = lines / (double)fileToUpdateTotalLines * 100;
+        }
+
+        public void CancelProcessing()
+        {
+            source.Cancel();
+            source.Dispose();
+            IsProcessFiles = false;
+            UpdatingFileProgressBarValue = 0.00;
         }
     }
 }
