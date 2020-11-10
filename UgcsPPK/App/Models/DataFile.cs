@@ -2,12 +2,12 @@
 using FileParsers;
 using FileParsers.CSV;
 using FileParsers.FixedColumnWidth;
+using FileParsers.Yaml;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UgCSPPK.Models.Yaml;
 
 namespace UgCSPPK.Models
 {
@@ -28,27 +28,12 @@ namespace UgCSPPK.Models
         {
             FileName = Path.GetFileName(filePath);
             FilePath = filePath;
-            Parser = CreateParser(template.FileType);
+            Parser = CreateParser(template);
             if (Parser != null)
             {
-                Parser.CommentPrefix = template.Format.CommentPrefix;
-                Parser.DateIndex = template.Columns.Timestamp?.Index ?? 0;
-                Parser.LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
-                Parser.LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
-                Parser.TraceNumberIndex = template.Columns.TraceNumber?.Index ?? 0;
-                Parser.ColumnLengths = template.Format.ColumnLengths;
-                Parser.DecimalSeparator = template.Format.DecimalSeparator;
-                Parser.DateColumnName = template.Columns.Timestamp?.Header;
-                Parser.LatitudeColumnName = template.Columns.Latitude?.Header;
-                Parser.LongitudeColumnName = template.Columns.Longitude?.Header;
-                Parser.TraceNumberColumnName = template.Columns.TraceNumber?.Header;
-                Parser.HasHeader = template.Format.HasHeader;
-                Parser.Separator = template.Format.Separator;
-                Parser.DateTimeRegex = template.Format.DateFormatRegex?.ToString();
                 try
                 {
                     Coordinates = Parser.Parse(filePath);
-
                     if (Coordinates != null)
                     {
                         SetTypeOfFile(template);
@@ -66,12 +51,12 @@ namespace UgCSPPK.Models
             }
         }
 
-        private Parser CreateParser(FileType fileType)
+        private Parser CreateParser(Template template)
         {
-            return fileType switch
+            return template.FileType switch
             {
-                FileType.ColumnsFixedWidth => new FixedColumnWidthParser(),
-                FileType.CSV => new CsvParser(),
+                FileType.ColumnsFixedWidth => new FixedColumnWidthParser(template),
+                FileType.CSV => new CsvParser(template),
                 _ => null,
             };
         }

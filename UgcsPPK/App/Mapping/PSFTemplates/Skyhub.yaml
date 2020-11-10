@@ -11,6 +11,7 @@
     decimal-separator: '.'
     separator: ','
     date-regex: '\d{4}-\d{2}-\d{2}'
+    has-complete-date: false
   # Column name or index
   columns:     
     latitude:

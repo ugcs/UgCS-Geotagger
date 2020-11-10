@@ -1,6 +1,7 @@
 ﻿using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using FileParsers.Yaml;
 using log4net;
 using ReactiveUI;
 using System;
@@ -12,7 +13,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UgCSPPK.Models;
-using UgCSPPK.Models.Yaml;
 using UgCSPPK.Views;
 using YamlDotNet.Serialization;
 
@@ -99,7 +99,7 @@ namespace UgCSPPK.ViewModels
             {
                 foreach (var file in chosenFiles)
                 {
-                    var template = FindTemplate(psfTemplates,file);
+                    var template = FindTemplate(psfTemplates, file);
                     if (template != null)
                     {
                         var psf = new PositioningSolutionFile(file, template);
@@ -301,7 +301,7 @@ namespace UgCSPPK.ViewModels
             // await MessageBoxView.Show(App.App.CurrentWindow, text, "Info", MessageBoxView.MessageBoxButtons.Ok);
         }
 
-        private Template FindTemplate(List<Template> templates, string file)
+        public Template FindTemplate(List<Template> templates, string file)
         {
             foreach (var t in templates)
             {
@@ -342,7 +342,6 @@ namespace UgCSPPK.ViewModels
                 CancelProcessing();
             else
             {
-
                 UpdatingFileProgressBarValue = 0.00;
                 IsProcessFiles = true;
                 source = new CancellationTokenSource();
@@ -350,7 +349,7 @@ namespace UgCSPPK.ViewModels
                 foreach (var ftu in filesToUpdate)
                 {
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
-                        fileToUpdateTotalLines += ftu.CalculateCountOfLines(); 
+                        fileToUpdateTotalLines += ftu.CalculateCountOfLines();
                 }
                 foreach (var ftu in filesToUpdate)
                 {

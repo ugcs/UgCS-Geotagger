@@ -1,5 +1,6 @@
 ﻿using FileParsers;
 using FileParsers.SegYLog;
+using FileParsers.Yaml;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using UgCSPPK.Models.Yaml;
 
 namespace UgCSPPK.Models
 {
@@ -35,6 +35,7 @@ namespace UgCSPPK.Models
         }
 
         public SegYLogParser SegyParser { get; } = new SegYLogParser();
+
         private void FindLinkedFile(string filePath)
         {
             try

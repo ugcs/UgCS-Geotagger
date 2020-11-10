@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileParsers.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace FileParsers.SegYLog
         public List<GeoCoordinates> Parse(string segyPath)
         {
             if (!File.Exists(segyPath))
-                throw new Exception($"File {segyPath} does not exist");
+                throw new FileNotFoundException($"File {segyPath} does not exist");
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))
             {
                 var textBytes = reader.ReadBytes(TextBytesOffset);
@@ -41,7 +42,7 @@ namespace FileParsers.SegYLog
                 else
                 {
                     PayloadType = Unknown;
-                    throw new Exception($"Not supported SEG-Y type: {PayloadType}");
+                    throw new UnknownSegyTypeException($"Not supported SEG-Y type: {PayloadType}");
                 }
             }
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))

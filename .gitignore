@@ -14,3 +14,5 @@
 /UgcsPPK/FileParsers/obj
 /UgcsPPK/FileParsers/bin/Debug/netstandard2.0
 /.vs/ProjectSettings.json
+/UgcsPPK/Tests/obj
+/UgcsPPK/Tests/bin/Debug/netcoreapp3.1
