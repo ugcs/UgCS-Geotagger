@@ -43,7 +43,7 @@ namespace FileParsers.Yaml
 
         public bool IsDateFieldsValid()
         {
-            return HasCompleteDate ? !string.IsNullOrWhiteSpace(DateFormatRegex) : true;
+            return !HasCompleteDate || !string.IsNullOrWhiteSpace(DateFormatRegex);
         }
 
         public bool IsDecimalSeparatorValid()

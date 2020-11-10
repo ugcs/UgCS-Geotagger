@@ -18,7 +18,6 @@ namespace FileParsers.FixedColumnWidth
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
             var coordinates = new List<GeoCoordinates>();
-            var decimalSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             var format = new CultureInfo("en-US", false).NumberFormat;
             format.NumberDecimalSeparator = DecimalSeparator;
             using (StreamReader reader = File.OpenText(logPath))
