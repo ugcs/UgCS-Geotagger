@@ -55,20 +55,12 @@ namespace FileParsers.SegYLog
                 var data = reader.ReadBytes((int)reader.BaseStream.Length).Skip(HeadersOffset).ToArray();
                 for (int i = 0; i < data.Length; i += TraceHeaderOffset + TracesLength * 2)
                 {
-                    GeoCoordinates coordinate;
-                    switch (PayloadType)
+                    GeoCoordinates coordinate = PayloadType switch
                     {
-                        case Gpr:
-                            coordinate = CreateGprCoordinates(data, i);
-                            break;
-
-                        case EchoSounder:
-                            coordinate = CreateEchoSounderCoordinates(data, i);
-                            break;
-
-                        default:
-                            throw new Exception($"Not supported SEG-Y type: {PayloadType}");
-                    }
+                        Gpr => CreateGprCoordinates(data, i),
+                        EchoSounder => CreateEchoSounderCoordinates(data, i),
+                        _ => throw new Exception($"Not supported SEG-Y type: {PayloadType}"),
+                    };
                     coordinates.Add(coordinate);
                 }
             }

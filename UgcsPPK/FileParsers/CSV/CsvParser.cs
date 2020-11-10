@@ -78,53 +78,51 @@ namespace FileParsers.CSV
             var text = new StringBuilder();
             var format = new CultureInfo("en-US", false);
             format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
-            using (StreamReader reader = File.OpenText(oldFile))
+            using StreamReader reader = File.OpenText(oldFile);
+            string line;
+            if (HasHeader)
             {
-                string line;
-                if (HasHeader)
+                line = reader.ReadLine();
+                FindIndexesByHeaders(line);
+                text.Append(line + "\n");
+            }
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (token.IsCancellationRequested)
+                    break;
+                try
                 {
-                    line = reader.ReadLine();
-                    FindIndexesByHeaders(line);
-                    text.Append(line + "\n");
-                }
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (token.IsCancellationRequested)
-                        break;
-                    try
-                    {
-                        if (line.StartsWith(CommentPrefix))
-                        {
-                            text.Append(line);
-                            continue;
-                        }
-                        var data = line.Split(new[] { Separator }, StringSplitOptions.None);
-                        var traceNumber = int.Parse(data[TraceNumberIndex]);
-                        var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
-                        var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
-                        if (lat != null && lon != null)
-                        {
-                            data[LongitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString(format);
-                            data[LatitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString(format);
-                            text.Append(string.Join(Separator, data) + "\n");
-                            result.CountOfReplacedLines++;
-                        }
-                        else
-                            text.Append(line);
-                    }
-                    catch (Exception)
+                    if (line.StartsWith(CommentPrefix))
                     {
                         text.Append(line);
+                        continue;
                     }
-                    finally
+                    var data = line.Split(new[] { Separator }, StringSplitOptions.None);
+                    var traceNumber = int.Parse(data[TraceNumberIndex]);
+                    var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                    var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                    if (lat != null && lon != null)
                     {
-                        result.CountOfLines++;
-                        CountOfReplacedLines++;
+                        data[LongitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString(format);
+                        data[LatitudeIndex] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString(format);
+                        text.Append(string.Join(Separator, data) + "\n");
+                        result.CountOfReplacedLines++;
                     }
+                    else
+                        text.Append(line);
                 }
-                File.WriteAllText(newFile, text.ToString());
-                return result;
+                catch (Exception)
+                {
+                    text.Append(line);
+                }
+                finally
+                {
+                    result.CountOfLines++;
+                    CountOfReplacedLines++;
+                }
             }
+            File.WriteAllText(newFile, text.ToString());
+            return result;
         }
 
         private void FindIndexesByHeaders(string line)
