@@ -1,0 +1,14 @@
+  name: "RTKLib POS"
+  code: "rtklib"
+  file-type: ColumnsFixedWidth
+  match-regex: "^.*RTKPOST-QT ver.+ Emlid b33$"
+  file-format:
+    comment-prefix: '%'
+    decimal-separator: '.'
+  columns:     
+    latitude:
+      index: 1
+    longitude:
+      index: 2
+    timestamp:
+      index: 0

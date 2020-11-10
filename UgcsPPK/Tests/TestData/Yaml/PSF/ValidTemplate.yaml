@@ -1,0 +1,26 @@
+  # Mapping for positioning solution file
+  # Displayable name of Template
+  name: "RTKLib POS"
+  # Code of template
+  code: "rtklib"
+  # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
+  file-type: ColumnsFixedWidth
+  # Applied to the first 10 not empty lines of the file
+  match-regex: "^.*RTKPOST-QT ver.+ Emlid b33$"
+  file-format:
+    # Applies to CSV type. 'true' if the first line of file has headers, otherwise false
+    has-header: false
+    # The symbol which uses to make a comment
+    comment-prefix: '%'
+    # The symbol used to separate the integer part from the fractional part of a number written in decimal form. Options are ',' and '.'
+    decimal-separator: '.'
+    # Apllies to ColumnsFixedWidth type. The format is [legthOfFirstColumn1, legthOfFirstColumn2, ..., legthOfFirstColumnN] where N is a count of columns
+    column-lengths: [23, 15, 15, 11, 4, 4, 9, 9, 9, 9, 9, 9, 7]
+  # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
+  columns:     
+    latitude:
+      index: 1
+    longitude:
+      index: 2
+    timestamp:
+      index: 0

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FileParsers.Exceptions;
+using FileParsers.Yaml;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,7 +13,7 @@ namespace FileParsers.CSV
 {
     public class CsvParser : Parser
     {
-        public CsvParser()
+        public CsvParser(Template template) : base(template)
         {
         }
 
@@ -20,7 +22,7 @@ namespace FileParsers.CSV
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
             var logName = Path.GetFileName(logPath);
-            DateTime currentDate = ParseCurrentDate(logName);
+            DateTime currentDate = HasCompleteDate ? DateTime.Now : ParseCurrentDate(logName);
             var coordinates = new List<GeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
             {
@@ -41,13 +43,18 @@ namespace FileParsers.CSV
                     var lat = double.Parse(data[LatitudeIndex], NumberStyles.Float, format);
                     var lon = double.Parse(data[LongitudeIndex], NumberStyles.Float, format);
                     var traceNumber = int.Parse(data[TraceNumberIndex]);
-                    var timeOfTheCurrentDay = DateTime.Parse(data[DateIndex]);
-                    var totalMS = timeOfTheCurrentDay.Second * 1000 + timeOfTheCurrentDay.Minute * 60000 + timeOfTheCurrentDay.Hour * 3600000 + timeOfTheCurrentDay.Millisecond;
-                    if (previousTime > totalMS)
-                        currentDate.AddDays(1);
-                    var currentDateAndTime = currentDate.AddMilliseconds(totalMS);
-                    previousTime = totalMS;
-                    coordinates.Add(new GeoCoordinates(currentDateAndTime, lat, lon, traceNumber));
+                    var date = DateTime.Parse(data[DateIndex]);
+                    if (!HasCompleteDate)
+                    {
+                        var totalMS = date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000 + date.Millisecond;
+                        if (previousTime > totalMS)
+                            currentDate.AddDays(1);
+                        var currentDateAndTime = currentDate.AddMilliseconds(totalMS);
+                        previousTime = totalMS;
+                        coordinates.Add(new GeoCoordinates(currentDateAndTime, lat, lon, traceNumber));
+                    }
+                    else
+                        coordinates.Add(new GeoCoordinates(date, lat, lon));
                 }
             }
             return coordinates;
@@ -58,7 +65,7 @@ namespace FileParsers.CSV
             Regex r = DateTimeRegex != null ? new Regex(DateTimeRegex) : new Regex(@"\d{4}-\d{2}-\d{2}");
             Match m = r.Match(logName);
             if (!m.Success)
-                throw new Exception("Incorrect file name. Set date of logging.");
+                throw new IncorrectDateFormatException("Incorrect file name. Set date of logging.");
 
             return DateTime.ParseExact(m.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
@@ -66,7 +73,7 @@ namespace FileParsers.CSV
         public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
-                throw new Exception($"File {oldFile} does not exist");
+                throw new FileNotFoundException($"File {oldFile} does not exist");
             var result = new Result();
             var text = new StringBuilder();
             var format = new CultureInfo("en-US", false);
@@ -129,7 +136,7 @@ namespace FileParsers.CSV
             DateIndex = headers.FindIndex(h => h.Equals(DateColumnName));
             TraceNumberIndex = headers.FindIndex(h => h.Equals(TraceNumberColumnName));
             if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1 || TraceNumberIndex == -1)
-                throw new Exception("Column names are not matched");
+                throw new ColumnsMatchingException("Column names are not matched");
         }
     }
 }

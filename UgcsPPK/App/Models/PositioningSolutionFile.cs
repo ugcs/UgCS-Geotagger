@@ -1,4 +1,4 @@
-﻿using UgCSPPK.Models.Yaml;
+﻿using FileParsers.Yaml;
 
 namespace UgCSPPK.Models
 {

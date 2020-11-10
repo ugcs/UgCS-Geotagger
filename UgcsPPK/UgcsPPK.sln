@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30524.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{531EF916-1584-46B0-8645-5B83B21A6F73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileParsers", "FileParsers\FileParsers.csproj", "{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileParsers", "FileParsers\FileParsers.csproj", "{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
