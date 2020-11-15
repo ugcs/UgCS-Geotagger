@@ -56,7 +56,7 @@ namespace UgCSPPK.Models
             return template.FileType switch
             {
                 FileType.ColumnsFixedWidth => new FixedColumnWidthParser(template),
-                FileType.CSV => new CsvParser(template),
+                FileType.CSV => template.Code != "magdrone" ? new CsvParser(template) : new MagDroneCsvParser(template),
                 _ => null,
             };
         }

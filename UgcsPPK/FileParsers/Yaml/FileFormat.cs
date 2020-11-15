@@ -31,10 +31,10 @@ namespace FileParsers.Yaml
             return type switch
             {
                 FileType.CSV => IsDecimalSeparatorValid() && IsDateFieldsValid() && Separator != null && CommentPrefix != null && columns != null && (HasHeader ? (!string.IsNullOrWhiteSpace(columns.Latitude?.Header)
-                && !string.IsNullOrWhiteSpace(columns.Longitude?.Header) && !string.IsNullOrWhiteSpace(columns.TraceNumber?.Header) && !string.IsNullOrWhiteSpace(columns.Timestamp?.Header)
-                && columns.Latitude?.Index == null && columns.Longitude?.Index == null && columns.Timestamp?.Index == null && columns.TraceNumber?.Index == null)
-                : (columns.Latitude?.Index != null && columns.Longitude?.Index != null && columns.Timestamp?.Index != null && columns.TraceNumber?.Index != null) &&
-                string.IsNullOrWhiteSpace(columns.Longitude?.Header) && string.IsNullOrWhiteSpace(columns.TraceNumber?.Header) && string.IsNullOrWhiteSpace(columns.Timestamp?.Header)),
+                && !string.IsNullOrWhiteSpace(columns.Longitude?.Header) && !string.IsNullOrWhiteSpace(columns.Timestamp?.Header)
+                && columns.Latitude?.Index == null && columns.Longitude?.Index == null && columns.Timestamp?.Index == null)
+                : (columns.Latitude?.Index != null && columns.Longitude?.Index != null && columns.Timestamp?.Index != null) &&
+                string.IsNullOrWhiteSpace(columns.Longitude?.Header) && string.IsNullOrWhiteSpace(columns.Timestamp?.Header)),
                 FileType.ColumnsFixedWidth => IsDecimalSeparatorValid() && ColumnLengths != null && CommentPrefix != null && columns != null && columns.Latitude?.Index != null &&
                 columns.Longitude?.Index != null && columns.Timestamp?.Index != null,
                 _ => false,

@@ -76,7 +76,7 @@ namespace UgCSPPK.Models
                     CoverageFile = f;
                     CoveringStatus = CoveringStatus.Covered;
                 }
-                else if ((f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime))
+                else if ((f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime) || (StartTime <= f.StartTime && f.EndTime <= EndTime))
                 {
                     CoverageFile = f;
                     CoveringStatus = CoveringStatus.PartiallyCovered;

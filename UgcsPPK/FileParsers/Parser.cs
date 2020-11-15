@@ -47,7 +47,7 @@ namespace FileParsers
             DateIndex = template.Columns.Timestamp?.Index ?? 0;
             LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
             LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
-            TraceNumberIndex = template.Columns.TraceNumber?.Index ?? 0;
+            TraceNumberIndex = template.Columns.TraceNumber?.Index ?? -1;
             ColumnLengths = template.Format.ColumnLengths;
             DecimalSeparator = template.Format.DecimalSeparator;
             DateColumnName = template.Columns.Timestamp?.Header;

@@ -4,7 +4,7 @@
   file-type: CSV
   # Applied to the first 10 not empty lines of the file
   match-regex: >-
-    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,GPR:Trace$
+    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,ALT:Filtered Altitude,Number$
   file-format:
     has-header: true
     comment-prefix: '#'
@@ -21,4 +21,4 @@
     timestamp:
       header: Time
     trace-number:
-      header: "GPR:Trace"
+      header: "Number"
