@@ -184,15 +184,6 @@ namespace Tests
         }
 
         [Test]
-        public void TestMissedTraceNumberTemplate()
-        {
-            var path = YamlTestDataFolder + FTUTemplatesFolder + "MissedTraceNumberTemplate.yaml";
-            var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
-            Assert.IsFalse(template.IsTemplateValid());
-        }
-
-        [Test]
         public void TestFTUValidTemplate()
         {
             var path = YamlTestDataFolder + FTUTemplatesFolder + "ValidTemplate.yaml";

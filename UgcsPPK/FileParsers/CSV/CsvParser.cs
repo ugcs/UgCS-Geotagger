@@ -35,6 +35,7 @@ namespace FileParsers.CSV
                 var format = new CultureInfo("en-US", false);
                 format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
                 double previousTime = 0;
+                var traceCount = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (line.StartsWith(CommentPrefix))
@@ -42,7 +43,8 @@ namespace FileParsers.CSV
                     var data = line.Split(new[] { Separator }, StringSplitOptions.None);
                     var lat = double.Parse(data[LatitudeIndex], NumberStyles.Float, format);
                     var lon = double.Parse(data[LongitudeIndex], NumberStyles.Float, format);
-                    var traceNumber = int.Parse(data[TraceNumberIndex]);
+                    var traceNumber = TraceNumberIndex != -1 ? int.Parse(data[TraceNumberIndex]) : traceCount;
+                    traceCount++;
                     var date = DateTime.Parse(data[DateIndex]);
                     if (!HasCompleteDate)
                     {
@@ -60,7 +62,7 @@ namespace FileParsers.CSV
             return coordinates;
         }
 
-        private DateTime ParseCurrentDate(string logName)
+        protected DateTime ParseCurrentDate(string logName)
         {
             Regex r = DateTimeRegex != null ? new Regex(DateTimeRegex) : new Regex(@"\d{4}-\d{2}-\d{2}");
             Match m = r.Match(logName);
@@ -80,6 +82,7 @@ namespace FileParsers.CSV
             format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
             using StreamReader reader = File.OpenText(oldFile);
             string line;
+            var traceCount = 0;
             if (HasHeader)
             {
                 line = reader.ReadLine();
@@ -94,11 +97,11 @@ namespace FileParsers.CSV
                 {
                     if (line.StartsWith(CommentPrefix))
                     {
-                        text.Append(line);
+                        text.Append(line + "\n");
                         continue;
                     }
                     var data = line.Split(new[] { Separator }, StringSplitOptions.None);
-                    var traceNumber = int.Parse(data[TraceNumberIndex]);
+                    var traceNumber = TraceNumberIndex != -1 ? int.Parse(data[TraceNumberIndex]) : traceCount;
                     var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
                     var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
                     if (lat != null && lon != null)
@@ -109,23 +112,24 @@ namespace FileParsers.CSV
                         result.CountOfReplacedLines++;
                     }
                     else
-                        text.Append(line);
+                        text.Append(line + "\n");
                 }
                 catch (Exception)
                 {
-                    text.Append(line);
+                    text.Append(line + "\n");
                 }
                 finally
                 {
                     result.CountOfLines++;
                     CountOfReplacedLines++;
+                    traceCount++;
                 }
             }
             File.WriteAllText(newFile, text.ToString());
             return result;
         }
 
-        private void FindIndexesByHeaders(string line)
+        protected void FindIndexesByHeaders(string line)
         {
             List<string> headers;
             headers = line.Split(new[] { Separator }, StringSplitOptions.None).ToList();
@@ -133,7 +137,7 @@ namespace FileParsers.CSV
             LatitudeIndex = headers.FindIndex(h => h.Equals(LatitudeColumnName));
             DateIndex = headers.FindIndex(h => h.Equals(DateColumnName));
             TraceNumberIndex = headers.FindIndex(h => h.Equals(TraceNumberColumnName));
-            if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1 || TraceNumberIndex == -1)
+            if (LongitudeIndex == -1 || LatitudeIndex == -1 || DateIndex == -1)
                 throw new ColumnsMatchingException("Column names are not matched");
         }
     }
