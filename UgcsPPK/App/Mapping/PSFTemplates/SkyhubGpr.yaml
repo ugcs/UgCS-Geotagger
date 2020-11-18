@@ -20,7 +20,7 @@
     # Applies to CSV type (especially for skyhub). Regular expression to get date from name of file;
     date-regex: '\d{4}-\d{2}-\d{2}'
     # If value is 'false' date must be set in the name of file via date-regex;
-    has-complete-date: false
+    has-file-name-date: true
   # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
   columns:
   # Latitude column
@@ -32,7 +32,7 @@
       header: Longitude
       #index: 0 if has-header is 'false'
   # Timestamp column
-    timestamp:
+    time:
       header: Time
       #index: 0 if has-header is 'false'
   # Tracenumber

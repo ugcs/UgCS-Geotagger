@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace FileParsers.CSV
 {
@@ -14,53 +17,120 @@ namespace FileParsers.CSV
 
         public override List<GeoCoordinates> Parse(string logPath)
         {
+            if (Template == null)
+                throw new NullReferenceException("Template is not set");
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
             var logName = Path.GetFileName(logPath);
-            DateTime currentDate = HasCompleteDate ? DateTime.Now : ParseCurrentDate(logName);
+            if (Template.Format.HasFileNameDate)
+                ParseDateFromNameOfFile(logPath);
             var coordinates = new List<GeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
             {
-                string line;
-                if (HasHeader)
+                string line = SkipLines(reader);
+                if (Template.Format.HasHeader)
                 {
-                    line = reader.ReadLine();
-                    FindIndexesByHeaders(line);
-                }
-                var format = new CultureInfo("en-US", false);
-                format.NumberFormat.NumberDecimalSeparator = DecimalSeparator;
-                double previousTime = 0;
-                var traceCount = 0;
-                var closestTime = DateTime.Now;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line.StartsWith(CommentPrefix))
-                        continue;
-                    var data = line.Split(new[] { Separator }, StringSplitOptions.None);
-                    var lat = double.Parse(data[LatitudeIndex], NumberStyles.Float, format);
-                    var lon = double.Parse(data[LongitudeIndex], NumberStyles.Float, format);
-                    var traceNumber = TraceNumberIndex != -1 ? int.Parse(data[TraceNumberIndex]) : traceCount;
-                    traceCount++;
-                    var timestamp = int.Parse(data[0]);
-                    DateTime date;
-                    var isRowHasTime = DateTime.TryParse(data[DateIndex], out date);
-                    date = isRowHasTime ? date : closestTime.AddMilliseconds(timestamp);
-                    if (isRowHasTime)
-                        closestTime = date;
-                    if (!HasCompleteDate)
+                    if (line == null)
                     {
-                        var totalMS = date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000 + date.Millisecond;
-                        if (previousTime > totalMS)
-                            currentDate.AddDays(1);
-                        var currentDateAndTime = currentDate.AddMilliseconds(totalMS);
-                        previousTime = totalMS;
-                        coordinates.Add(new GeoCoordinates(currentDateAndTime, lat, lon, traceNumber));
+                        line = reader.ReadLine();
+                        FindIndexesByHeaders(line);
+                        skippedLines.Append(line + "\n");
                     }
                     else
-                        coordinates.Add(new GeoCoordinates(date, lat, lon));
+                        FindIndexesByHeaders(line);
+                }
+
+                var format = new CultureInfo("en-US", false);
+                format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
+                var traceCount = 0;
+                DateTime? firstDateTime = null;
+                var timestampOfTheFirsDatetTime = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith(Template.Format.CommentPrefix))
+                        continue;
+                    var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
+                    var lat = double.Parse(data[(int)Template.Columns.Latitude.Index], NumberStyles.Float, format);
+                    var lon = double.Parse(data[(int)Template.Columns.Longitude.Index], NumberStyles.Float, format);
+                    var timestamp = int.Parse(data[(int)Template.Columns.Timestamp.Index]);
+                    var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
+                    DateTime time;
+                    var isRowHasTime = DateTime.TryParse(data[(int)Template.Columns.Time.Index], out time);
+                    if (!isRowHasTime)
+                        if (firstDateTime != null)
+                        {
+                            var dateTime = firstDateTime.Value.AddMilliseconds(timestamp - timestampOfTheFirsDatetTime);
+                            coordinates.Add(new GeoCoordinates(dateTime, lat, lon, traceNumber));
+                        }
+                        else
+                            continue;
+                    else
+                    {
+                        var date = ParseDateTime(data);
+                        if (firstDateTime == null)
+                        {
+                            firstDateTime = date;
+                            timestampOfTheFirsDatetTime = timestamp;
+                        }
+                        coordinates.Add(new GeoCoordinates(date, lat, lon, traceNumber));
+                    }
+                    traceCount++;
                 }
             }
             return coordinates;
         }
+
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
+        {
+            if (!File.Exists(oldFile))
+                throw new FileNotFoundException("File {oldFile} does not exist");
+            if (Template == null)
+                throw new NullReferenceException($"Template is not set");
+            var result = new Result();
+            var format = new CultureInfo("en-US", false);
+            format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
+            using StreamReader reader = File.OpenText(oldFile);
+            string line;
+            var traceCount = 0;
+            using (StreamWriter ppkFile = new StreamWriter(newFile))
+            {
+                ppkFile.WriteLine(skippedLines.ToString());
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+                    try
+                    {
+                        if (line.StartsWith(Template.Format.CommentPrefix))
+                            continue;
+                        var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
+                        var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
+                        var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                        var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
+                        if (lat != null && lon != null)
+                        {
+                            data[(int)Template.Columns.Longitude.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString(format);
+                            data[(int)Template.Columns.Latitude.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString(format);
+                            data[(int)Template.Columns.Date.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture); 
+                            data[(int)Template.Columns.Time.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
+                            ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
+                            result.CountOfReplacedLines++;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    finally
+                    {
+                        result.CountOfLines++;
+                        CountOfReplacedLines++;
+                        traceCount++;
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 }

@@ -18,7 +18,7 @@ namespace FileParsers
                 var rightBorderIndex = leftBorderIndex + 1;
                 var correctedLat = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
                 var correctedLon = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                correctedTraces.Add(new GeoCoordinates(coordinates.Date, correctedLat, correctedLon, coordinates.TraceNumber));
+                correctedTraces.Add(new GeoCoordinates(coordinates.DateTime, correctedLat, correctedLon, coordinates.TraceNumber));
             }
             return correctedTraces;
         }

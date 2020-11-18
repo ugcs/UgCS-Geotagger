@@ -17,8 +17,8 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "has-header")]
         public bool HasHeader { get; set; }
 
-        [YamlMember(Alias = "has-complete-date")]
-        public bool HasCompleteDate { get; set; }
+        [YamlMember(Alias = "has-file-name-date")]
+        public bool HasFileNameDate { get; set; }
 
         [YamlMember(Alias = "date-regex")]
         public string DateFormatRegex { get; set; }
@@ -31,19 +31,19 @@ namespace FileParsers.Yaml
             return type switch
             {
                 FileType.CSV => IsDecimalSeparatorValid() && IsDateFieldsValid() && Separator != null && CommentPrefix != null && columns != null && (HasHeader ? (!string.IsNullOrWhiteSpace(columns.Latitude?.Header)
-                && !string.IsNullOrWhiteSpace(columns.Longitude?.Header) && !string.IsNullOrWhiteSpace(columns.Timestamp?.Header)
-                && columns.Latitude?.Index == null && columns.Longitude?.Index == null && columns.Timestamp?.Index == null)
-                : (columns.Latitude?.Index != null && columns.Longitude?.Index != null && columns.Timestamp?.Index != null) &&
-                string.IsNullOrWhiteSpace(columns.Longitude?.Header) && string.IsNullOrWhiteSpace(columns.Timestamp?.Header)),
+                && !string.IsNullOrWhiteSpace(columns.Longitude?.Header)
+                && columns.Latitude?.Index == null && columns.Longitude?.Index == null)
+                : (columns.Latitude?.Index != null && columns.Longitude?.Index != null) &&
+                string.IsNullOrWhiteSpace(columns.Longitude?.Header)),
                 FileType.ColumnsFixedWidth => IsDecimalSeparatorValid() && ColumnLengths != null && CommentPrefix != null && columns != null && columns.Latitude?.Index != null &&
-                columns.Longitude?.Index != null && columns.Timestamp?.Index != null,
+                columns.Longitude?.Index != null,
                 _ => false,
             };
         }
 
         public bool IsDateFieldsValid()
         {
-            return !HasCompleteDate || !string.IsNullOrWhiteSpace(DateFormatRegex);
+            return !string.IsNullOrWhiteSpace(DateFormatRegex);
         }
 
         public bool IsDecimalSeparatorValid()

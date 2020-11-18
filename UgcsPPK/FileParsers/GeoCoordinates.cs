@@ -8,12 +8,12 @@ namespace FileParsers
         public double Longitude { get; set; }
         public double TimeInMs { get; set; }
         public int TraceNumber { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime DateTime { get; set; }
 
-        public GeoCoordinates(DateTime date, double latitide, double longitude, int traceNumber)
+        public GeoCoordinates(DateTime dateTime, double latitide, double longitude, int traceNumber)
         {
-            Date = date;
-            TimeInMs = date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            DateTime = dateTime;
+            TimeInMs = dateTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             Latitude = latitide;
             Longitude = longitude;
             TraceNumber = traceNumber;
@@ -21,7 +21,7 @@ namespace FileParsers
 
         public GeoCoordinates(DateTime date, double latitide, double longitude)
         {
-            Date = date;
+            DateTime = date;
             TimeInMs = date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             Latitude = latitide;
             Longitude = longitude;

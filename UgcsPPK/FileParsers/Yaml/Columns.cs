@@ -10,6 +10,14 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "longitude")]
         public Column Longitude { get; set; }
 
+        [YamlMember(Alias = "date")]
+        public Column Date { get; set; }
+
+        [YamlMember(Alias = "time")]
+        public Column Time { get; set; }
+        [YamlMember(Alias = "date-time")]
+        public Column DateTime { get; set; }
+
         [YamlMember(Alias = "timestamp")]
         public Column Timestamp { get; set; }
 
