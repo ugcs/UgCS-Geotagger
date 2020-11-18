@@ -25,6 +25,9 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "columns")]
         public Columns Columns { get; set; }
 
+        [YamlMember(Alias = "skip-lines-to")]
+        public SkipLinesTo SkipLinesTo { get; set; }
+
         public bool IsTemplateValid()
         {
             return IsValidRegex() && !string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Code) && FileType != FileType.Unknown && IsFormatValid();

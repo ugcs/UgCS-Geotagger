@@ -12,5 +12,5 @@
       index: 1
     longitude:
       index: 2
-    timestamp:
+    date-time:
       index: 0

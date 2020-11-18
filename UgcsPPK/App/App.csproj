@@ -25,19 +25,25 @@
     <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\MagArrow.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\MagDrone.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\Skyhub.yaml">
+    <None Update="Mapping\FTUTemplates\SkyhubGpr.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\PSFTemplates\Skyhub.yaml">
+    <None Update="Mapping\PSFTemplates\SkyhubMag.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\SkyhubGpr.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

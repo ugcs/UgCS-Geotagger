@@ -1,29 +1,22 @@
   # Mapping for positioning solution file
   # Displayable name of Template
-  name: "MagDrone"
+  name: "SkyHub"
   # Code of template
-  code: "magdrone" 
+  code: "skyhub" 
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV 
   # Applied to the first 10 not empty lines of the file to detect template
   match-regex: >-
-    ^\s*MagDroneR3:
-  # First Lines which do not contain any data and have to be skipped
-  skip-lines-to:
-    # Skip lines until the first matching is found
-    match-regex: >-
-     ^\s*Timestamp
-    # Skip matched line or not;
-    skip-matched-line: false
+    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,ALT:Filtered Altitude$
   file-format:
   # Applies to CSV type. 'true' if the first line of file has headers, otherwise false
     has-header: true
     # The symbol which uses to make a comment
-    comment-prefix: '%'
+    comment-prefix: '#'
     # The symbol used to separate the integer part from the fractional part of a number written in decimal form. Options are ',' and '.'
     decimal-separator: '.'
     # Applies to CSV type. The symbol to separate values from line in CSV file;
-    separator: ';'
+    separator: ','
     # Applies to CSV type (especially for skyhub). Regular expression to get date from name of file;
     date-regex: '\d{4}-\d{2}-\d{2}'
     # If value is 'true' date must be set in the name of file via date-regex;
@@ -32,19 +25,13 @@
   columns:
   # Latitude column
     latitude:
-      header: ' Latitude [Decimal Degrees]'
+      header: Latitude
       #index: 0 if has-header is 'false'
   # Longitude column
     longitude:
-      header: ' Longitude [Decimal Degrees]'
+      header: Longitude
       #index: 0 if has-header is 'false'
   # Timestamp column
     time:
-      header: ' GPSTime [hh:mm:ss.sss]'
-      #index: 0 if has-header is 'false'
-    date:
-      header: ' GPSDate'
-      #index: 0 if has-header is 'false'
-    timestamp:
-      header: 'Timestamp [ms]'
+      header: Time
       #index: 0 if has-header is 'false'

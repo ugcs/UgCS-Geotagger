@@ -1,27 +1,18 @@
 ﻿using FileParsers.Yaml;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace FileParsers
 {
     public abstract class Parser : IGeoCoordinateParser
     {
-        public string CommentPrefix { get; set; } = "#";
-        public string DecimalSeparator { get; set; } = ".";
-        public int DateIndex { get; set; }
-        public int LongitudeIndex { get; set; }
-        public int LatitudeIndex { get; set; }
-        public int TraceNumberIndex { get; set; }
-        public string Separator { get; set; } = ",";
-        public string DateColumnName { get; set; }
-        public string LongitudeColumnName { get; set; }
-        public string LatitudeColumnName { get; set; }
-        public string TraceNumberColumnName { get; set; }
-        public string DateTimeRegex { get; set; }
-        public bool HasHeader { get; set; }
-        public bool HasCompleteDate { get; set; }
-        public List<ushort> ColumnLengths { get; set; }
+        protected StringBuilder skippedLines;
+        protected DateTime? dateFromNameOfFile;
+        public Template Template { get; }
         private int _countOfReplacedLines;
 
         public int CountOfReplacedLines
@@ -43,21 +34,34 @@ namespace FileParsers
 
         public Parser(Template template)
         {
-            CommentPrefix = template.Format.CommentPrefix;
-            DateIndex = template.Columns.Timestamp?.Index ?? 0;
-            LatitudeIndex = template.Columns.Latitude?.Index ?? 0;
-            LongitudeIndex = template.Columns.Longitude?.Index ?? 0;
-            TraceNumberIndex = template.Columns.TraceNumber?.Index ?? -1;
-            ColumnLengths = template.Format.ColumnLengths;
-            DecimalSeparator = template.Format.DecimalSeparator;
-            DateColumnName = template.Columns.Timestamp?.Header;
-            LatitudeColumnName = template.Columns.Latitude?.Header;
-            LongitudeColumnName = template.Columns.Longitude?.Header;
-            TraceNumberColumnName = template.Columns.TraceNumber?.Header;
-            HasHeader = template.Format.HasHeader;
-            Separator = template.Format.Separator;
-            DateTimeRegex = template.Format.DateFormatRegex?.ToString();
-            HasCompleteDate = template.Format.HasCompleteDate;
+            if (template != null && template.IsTemplateValid())
+                Template = template;
+        }
+
+        protected string SkipLines(StreamReader reader)
+        {
+            string line;
+            skippedLines = new StringBuilder();
+            if (Template.SkipLinesTo != null)
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    skippedLines.Append(line + "\n");
+                    var regex = new Regex(Template.SkipLinesTo.MatchRegex);
+                    if (regex.IsMatch(line))
+                        break;
+                }
+                if (Template.SkipLinesTo.SkipMatchedLine)
+                {
+                    line = reader.ReadLine();
+                    skippedLines.Append(line + "\n");
+                    return line;
+                }
+                else
+                    return line;
+            }
+            return null;
+
         }
     }
 }
