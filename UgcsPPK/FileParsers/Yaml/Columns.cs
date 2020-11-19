@@ -15,6 +15,7 @@ namespace FileParsers.Yaml
 
         [YamlMember(Alias = "time")]
         public Column Time { get; set; }
+
         [YamlMember(Alias = "date-time")]
         public Column DateTime { get; set; }
 

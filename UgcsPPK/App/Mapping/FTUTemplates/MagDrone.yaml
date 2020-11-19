@@ -5,7 +5,7 @@
   code: "magdrone" 
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV 
-  # Applied to the first 10 not empty lines of the file to detect template
+  # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
     ^\s*MagDroneR3:
   # First Lines which do not contain any data and have to be skipped
@@ -16,7 +16,7 @@
     # Skip matched line or not;
     skip-matched-line: false
   file-format:
-  # Applies to CSV type. 'true' if the first line of file has headers, otherwise false
+  # Applies to CSV type. 'true' if the file has headers, otherwise false
     has-header: true
     # The symbol which uses to make a comment
     comment-prefix: '%'
@@ -24,10 +24,6 @@
     decimal-separator: '.'
     # Applies to CSV type. The symbol to separate values from line in CSV file;
     separator: ';'
-    # Applies to CSV type (especially for skyhub). Regular expression to get date from name of file;
-    date-regex: '\d{4}-\d{2}-\d{2}'
-    # If value is 'true' date must be set in the name of file via date-regex;
-    has-file-name-date: true
   # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
   columns:
   # Latitude column
@@ -38,13 +34,15 @@
     longitude:
       header: ' Longitude [Decimal Degrees]'
       #index: 0 if has-header is 'false'
-  # Timestamp column
+  # Time column. Contains only time without date. Must be paired with Date column or with the date-regex and has-file-name-date parameters;
     time:
       header: ' GPSTime [hh:mm:ss.sss]'
       #index: 0 if has-header is 'false'
+  # Date column. Contains only date without time. Must be paired with Time column or with the date-regex and has-file-name-date parameters;
     date:
       header: ' GPSDate'
       #index: 0 if has-header is 'false'
+  # Recording frequency (MS). Must be used only to parse MagDrone CSV. 
     timestamp:
       header: 'Timestamp [ms]'
       #index: 0 if has-header is 'false'

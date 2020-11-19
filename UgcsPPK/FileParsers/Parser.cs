@@ -34,8 +34,7 @@ namespace FileParsers
 
         public Parser(Template template)
         {
-            if (template != null && template.IsTemplateValid())
-                Template = template;
+            Template = template;
         }
 
         protected string SkipLines(StreamReader reader)
@@ -61,7 +60,6 @@ namespace FileParsers
                     return line;
             }
             return null;
-
         }
     }
 }

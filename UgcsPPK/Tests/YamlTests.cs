@@ -14,25 +14,6 @@ namespace Tests
         }
 
         [Test]
-        public void TestInvalidSyntax()
-        {
-            var path = YamlTestDataFolder + "SyntaxInvalid.yaml";
-            var file = File.ReadAllText(path);
-            try
-            {
-                var template = deserializer.Deserialize<Template>(file);
-            }
-            catch (SemanticErrorException)
-            {
-                Assert.Pass(TestPassed);
-            }
-            catch (Exception)
-            {
-                Assert.Fail(TestFailed);
-            }
-        }
-
-        [Test]
         public void TestUnknownType()
         {
             var path = YamlTestDataFolder + "UnknownTypeTemplate.yaml";
@@ -54,7 +35,7 @@ namespace Tests
             var path = YamlTestDataFolder + "WrongRegexTemplate.yaml";
             var file = File.ReadAllText(path);
             var template = deserializer.Deserialize<Template>(file);
-            Assert.IsFalse(template.IsValidRegex());
+            Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
@@ -63,7 +44,7 @@ namespace Tests
             var path = YamlTestDataFolder + "MissDecimalSeparatorTemplate.yaml";
             var file = File.ReadAllText(path);
             var template = deserializer.Deserialize<Template>(file);
-            Assert.IsFalse(template.Format.IsDecimalSeparatorValid());
+            Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
@@ -108,7 +89,7 @@ namespace Tests
             var path = YamlTestDataFolder + "MissDateFormatTemplate.yaml";
             var file = File.ReadAllText(path);
             var template = deserializer.Deserialize<Template>(file);
-            Assert.IsFalse(template.Format.IsDateFieldsValid());
+            Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
@@ -202,6 +183,15 @@ namespace Tests
             file = File.ReadAllText(path);
             var secondTemplate = deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid() && secondTemplate.IsTemplateValid());
+        }
+
+        [Test]
+        public void TestValidMagDrone()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneValidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            Assert.IsTrue(template.IsTemplateValid());
         }
     }
 }

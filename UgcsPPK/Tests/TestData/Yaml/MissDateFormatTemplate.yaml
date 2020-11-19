@@ -5,7 +5,7 @@
   file-format:
     has-header: true
     decimal-separator: '.'
-    has-complete-date: true
+    has-file-name-date: true
   columns:
     latitude:
       header: Latitude

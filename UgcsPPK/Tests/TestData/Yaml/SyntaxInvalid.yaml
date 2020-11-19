@@ -1,6 +1,5 @@
 ﻿  name: "invalid sysnax"
   code: "skyhub"
-  incorrect syntax
   file-type: CSV 
   match-regex: 'regex'
   file-format:

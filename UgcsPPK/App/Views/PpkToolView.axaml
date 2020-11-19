@@ -155,6 +155,7 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
@@ -162,6 +163,17 @@
       <Button Grid.Row="1" Grid.Column="1" Classes="Remove" Command="{Binding Clear}" IsEnabled="{Binding !IsProcessFiles}">Clear</Button>
       <Button Grid.Row="1" Grid.Column="3" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
       <ProgressBar  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="12 0 0 0"  Value="{Binding UpdatingFileProgressBarValue}"  IsVisible="{Binding IsProcessFiles}"></ProgressBar>
+      <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Items="{Binding Messages}" IsReadOnly="True">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn  Header="Messages" Width="*" IsReadOnly="True"> 
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding .}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
     </Grid>    
   </Grid>
 </UserControl>

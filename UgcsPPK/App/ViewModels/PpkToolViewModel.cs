@@ -1,6 +1,8 @@
 ﻿using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Logging;
+using FileParsers;
 using FileParsers.Yaml;
 using log4net;
 using ReactiveUI;
@@ -30,11 +32,13 @@ namespace UgCSPPK.ViewModels
         private readonly ObservableCollection<FileToUpdate> filesToUpdate = new ObservableCollection<FileToUpdate>();
         private readonly List<Template> psfTemplates = new List<Template>();
         private readonly List<Template> ftuTemplates = new List<Template>();
+        private readonly ObservableCollection<string> messages = new ObservableCollection<string>();
         private CancellationTokenSource source;
         private int fileToUpdateTotalLines;
         public DataGridCollectionView FilesToUpdate { get; }
 
         public DataGridCollectionView PositionSolutionFiles { get; }
+        public DataGridCollectionView Messages { get; }
 
         private PositioningSolutionFile _selectedPositioningSolutionFile;
 
@@ -84,6 +88,7 @@ namespace UgCSPPK.ViewModels
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
             FilesToUpdate = new DataGridCollectionView(filesToUpdate);
+            Messages = new DataGridCollectionView(messages);
             CreateTemplates();
         }
 
@@ -109,6 +114,8 @@ namespace UgCSPPK.ViewModels
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());
                         }
                     }
+                    else
+                        messages.Add($"Template for {file} was not found");
                 }
                 GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
             }
@@ -152,6 +159,8 @@ namespace UgCSPPK.ViewModels
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());
                         }
                     }
+                    else
+                        messages.Add($"Template for {file} was not found");
                 }
                 GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
             }
@@ -207,7 +216,10 @@ namespace UgCSPPK.ViewModels
                         {
                             var ftu = new FileToUpdate(file, template);
                             filesToUpdate.Add(ftu);
-                        }
+                        } else
+                        {
+                            messages.Add($"Template for {file} was not found");
+                        }    
                         foreach (var f in filesToUpdate)
                         {
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());
@@ -295,10 +307,9 @@ namespace UgCSPPK.ViewModels
                     nonValidTemplates.Add(file);
                 }
             }
-            string text = "";
+            messages.Add($"Valid Templates: {ftuTemplates.Count + psfTemplates.Count}, Invalid Templates: {nonValidTemplates.Count}");
             foreach (var t in nonValidTemplates)
-                text += $"Template {t} is not valid";
-            // await MessageBoxView.Show(App.App.CurrentWindow, text, "Info", MessageBoxView.MessageBoxButtons.Ok);
+                messages.Add($"Template {t} is not valid");
         }
 
         public Template FindTemplate(List<Template> templates, string file)
@@ -353,11 +364,14 @@ namespace UgCSPPK.ViewModels
                 }
                 foreach (var ftu in filesToUpdate)
                 {
+                    messages.Add("Start Processing");
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
                     {
                         fileToUpdateTotalLines = ftu.Coordinates.Count;
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
+                        Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
                         var message = await Task.Run(() => ftu.UpdateCoordinates(source));
+                        Interpolator.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.Parser.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         await MessageBoxView.Show(App.App.CurrentWindow, message, "Info", MessageBoxView.MessageBoxButtons.Ok);
                     }

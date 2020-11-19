@@ -111,5 +111,59 @@ namespace Tests
             }
             Assert.Fail(TestFailed);
         }
+
+        [Test]
+        public void TestMagdroneCSV()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneValidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            var parser = new MagDroneCsvParser(template);
+            try
+            {
+                var result = parser.Parse(Path.GetFullPath(CSVTestDataFolder + YamlMagdroneFolder + "Magdrone.csv"));
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
+            Assert.Pass(TestPassed);
+        }
+
+        [Test]
+        public void TestMagdroneCSVWithInvalidTemplate()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneInvalidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            var parser = new MagDroneCsvParser(template);
+            try
+            {
+                var result = parser.Parse(Path.GetFullPath(CSVTestDataFolder + YamlMagdroneFolder + "Magdrone.csv"));
+            }
+            catch (Exception e)
+            {
+                Assert.Pass(e.Message);
+            }
+            Assert.Fail(TestFailed);
+        }
+
+        [Test]
+        public void TestMagArrow()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlMagarrowFolder + "MagArrowValidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            var parser = new CsvParser(template);
+            try
+            {
+                var result = parser.Parse(Path.GetFullPath(CSVTestDataFolder + YamlMagarrowFolder + "MagArrow.csv"));
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
+            Assert.Pass(TestPassed);
+        }
     }
 }
