@@ -5,11 +5,11 @@
   code: "skyhub" 
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV 
-  # Applied to the first 10 not empty lines of the file to detect template
+  # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
     ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,RTK Status,ALT:Altitude,ALT:Filtered Altitude$
   file-format:
-  # Applies to CSV type. 'true' if the first line of file has headers, otherwise false
+  # Applies to CSV type. 'true' if file has headers, otherwise false
     has-header: true
     # The symbol which uses to make a comment
     comment-prefix: '#'
@@ -31,7 +31,7 @@
     longitude:
       header: Longitude
       #index: 0 if has-header is 'false'
-  # Timestamp column
+  # Time column. Contains only time without date. Must be paired with Date column or with the date-regex and has-file-name-date parameters;
     time:
       header: Time
       #index: 0 if has-header is 'false'

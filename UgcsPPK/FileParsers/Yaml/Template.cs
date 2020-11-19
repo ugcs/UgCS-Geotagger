@@ -33,7 +33,7 @@ namespace FileParsers.Yaml
             return IsValidRegex() && !string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Code) && FileType != FileType.Unknown && IsFormatValid();
         }
 
-        public bool IsValidRegex()
+        private bool IsValidRegex()
         {
             if (string.IsNullOrWhiteSpace(MatchRegex)) return false;
             try

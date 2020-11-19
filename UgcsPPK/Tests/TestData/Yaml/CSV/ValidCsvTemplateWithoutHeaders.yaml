@@ -9,12 +9,11 @@
     decimal-separator: '.'
     separator: ','
     date-regex: '\d{4}-\d{2}-\d{2}'
+    has-file-name-date: true
   columns:
     latitude:
       index: 5
     longitude:
       index: 6
-    timestamp: 
+    time: 
       index: 1
-    trace-number:
-      index: 10

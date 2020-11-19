@@ -9,12 +9,13 @@
     decimal-separator: '.'
     separator: ','
     date-regex: '\d{4}-\d{2}-\d{2}'
+    has-file-name-date: true
   columns:
     latitude:
       header: Latitude
     longitude:
       header: Longitude
-    timestamp:
+    time:
       header: Time
     trace-number:
       header: "GPR:Trace"

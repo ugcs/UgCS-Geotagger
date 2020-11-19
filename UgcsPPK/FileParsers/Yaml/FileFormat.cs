@@ -30,7 +30,7 @@ namespace FileParsers.Yaml
         {
             return type switch
             {
-                FileType.CSV => IsDecimalSeparatorValid() && IsDateFieldsValid() && Separator != null && CommentPrefix != null && columns != null && (HasHeader ? (!string.IsNullOrWhiteSpace(columns.Latitude?.Header)
+                FileType.CSV => IsDecimalSeparatorValid() && Separator != null && CommentPrefix != null && columns != null && IsDateTimeColumnsValid(columns) && (HasHeader ? (!string.IsNullOrWhiteSpace(columns.Latitude?.Header)
                 && !string.IsNullOrWhiteSpace(columns.Longitude?.Header)
                 && columns.Latitude?.Index == null && columns.Longitude?.Index == null)
                 : (columns.Latitude?.Index != null && columns.Longitude?.Index != null) &&
@@ -41,12 +41,19 @@ namespace FileParsers.Yaml
             };
         }
 
-        public bool IsDateFieldsValid()
+        private bool IsDateTimeColumnsValid(Columns columns)
         {
-            return !string.IsNullOrWhiteSpace(DateFormatRegex);
+            return (!(string.IsNullOrEmpty(DateFormatRegex)) && ((HasFileNameDate && !(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) ||
+                (HasFileNameDate && (string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null)))) ||
+                ((!(string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index == null)) ||
+                ((string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index != null))) ||
+                ((!(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) &&
+                ((!string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index == null)) ||
+                ((string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null)) &&
+                (string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index != null));
         }
 
-        public bool IsDecimalSeparatorValid()
+        private bool IsDecimalSeparatorValid()
         {
             return DecimalSeparator != null && (DecimalSeparator.Equals(".") || DecimalSeparator.Equals(","));
         }

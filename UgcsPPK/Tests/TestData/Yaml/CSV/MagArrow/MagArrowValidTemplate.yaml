@@ -1,0 +1,19 @@
+  name: "MagArrow"
+  code: "magarrow" 
+  file-type: CSV 
+  match-regex: >-
+    ^\s*Counter,Date
+  file-format:
+    has-header: true
+    comment-prefix: '%'
+    decimal-separator: '.'
+    separator: ','
+  columns:
+    latitude:
+      header: 'Latitude'
+    longitude:
+      header: 'Longitude'
+    time:
+      header: 'Time'
+    date:
+      header: 'Date'

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace FileParsers.CSV
@@ -21,7 +20,6 @@ namespace FileParsers.CSV
                 throw new NullReferenceException("Template is not set");
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
-            var logName = Path.GetFileName(logPath);
             if (Template.Format.HasFileNameDate)
                 ParseDateFromNameOfFile(logPath);
             var coordinates = new List<GeoCoordinates>();
@@ -54,8 +52,7 @@ namespace FileParsers.CSV
                     var lon = double.Parse(data[(int)Template.Columns.Longitude.Index], NumberStyles.Float, format);
                     var timestamp = int.Parse(data[(int)Template.Columns.Timestamp.Index]);
                     var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
-                    DateTime time;
-                    var isRowHasTime = DateTime.TryParse(data[(int)Template.Columns.Time.Index], out time);
+                    var isRowHasTime = DateTime.TryParse(data[(int)Template.Columns.Time.Index], out _);
                     if (!isRowHasTime)
                         if (firstDateTime != null)
                         {
@@ -92,6 +89,7 @@ namespace FileParsers.CSV
             using StreamReader reader = File.OpenText(oldFile);
             string line;
             var traceCount = 0;
+            var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
                 ppkFile.WriteLine(skippedLines.ToString());
@@ -105,14 +103,13 @@ namespace FileParsers.CSV
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                         var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
-                        var lon = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
-                        var lat = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault();
-                        if (lat != null && lon != null)
+                        var coordinateFound = dict.TryGetValue(traceNumber, out GeoCoordinates coordinate);
+                        if (coordinateFound)
                         {
-                            data[(int)Template.Columns.Longitude.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Longitude.ToString(format);
-                            data[(int)Template.Columns.Latitude.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().Latitude.ToString(format);
-                            data[(int)Template.Columns.Date.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture); 
-                            data[(int)Template.Columns.Time.Index] = coordinates.Where(c => c.TraceNumber == traceNumber).FirstOrDefault().DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
+                            data[(int)Template.Columns.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
+                            data[(int)Template.Columns.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
+                            data[(int)Template.Columns.Date.Index] = dict[traceNumber].DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                            data[(int)Template.Columns.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
                             ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }
@@ -131,6 +128,5 @@ namespace FileParsers.CSV
 
             return result;
         }
-
     }
 }

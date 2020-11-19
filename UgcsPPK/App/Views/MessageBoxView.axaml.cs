@@ -73,7 +73,7 @@ namespace UgCSPPK.Views
 
             var tcs = new TaskCompletionSource<MessageBoxResult>();
             msgbox.Closed += delegate { tcs.TrySetResult(res); };
-             if (parent != null)
+            if (parent != null)
                 msgbox.ShowDialog(parent);
             else msgbox.Show();
             return tcs.Task;

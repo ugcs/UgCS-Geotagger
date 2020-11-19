@@ -25,6 +25,12 @@
     <None Update="TestData\Parsers\CSV\2020-07-29-14-37-42-position-no-headers.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\Parsers\CSV\MagArrow\MagArrow.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Parsers\CSV\MagDrone\Magdrone.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\Parsers\CSV\Missed-date-position.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -56,6 +62,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\Yaml\CSV\HeadersAndIndexesTogetherTemplateSecondCase.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Yaml\CSV\MagArrow\MagArrowValidTemplate.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Yaml\CSV\MagDrone\MagDroneInvalidTemplate.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Yaml\CSV\MagDrone\MagDroneValidTemplate.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\Yaml\CSV\NoHeadersWhenSetTemplate.yaml">
