@@ -1,0 +1,39 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Run Tests
+      run: |
+        cd UgcsPPK/Tests
+        dotnet test
+    - name: Build
+      run: |
+        cd UgcsPPK
+        dotnet restore
+        cd App
+        VERSION=$(grep 'Version' UgcsPPK/App/App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+        DIR=app
+        APP_NAME=ugcs-ppk-
+        mkdir $DIR
+        dotnet publish -c Release -r win10-x64 -o $DIR/
+        zip -r $APP_NAME-$VERSION.zip $DIR
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ugcs-ppk
+        path: UgcsPPK/App/*.zip
+      
