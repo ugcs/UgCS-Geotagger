@@ -127,8 +127,10 @@ namespace UgCSPPK.ViewModels
             if (PositionSolutionFiles.Contains(SelectedPositioningSolutionFile))
             {
                 foreach (var f in filesToUpdate)
-                    if (f.CoverageFile == SelectedPositioningSolutionFile)
-                        f.UnsetCoverageFile();
+                {
+                    if (f.CoverageFiles.Contains(SelectedPositioningSolutionFile))
+                        f.UnsetCoverageFile(SelectedPositioningSolutionFile);
+                }
                 PositionSolutionFiles.Remove(SelectedPositioningSolutionFile);
             }
             foreach (var f in filesToUpdate)
