@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace UgCSPPK.Models
         }
 
         public string ResultMessage { get; private set; } = "";
-        public PositioningSolutionFile CoverageFile { get; private set; }
+        public HashSet<PositioningSolutionFile> CoverageFiles { get; private set; } = new HashSet<PositioningSolutionFile>();
         public string LinkedFile { get; set; }
 
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
@@ -67,38 +68,39 @@ namespace UgCSPPK.Models
 
         public void CheckCoveringStatus(List<PositioningSolutionFile> psfFiles)
         {
-            if (CoverageFile != null && CoveringStatus == CoveringStatus.Covered)
+            if (psfFiles.Count == 0)
                 return;
+            var minTime = psfFiles.Min(f => f.StartTime);
+            var maxTime = psfFiles.Max(f => f.EndTime);
             foreach (var f in psfFiles)
             {
-                if (f.StartTime <= StartTime && f.EndTime >= EndTime)
-                {
-                    CoverageFile = f;
-                    CoveringStatus = CoveringStatus.Covered;
-                }
-                else if ((f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime) || (StartTime <= f.StartTime && f.EndTime <= EndTime))
-                {
-                    CoverageFile = f;
-                    CoveringStatus = CoveringStatus.PartiallyCovered;
-                }
-                else
-                    CoveringStatus = CoveringStatus.NotCovered;
+                if ((f.StartTime <= StartTime && f.EndTime >= EndTime) || (f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime) || (StartTime <= f.StartTime && f.EndTime <= EndTime))
+                    CoverageFiles.Add(f);
             }
+            if (CoverageFiles.Count > 0 && minTime <= StartTime && maxTime >= EndTime)
+                CoveringStatus = CoveringStatus.Covered;
+            else if (CoverageFiles.Count > 0)
+                CoveringStatus = CoveringStatus.PartiallyCovered;
+            else
+                CoveringStatus = CoveringStatus.NotCovered;
         }
 
         public Task<string> UpdateCoordinates(CancellationTokenSource source)
         {
             string message;
-            if (CoverageFile == null)
+            if (CoverageFiles.Count == 0)
             {
-                message = "Coverage file does not set";
+                message = "Coverage files do not set";
                 return Task.FromResult(message);
             }
 
             List<GeoCoordinates> correctedCoordinates = new List<GeoCoordinates>();
+            var coverageCoordinates = new List<GeoCoordinates>();
+            foreach (var f in CoverageFiles)
+                coverageCoordinates.AddRange(f.Coordinates);
             try
             {
-                correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, CoverageFile.Coordinates);
+                correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, coverageCoordinates, source);
                 var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
                 var result = Parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates, source);
                 message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";
@@ -131,10 +133,11 @@ namespace UgCSPPK.Models
             return Task.FromResult(message);
         }
 
-        public void UnsetCoverageFile()
+        public void UnsetCoverageFile(PositioningSolutionFile file)
         {
-            CoverageFile = null;
-            CoveringStatus = CoveringStatus.NotCovered;
+            CoverageFiles.Remove(file);
+            if (CoverageFiles.Count == 0)
+                CoveringStatus = CoveringStatus.NotCovered;
         }
 
         private string CreateFileWithPpkSuffix(string fullPath)
