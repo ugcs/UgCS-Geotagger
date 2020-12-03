@@ -1,7 +1,6 @@
 ﻿using App.ViewModels;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Logging;
 using FileParsers;
 using FileParsers.Yaml;
 using log4net;
@@ -218,10 +217,11 @@ namespace UgCSPPK.ViewModels
                         {
                             var ftu = new FileToUpdate(file, template);
                             filesToUpdate.Add(ftu);
-                        } else
+                        }
+                        else
                         {
                             messages.Add($"Template for {file} was not found");
-                        }    
+                        }
                         foreach (var f in filesToUpdate)
                         {
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());

@@ -22,7 +22,7 @@ namespace FileParsers.CSV
                 throw new FileNotFoundException("File {logPath} does not exist");
             if (Template == null)
                 throw new NullReferenceException($"Template is not set");
-            if (Template.Format.HasFileNameDate)
+            if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
                 ParseDateFromNameOfFile(logPath);
             var coordinates = new List<GeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
@@ -35,7 +35,7 @@ namespace FileParsers.CSV
                     FindIndexesByHeaders(line);
                     skippedLines.Append(line + "\n");
                 }
-                var format = new CultureInfo("en-US", false);
+                format = new CultureInfo("en-US", false);
                 format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
                 var traceCount = 0;
                 while ((line = reader.ReadLine()) != null)
@@ -43,9 +43,10 @@ namespace FileParsers.CSV
                     if (line.StartsWith(Template.Format.CommentPrefix))
                         continue;
                     var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
-                    var lat = double.Parse(data[(int)Template.Columns.Latitude.Index], NumberStyles.Float, format);
-                    var lon = double.Parse(data[(int)Template.Columns.Longitude.Index], NumberStyles.Float, format);
-                    var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
+                    var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
+                    var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
+                    var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
+                        ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     traceCount++;
                     var date = ParseDateTime(data);
                     coordinates.Add(new GeoCoordinates(date, lat, lon, traceNumber));
@@ -56,36 +57,11 @@ namespace FileParsers.CSV
 
         protected void ParseDateFromNameOfFile(string logName)
         {
-            Regex r = Template.Format.DateFormatRegex != null ? new Regex(Template.Format.DateFormatRegex) : new Regex(@"\d{4}-\d{2}-\d{2}");
+            Regex r = new Regex(Template.DataMapping.Date.Regex);
             Match m = r.Match(logName);
             if (!m.Success)
                 throw new IncorrectDateFormatException("Incorrect file name. Set date of logging.");
-            dateFromNameOfFile = DateTime.ParseExact(m.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-        }
-
-        protected DateTime ParseDateTime(string[] data)
-        {
-            if (Template.Columns.DateTime != null && Template.Columns.DateTime?.Index != -1)
-            {
-                return DateTime.Parse(data[(int)Template.Columns.DateTime.Index]);
-            }
-            else if (Template.Columns.Time != null && Template.Columns.Time.Index != -1 && Template.Columns.Date != null && Template.Columns.Date.Index != -1)
-            {
-                var date = DateTime.Parse(data[(int)Template.Columns.Date.Index]);
-                var time = DateTime.Parse(data[(int)Template.Columns.Time.Index]);
-                var totalMS = time.Second * 1000 + time.Minute * 60000 + time.Hour * 3600000 + time.Millisecond;
-                var dateTime = date.AddMilliseconds(totalMS);
-                return dateTime;
-            }
-            else if (Template.Columns.Time != null && Template.Columns.Time.Index != -1 && dateFromNameOfFile != null)
-            {
-                var time = DateTime.Parse(data[(int)Template.Columns.Time.Index]);
-                var totalMS = time.Second * 1000 + time.Minute * 60000 + time.Hour * 3600000 + time.Millisecond;
-                var dateTime = dateFromNameOfFile.Value.AddMilliseconds(totalMS);
-                return dateTime;
-            }
-            else
-                throw new IncorrectDateFormatException("Cannot parse DateTime form file");
+            dateFromNameOfFile = DateTime.ParseExact(m.Value, Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
         }
 
         public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
@@ -113,12 +89,12 @@ namespace FileParsers.CSV
                         if (line.StartsWith(Template.Format.CommentPrefix))
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
-                        var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
+                        var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ? int.Parse(data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                         var coordinateFound = dict.TryGetValue(traceNumber, out GeoCoordinates coordinate);
                         if (coordinateFound)
                         {
-                            data[(int)Template.Columns.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
-                            data[(int)Template.Columns.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
+                            data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
+                            data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
                             ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }
@@ -142,20 +118,20 @@ namespace FileParsers.CSV
         {
             List<string> headers;
             headers = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None).ToList();
-            Template.Columns.Latitude.Index = headers.FindIndex(h => h.Equals(Template.Columns.Latitude.Header));
-            Template.Columns.Longitude.Index = headers.FindIndex(h => h.Equals(Template.Columns.Longitude.Header));
-            if (Template.Columns.Date != null && Template.Columns.Date.Header != null)
-                Template.Columns.Date.Index = headers.FindIndex(h => h.Equals(Template.Columns.Date.Header));
-            if (Template.Columns.Time != null && Template.Columns.Time.Header != null)
-                Template.Columns.Time.Index = headers.FindIndex(h => h.Equals(Template.Columns.Time.Header));
-            if (Template.Columns.DateTime != null && Template.Columns.DateTime.Header != null)
-                Template.Columns.DateTime.Index = headers.FindIndex(h => h.Equals(Template.Columns.Time.Header));
-            if (Template.Columns.Timestamp != null && Template.Columns.Timestamp.Header != null)
-                Template.Columns.Timestamp.Index = headers.FindIndex(h => h.Equals(Template.Columns.Timestamp.Header));
-            if (Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Header != null)
-                Template.Columns.TraceNumber.Index = headers.FindIndex(h => h.Equals(Template.Columns.TraceNumber.Header));
+            Template.DataMapping.Latitude.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Latitude.Header));
+            Template.DataMapping.Longitude.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Longitude.Header));
+            if (Template.DataMapping.Date != null && Template.DataMapping.Date.Header != null)
+                Template.DataMapping.Date.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Date.Header));
+            if (Template.DataMapping.Time != null && Template.DataMapping.Time.Header != null)
+                Template.DataMapping.Time.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Time.Header));
+            if (Template.DataMapping.DateTime != null && Template.DataMapping.DateTime.Header != null)
+                Template.DataMapping.DateTime.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Time.Header));
+            if (Template.DataMapping.Timestamp != null && Template.DataMapping.Timestamp.Header != null)
+                Template.DataMapping.Timestamp.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Timestamp.Header));
+            if (Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Header != null)
+                Template.DataMapping.TraceNumber.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.TraceNumber.Header));
 
-            if (Template.Columns.Latitude.Index == -1 || Template.Columns.Longitude.Index == -1)
+            if (Template.DataMapping.Latitude.Index == -1 || Template.DataMapping.Longitude.Index == -1)
                 throw new ColumnsMatchingException("Column names are not matched");
         }
     }

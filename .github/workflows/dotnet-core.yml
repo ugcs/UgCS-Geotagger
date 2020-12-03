@@ -28,7 +28,7 @@ jobs:
         cd App
         VERSION=$(grep 'Version' UgcsPPK/App/App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
         DIR=app
-        APP_NAME=ugcs-ppk-
+        APP_NAME=ugcs-ppk
         mkdir $DIR
         dotnet publish -c Release -r win10-x64 -o $DIR/
         zip -r $APP_NAME-$VERSION.zip $DIR

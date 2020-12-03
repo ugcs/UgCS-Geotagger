@@ -8,12 +8,15 @@
     comment-prefix: '#'
     decimal-separator: '.'
     separator: ','
-    date-regex: '\d{4}-\d{2}-\d{2}'
-    has-file-name-date: true
-  columns:
+  data-mapping:
     latitude:
       index: 5
     longitude:
       index: 6
-    time: 
+    date:
+      source: FileName
+      regex: '\d{4}-\d{2}-\d{2}'
+      format: 'yyyy-MM-dd'
+    time:
       index: 1
+      format: 'HH:mm:ss.fff'

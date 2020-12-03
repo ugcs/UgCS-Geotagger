@@ -20,8 +20,8 @@ namespace FileParsers.FixedColumnWidth
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
             var coordinates = new List<GeoCoordinates>();
-            var format = new CultureInfo("en-US", false).NumberFormat;
-            format.NumberDecimalSeparator = Template.Format.DecimalSeparator;
+            format = new CultureInfo("en-US", false);
+            format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
             using (StreamReader reader = File.OpenText(logPath))
             {
                 string line = SkipLines(reader);
@@ -36,9 +36,9 @@ namespace FileParsers.FixedColumnWidth
                         data.Add(column);
                         line = line.Substring(col);
                     }
-                    var date = DateTime.Parse(data[(int)Template.Columns.DateTime.Index]);
-                    var lat = double.Parse(data[(int)Template.Columns.Latitude.Index], NumberStyles.Float, format);
-                    var lon = double.Parse(data[(int)Template.Columns.Longitude.Index], NumberStyles.Float, format);
+                    var date = ParseDateTime(data.ToArray());
+                    var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
+                    var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
                     coordinates.Add(new GeoCoordinates(date, lat, lon));
                 }
             }

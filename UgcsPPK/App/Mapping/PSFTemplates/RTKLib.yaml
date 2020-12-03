@@ -13,10 +13,11 @@
     decimal-separator: '.'
   # Applies to ColumnsFixedWidth files. The length of every data column to parse information
     column-lengths: [23, 15, 15, 11, 4, 4, 9, 9, 9, 9, 9, 9, 7]
-  columns:     
+  data-mapping:     
     latitude:
       index: 1
     longitude:
       index: 2
     date-time:
       index: 0
+      format: 'yyyy/MM/dd HH:mm:ss.fff'

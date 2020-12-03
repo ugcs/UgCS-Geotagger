@@ -22,8 +22,8 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "file-format")]
         public FileFormat Format { get; set; }
 
-        [YamlMember(Alias = "columns")]
-        public Columns Columns { get; set; }
+        [YamlMember(Alias = "data-mapping")]
+        public DataMapping DataMapping { get; set; }
 
         [YamlMember(Alias = "skip-lines-to")]
         public SkipLinesTo SkipLinesTo { get; set; }
@@ -49,7 +49,7 @@ namespace FileParsers.Yaml
 
         private bool IsFormatValid()
         {
-            return Format != null && Format.IsFormatValid(FileType, Columns);
+            return Format != null && Format.IsFormatValid(FileType, DataMapping);
         }
     }
 

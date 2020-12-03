@@ -8,13 +8,16 @@
     comment-prefix: '#'
     decimal-separator: '.'
     separator: ','
-    date-regex: '\d{4}-\d{2}-\d{2}'
-  columns:
+  data-mapping:
     latitude:
       header: Latitude
     longitude:
       header: Longitude
-    timestamp:
+    time:
       header: Time
+    date:
+      source: FileName
+      regex: '\d{4}-\d{2}-\d{2}'
+      format: 'yyyy-MM-dd'
     trace-number:
       header: "GPR:Trace"

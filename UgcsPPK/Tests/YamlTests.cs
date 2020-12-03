@@ -1,6 +1,5 @@
 using FileParsers.Yaml;
 using NUnit.Framework;
-using System;
 using System.IO;
 using YamlDotNet.Core;
 
@@ -84,15 +83,6 @@ namespace Tests
         }
 
         [Test]
-        public void TestDateFormat()
-        {
-            var path = YamlTestDataFolder + "MissDateFormatTemplate.yaml";
-            var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
-            Assert.IsFalse(template.IsTemplateValid());
-        }
-
-        [Test]
         public void TestValidCsvTemplate()
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
@@ -162,27 +152,6 @@ namespace Tests
             var file = File.ReadAllText(path);
             var template = deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
-        }
-
-        [Test]
-        public void TestFTUValidTemplate()
-        {
-            var path = YamlTestDataFolder + FTUTemplatesFolder + "ValidTemplate.yaml";
-            var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
-            Assert.IsTrue(template.IsTemplateValid());
-        }
-
-        [Test]
-        public void TestPSFValidTemplates()
-        {
-            var path = YamlTestDataFolder + PSFTemplatesFolder + "ValidTemplate.yaml";
-            var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
-            path = YamlTestDataFolder + PSFTemplatesFolder + "SecondValidTemplate.yaml";
-            file = File.ReadAllText(path);
-            var secondTemplate = deserializer.Deserialize<Template>(file);
-            Assert.IsTrue(template.IsTemplateValid() && secondTemplate.IsTemplateValid());
         }
 
         [Test]
