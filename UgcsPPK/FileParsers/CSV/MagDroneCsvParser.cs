@@ -109,8 +109,8 @@ namespace FileParsers.CSV
                         {
                             data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
                             data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
-                            data[(int)Template.DataMapping.Date.Index] = dict[traceNumber].DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-                            data[(int)Template.DataMapping.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
+                            data[(int)Template.DataMapping.Date.Index] = dict[traceNumber].DateTime.Date.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
+                            data[(int)Template.DataMapping.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString(Template.DataMapping.Time.Format);
                             ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }
