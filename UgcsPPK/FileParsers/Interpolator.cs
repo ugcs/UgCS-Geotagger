@@ -8,7 +8,9 @@ namespace FileParsers
     public static class Interpolator
     {
         public static int MaxTimeDifferenceMs = 1000;
+
         public static event Action<int> OnOneHundredLinesReplaced;
+
         public static List<GeoCoordinates> SetPpkCorrectedCoordinates(List<GeoCoordinates> csvCoordinates, List<GeoCoordinates> ppkCoordinates, CancellationTokenSource token)
         {
             var correctedTraces = new List<GeoCoordinates>();
@@ -33,7 +35,6 @@ namespace FileParsers
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)
                     OnOneHundredLinesReplaced?.Invoke(countOfReplacedLines);
-
             }
             return correctedTraces;
         }

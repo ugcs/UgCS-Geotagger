@@ -24,25 +24,17 @@
     decimal-separator: '.'
     # Applies to CSV type. The symbol to separate values from line in CSV file;
     separator: ';'
-  # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
-  columns:
-  # Latitude column
+  # Mapping data from source file to data. Requierd fields (latitude, longitude, time and date or date-time)
+  data-mapping:
     latitude:
       header: ' Latitude [Decimal Degrees]'
-      #index: 0 if has-header is 'false'
-  # Longitude column
     longitude:
       header: ' Longitude [Decimal Degrees]'
-      #index: 0 if has-header is 'false'
-  # Time column. Contains only time without date. Must be paired with Date column or with the date-regex and has-file-name-date parameters;
     time:
       header: ' GPSTime [hh:mm:ss.sss]'
-      #index: 0 if has-header is 'false'
-  # Date column. Contains only date without time. Must be paired with Time column or with the date-regex and has-file-name-date parameters;
+      format: 'HH:mm:ss.fff'
     date:
       header: ' GPSDate'
-      #index: 0 if has-header is 'false'
-  # Recording frequency (MS). Must be used only to parse MagDrone CSV. 
+      format: 'yyyy/MM/dd'
     timestamp:
       header: 'Timestamp [ms]'
-      #index: 0 if has-header is 'false'

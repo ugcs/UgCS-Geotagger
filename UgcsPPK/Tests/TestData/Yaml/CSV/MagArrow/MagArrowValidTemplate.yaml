@@ -8,12 +8,14 @@
     comment-prefix: '%'
     decimal-separator: '.'
     separator: ','
-  columns:
+  data-mapping:
     latitude:
       header: 'Latitude'
     longitude:
       header: 'Longitude'
     time:
       header: 'Time'
+      format: 'HH:mm:ss.fff'
     date:
       header: 'Date'
+      format: 'yyyy/MM/dd'

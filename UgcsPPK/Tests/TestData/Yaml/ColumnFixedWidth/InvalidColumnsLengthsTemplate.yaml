@@ -6,10 +6,11 @@
     comment-prefix: '%'
     decimal-separator: '.'
     column-lengths: [10, 1, 12]
-  columns:     
+  data-mapping:     
     latitude:
       index: 1
     longitude:
       index: 2
-    timestamp:
+    date-time:
       index: 0
+      format: 'yyyy/MM/dd HH:mm:ss.fff'

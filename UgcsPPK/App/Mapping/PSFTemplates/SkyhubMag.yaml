@@ -17,21 +17,17 @@
     decimal-separator: '.'
     # Applies to CSV type. The symbol to separate values from line in CSV file;
     separator: ','
-    # Applies to CSV type (especially for skyhub). Regular expression to get date from name of file;
-    date-regex: '\d{4}-\d{2}-\d{2}'
-    # If value is 'true' date must be set in the name of file via date-regex;
-    has-file-name-date: true
-  # Column name or index. If has-header is 'true' hearers must be set for every column. Otherwise indexes must be set 
-  columns:
-  # Latitude column
+  # Mapping data from source file to data. Requierd fields (latitude, longitude, time and date or date-time)
+  data-mapping:
     latitude:
       header: Latitude
-      #index: 0 if has-header is 'false'
-  # Longitude column
     longitude:
       header: Longitude
-      #index: 0 if has-header is 'false'
-  # Time column. Contains only time without date. Must be paired with Date column or with the date-regex and has-file-name-date parameters;
     time:
       header: Time
-      #index: 0 if has-header is 'false'
+      format: 'HH:mm:ss.fff'  
+    date:
+    # Source to parse date. Avaliable values are FileName and Column. Column is default value
+      source: FileName
+      regex: '\d{4}-\d{2}-\d{2}'
+      format: 'yyyy-MM-dd'

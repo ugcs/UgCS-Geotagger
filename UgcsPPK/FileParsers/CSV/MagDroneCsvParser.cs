@@ -20,7 +20,7 @@ namespace FileParsers.CSV
                 throw new NullReferenceException("Template is not set");
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
-            if (Template.Format.HasFileNameDate)
+            if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
                 ParseDateFromNameOfFile(logPath);
             var coordinates = new List<GeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
@@ -38,7 +38,7 @@ namespace FileParsers.CSV
                         FindIndexesByHeaders(line);
                 }
 
-                var format = new CultureInfo("en-US", false);
+                format = new CultureInfo("en-US", false);
                 format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
                 var traceCount = 0;
                 DateTime? firstDateTime = null;
@@ -48,11 +48,12 @@ namespace FileParsers.CSV
                     if (line.StartsWith(Template.Format.CommentPrefix))
                         continue;
                     var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
-                    var lat = double.Parse(data[(int)Template.Columns.Latitude.Index], NumberStyles.Float, format);
-                    var lon = double.Parse(data[(int)Template.Columns.Longitude.Index], NumberStyles.Float, format);
-                    var timestamp = int.Parse(data[(int)Template.Columns.Timestamp.Index]);
-                    var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
-                    var isRowHasTime = DateTime.TryParse(data[(int)Template.Columns.Time.Index], out _);
+                    var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
+                    var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
+                    var timestamp = ParseInt(Template.DataMapping.Timestamp, data[(int)Template.DataMapping.Timestamp.Index]);
+                    var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
+                        ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
+                    var isRowHasTime = DateTime.TryParse(data[(int)Template.DataMapping.Time.Index], out _);
                     if (!isRowHasTime)
                         if (firstDateTime != null)
                         {
@@ -102,14 +103,14 @@ namespace FileParsers.CSV
                         if (line.StartsWith(Template.Format.CommentPrefix))
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
-                        var traceNumber = Template.Columns.TraceNumber != null && Template.Columns.TraceNumber.Index != null ? int.Parse(data[(int)Template.Columns.TraceNumber.Index]) : traceCount;
+                        var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ? int.Parse(data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                         var coordinateFound = dict.TryGetValue(traceNumber, out GeoCoordinates coordinate);
                         if (coordinateFound)
                         {
-                            data[(int)Template.Columns.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
-                            data[(int)Template.Columns.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
-                            data[(int)Template.Columns.Date.Index] = dict[traceNumber].DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-                            data[(int)Template.Columns.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
+                            data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
+                            data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
+                            data[(int)Template.DataMapping.Date.Index] = dict[traceNumber].DateTime.Date.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                            data[(int)Template.DataMapping.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString("hh\\:mm\\:ss\\.fff");
                             ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }

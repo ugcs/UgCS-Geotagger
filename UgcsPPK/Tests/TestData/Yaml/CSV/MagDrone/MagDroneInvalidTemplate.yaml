@@ -12,7 +12,7 @@
     comment-prefix: '%'
     decimal-separator: '.'
     separator: ';'
-  columns:
+  data-mapping:
     latitude:
       header: ' Latitude [Decimal Degrees]'
     longitude:

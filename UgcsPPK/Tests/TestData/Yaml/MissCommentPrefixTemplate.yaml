@@ -6,8 +6,7 @@
   file-format:
     has-header: true
     decimal-separator: '.'
-    date-regex: '\d{4}-\d{2}-\d{2}'
-  columns:
+  data-mapping:
     latitude:
       header: Latitude
     longitude:

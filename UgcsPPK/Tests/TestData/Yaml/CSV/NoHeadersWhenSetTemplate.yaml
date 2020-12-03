@@ -8,13 +8,16 @@
     comment-prefix: '#'
     decimal-separator: '.'
     separator: ','
-    date-regex: '\d{4}-\d{2}-\d{2}'
-  columns:
+  data-mapping:
     latitude:
       index: 1
     longitude:
       index: 2
-    timestamp:
+    time:
       index: 3
+    date:
+      source: FileName
+      regex: '\d{4}-\d{2}-\d{2}'
+      format: 'yyyy-MM-dd'
     trace-number:
       index: 4

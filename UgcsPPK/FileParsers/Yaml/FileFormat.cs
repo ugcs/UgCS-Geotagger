@@ -17,16 +17,10 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "has-header")]
         public bool HasHeader { get; set; }
 
-        [YamlMember(Alias = "has-file-name-date")]
-        public bool HasFileNameDate { get; set; }
-
-        [YamlMember(Alias = "date-regex")]
-        public string DateFormatRegex { get; set; }
-
         [YamlMember(Alias = "column-lengths")]
         public List<ushort> ColumnLengths { get; set; }
 
-        public bool IsFormatValid(FileType type, Columns columns)
+        public bool IsFormatValid(FileType type, DataMapping columns)
         {
             return type switch
             {
@@ -41,16 +35,18 @@ namespace FileParsers.Yaml
             };
         }
 
-        private bool IsDateTimeColumnsValid(Columns columns)
+        private bool IsDateTimeColumnsValid(DataMapping columns)
         {
-            return (!(string.IsNullOrEmpty(DateFormatRegex)) && ((HasFileNameDate && !(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) ||
-                (HasFileNameDate && (string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null)))) ||
-                ((!(string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index == null)) ||
-                ((string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index != null))) ||
-                ((!(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) &&
-                ((!string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index == null)) ||
-                ((string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null)) &&
-                (string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index != null));
+            return (!string.IsNullOrEmpty(columns.Date?.Format) && !string.IsNullOrEmpty(columns.Time?.Format) && ((columns.Date?.Source == Data.Source.FileName
+                && !(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) ||
+                (columns.Date?.Source == Data.Source.FileName && string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null))) ||
+                (!(string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index == null)) ||
+                string.IsNullOrWhiteSpace(columns.DateTime?.Header) && columns.DateTime?.Index != null && !string.IsNullOrEmpty(columns.DateTime?.Format) ||
+                (((!(string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index == null)) &&
+                !string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index == null) ||
+                (string.IsNullOrWhiteSpace(columns.Time?.Header) && columns.Time?.Index != null) &&
+                (string.IsNullOrWhiteSpace(columns.Date?.Header) && columns.Date?.Index != null)
+                && !string.IsNullOrEmpty(columns.Date?.Format) && !string.IsNullOrEmpty(columns.Time?.Format));
         }
 
         private bool IsDecimalSeparatorValid()
