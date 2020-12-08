@@ -32,9 +32,9 @@ namespace FileParsers
 
         public event Action<int> OnOneHundredLinesReplaced;
 
-        public abstract List<GeoCoordinates> Parse(string path);
+        public abstract List<IGeoCoordinates> Parse(string path);
 
-        public abstract Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token);
+        public abstract Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token);
 
         public Parser(Template template)
         {

@@ -162,5 +162,15 @@ namespace Tests
             var template = deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
+
+        [Test]
+        public void TestValidNmea()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlNmeaFolder + "NmeaValidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            Assert.IsTrue(template.IsTemplateValid());
+        }
+
     }
 }

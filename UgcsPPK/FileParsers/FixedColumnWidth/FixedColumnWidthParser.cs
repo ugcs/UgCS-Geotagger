@@ -13,13 +13,13 @@ namespace FileParsers.FixedColumnWidth
         {
         }
 
-        public override List<GeoCoordinates> Parse(string logPath)
+        public override List<IGeoCoordinates> Parse(string logPath)
         {
             if (Template == null)
                 throw new NullReferenceException("Template is not set");
             if (!File.Exists(logPath))
                 throw new FileNotFoundException($"File {logPath} does not exist");
-            var coordinates = new List<GeoCoordinates>();
+            var coordinates = new List<IGeoCoordinates>();
             format = new CultureInfo("en-US", false);
             format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
             using (StreamReader reader = File.OpenText(logPath))
@@ -45,7 +45,7 @@ namespace FileParsers.FixedColumnWidth
             return coordinates;
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             return new Result();
         }

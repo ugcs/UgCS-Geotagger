@@ -11,9 +11,9 @@ namespace FileParsers
 
         public static event Action<int> OnOneHundredLinesReplaced;
 
-        public static List<GeoCoordinates> SetPpkCorrectedCoordinates(List<GeoCoordinates> csvCoordinates, List<GeoCoordinates> ppkCoordinates, CancellationTokenSource token)
+        public static List<IGeoCoordinates> SetPpkCorrectedCoordinates(List<IGeoCoordinates> csvCoordinates, List<IGeoCoordinates> ppkCoordinates, CancellationTokenSource token)
         {
-            var correctedTraces = new List<GeoCoordinates>();
+            var correctedTraces = new List<IGeoCoordinates>();
             var min = ppkCoordinates.First().TimeInMs;
             var max = ppkCoordinates.Last().TimeInMs;
             var countOfReplacedLines = 0;
@@ -29,9 +29,9 @@ namespace FileParsers
                 var rightBorderIndex = leftBorderIndex + 1;
                 if (ppkCoordinates[rightBorderIndex].TimeInMs - ppkCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
                     continue;
-                var correctedLat = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                var correctedLon = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                correctedTraces.Add(new GeoCoordinates(coordinates.DateTime, correctedLat, correctedLon, coordinates.TraceNumber));
+                coordinates.Latitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
+                coordinates.Longitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
+                correctedTraces.Add(coordinates);
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)
                     OnOneHundredLinesReplaced?.Invoke(countOfReplacedLines);
