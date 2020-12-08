@@ -27,7 +27,7 @@ namespace FileParsers.SegYLog
         public string PayloadType { get; private set; }
         public short TracesLength { get; private set; }
 
-        public List<GeoCoordinates> Parse(string segyPath)
+        public List<IGeoCoordinates> Parse(string segyPath)
         {
             if (!File.Exists(segyPath))
                 throw new FileNotFoundException($"File {segyPath} does not exist");
@@ -49,7 +49,7 @@ namespace FileParsers.SegYLog
             {
                 TracesLength = BitConverter.ToInt16(reader.ReadBytes(SamplesPerTraceOffset).Skip(SamplesPerTraceOffset - sizeof(short)).Take(sizeof(short)).ToArray(), 0);
             }
-            var coordinates = new List<GeoCoordinates>();
+            var coordinates = new List<IGeoCoordinates>();
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))
             {
                 var data = reader.ReadBytes((int)reader.BaseStream.Length).Skip(HeadersOffset).ToArray();
@@ -97,7 +97,7 @@ namespace FileParsers.SegYLog
             return BitConverter.ToInt32(data, i);
         }
 
-        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
+        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             var result = new Result();
             var startPosition = HeadersOffset;

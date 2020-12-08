@@ -14,7 +14,7 @@ namespace FileParsers.CSV
         {
         }
 
-        public override List<GeoCoordinates> Parse(string logPath)
+        public override List<IGeoCoordinates> Parse(string logPath)
         {
             if (Template == null)
                 throw new NullReferenceException("Template is not set");
@@ -22,7 +22,7 @@ namespace FileParsers.CSV
                 throw new FileNotFoundException($"File {logPath} does not exist");
             if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
                 ParseDateFromNameOfFile(logPath);
-            var coordinates = new List<GeoCoordinates>();
+            var coordinates = new List<IGeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
             {
                 string line = SkipLines(reader);
@@ -78,7 +78,7 @@ namespace FileParsers.CSV
             return coordinates;
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
                 throw new FileNotFoundException("File {oldFile} does not exist");
@@ -93,7 +93,8 @@ namespace FileParsers.CSV
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
-                ppkFile.WriteLine(skippedLines.ToString());
+                line = SkipLines(reader);
+                ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (token.IsCancellationRequested)
@@ -104,13 +105,13 @@ namespace FileParsers.CSV
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                         var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ? int.Parse(data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
-                        var coordinateFound = dict.TryGetValue(traceNumber, out GeoCoordinates coordinate);
+                        var coordinateFound = dict.TryGetValue(traceNumber, out IGeoCoordinates coordinate);
                         if (coordinateFound)
                         {
-                            data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
-                            data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
-                            data[(int)Template.DataMapping.Date.Index] = dict[traceNumber].DateTime.Date.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
-                            data[(int)Template.DataMapping.Time.Index] = dict[traceNumber].DateTime.TimeOfDay.ToString(Template.DataMapping.Time.Format);
+                            data[(int)Template.DataMapping.Longitude.Index] = coordinate.Longitude.ToString(format);
+                            data[(int)Template.DataMapping.Latitude.Index] = coordinate.Latitude.ToString(format);
+                            data[(int)Template.DataMapping.Date.Index] = coordinate.DateTime.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
+                            data[(int)Template.DataMapping.Time.Index] = coordinate.DateTime.ToString(Template.DataMapping.Time.Format, CultureInfo.InvariantCulture);
                             ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }

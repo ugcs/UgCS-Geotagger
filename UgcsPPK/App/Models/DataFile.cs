@@ -13,9 +13,10 @@ namespace UgCSPPK.Models
 {
     public class DataFile : ViewModelBase, IDataFile
     {
+        private readonly CSVParsersFactory cSVParsersFactory = new CSVParsersFactory();
         protected static ILog log = LogManager.GetLogger(typeof(DataFile));
         public const string PPK = "PPK";
-        public List<GeoCoordinates> Coordinates { get; }
+        public List<IGeoCoordinates> Coordinates { get; }
         public string FileName { get; protected set; }
         public string FilePath { get; protected set; }
         public string TypeOfFile { get; protected set; }
@@ -56,7 +57,7 @@ namespace UgCSPPK.Models
             return template.FileType switch
             {
                 FileType.ColumnsFixedWidth => new FixedColumnWidthParser(template),
-                FileType.CSV => template.Code != "magdrone" ? new CsvParser(template) : new MagDroneCsvParser(template),
+                FileType.CSV => cSVParsersFactory.CreateCSVParser(template),
                 _ => null,
             };
         }
@@ -66,7 +67,7 @@ namespace UgCSPPK.Models
             TypeOfFile = template.Name;
         }
 
-        private void SetStartTime(List<GeoCoordinates> posLogData)
+        private void SetStartTime(List<IGeoCoordinates> posLogData)
         {
             try
             {
@@ -78,7 +79,7 @@ namespace UgCSPPK.Models
             }
         }
 
-        private void SetEndTime(List<GeoCoordinates> posLogData)
+        private void SetEndTime(List<IGeoCoordinates> posLogData)
         {
             try
             {

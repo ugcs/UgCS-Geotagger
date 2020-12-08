@@ -97,7 +97,7 @@ namespace UgCSPPK.ViewModels
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "PPK Log", Extensions = { "pos", "csv" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Solution Files", Extensions = { "pos", "csv"} });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             if (chosenFiles != null)
             {
@@ -144,7 +144,7 @@ namespace UgCSPPK.ViewModels
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Log", Extensions = { "csv" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Log", Extensions = { "csv", "log" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             if (chosenFiles != null)
             {

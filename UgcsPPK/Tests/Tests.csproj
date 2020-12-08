@@ -40,6 +40,9 @@
     <None Update="TestData\Parsers\CSV\2020-07-29-14-37-42-position.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\Parsers\CSV\Nmea\2020-10-23-09-16-13-pergam-falcon.log">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\Parsers\FixedColumnWidth\Invalid.pos">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -71,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\Yaml\CSV\MagDrone\MagDroneValidTemplate.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Yaml\CSV\Nmea\NmeaValidTemplate.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestData\Yaml\CSV\NoHeadersWhenSetTemplate.yaml">

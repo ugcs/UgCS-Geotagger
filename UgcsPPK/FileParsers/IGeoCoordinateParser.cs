@@ -5,8 +5,8 @@ namespace FileParsers
 {
     public interface IGeoCoordinateParser
     {
-        List<GeoCoordinates> Parse(string path);
+        List<IGeoCoordinates> Parse(string path);
 
-        Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token);
+        Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token);
     }
 }

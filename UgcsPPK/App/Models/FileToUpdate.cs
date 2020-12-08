@@ -94,8 +94,8 @@ namespace UgCSPPK.Models
                 return Task.FromResult(message);
             }
 
-            List<GeoCoordinates> correctedCoordinates = new List<GeoCoordinates>();
-            var coverageCoordinates = new List<GeoCoordinates>();
+            List<IGeoCoordinates> correctedCoordinates = new List<IGeoCoordinates>();
+            var coverageCoordinates = new List<IGeoCoordinates>();
             foreach (var f in CoverageFiles)
                 coverageCoordinates.AddRange(f.Coordinates);
             try

@@ -165,5 +165,24 @@ namespace Tests
             }
             Assert.Pass(TestPassed);
         }
+
+        [Test]
+        public void TestNmea()
+        {
+            var path = YamlTestDataFolder + YamlCsvFolder + YamlNmeaFolder + "NmeaValidTemplate.yaml";
+            var file = File.ReadAllText(path);
+            var template = deserializer.Deserialize<Template>(file);
+            var parser = new NmeaCsvParser(template);
+            try
+            {
+                var result = parser.Parse(Path.GetFullPath(CSVTestDataFolder + YamlNmeaFolder + "2020-10-23-09-16-13-pergam-falcon.log"));
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
+            Assert.Pass(TestPassed);
+        }
+
     }
 }

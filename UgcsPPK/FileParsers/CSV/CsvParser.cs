@@ -16,7 +16,7 @@ namespace FileParsers.CSV
         {
         }
 
-        public override List<GeoCoordinates> Parse(string logPath)
+        public override List<IGeoCoordinates> Parse(string logPath)
         {
             if (!File.Exists(logPath))
                 throw new FileNotFoundException("File {logPath} does not exist");
@@ -24,7 +24,7 @@ namespace FileParsers.CSV
                 throw new NullReferenceException($"Template is not set");
             if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
                 ParseDateFromNameOfFile(logPath);
-            var coordinates = new List<GeoCoordinates>();
+            var coordinates = new List<IGeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
             {
                 string line = SkipLines(reader);
@@ -64,14 +64,14 @@ namespace FileParsers.CSV
             dateFromNameOfFile = DateTime.ParseExact(m.Value, Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<GeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
                 throw new FileNotFoundException("File {oldFile} does not exist");
             if (Template == null)
                 throw new NullReferenceException($"Template is not set");
             var result = new Result();
-            var format = new CultureInfo("en-US", false);
+            format = new CultureInfo("en-US", false);
             format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
             using StreamReader reader = File.OpenText(oldFile);
             string line;
@@ -79,7 +79,8 @@ namespace FileParsers.CSV
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
-                ppkFile.WriteLine(skippedLines.ToString());
+                line = SkipLines(reader);
+                ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (token.IsCancellationRequested)
@@ -90,7 +91,7 @@ namespace FileParsers.CSV
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                         var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ? int.Parse(data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
-                        var coordinateFound = dict.TryGetValue(traceNumber, out GeoCoordinates coordinate);
+                        var coordinateFound = dict.TryGetValue(traceNumber, out IGeoCoordinates coordinate);
                         if (coordinateFound)
                         {
                             data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
@@ -110,7 +111,6 @@ namespace FileParsers.CSV
                     }
                 }
             }
-
             return result;
         }
 

@@ -28,6 +28,9 @@
     <None Update="Mapping\FTUTemplates\MagArrow.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\Nmea.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -38,6 +41,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\RTKLib.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\SkyhubGprNmea.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\SkyhubMag.yaml">
