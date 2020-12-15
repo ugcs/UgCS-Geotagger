@@ -39,10 +39,8 @@ jobs:
 
   build_documentation:
     runs-on: ubuntu-latest
+    container: docker://ugcs/doker:latest 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Docker image
-      uses: docker://ugcs/doker:latest
     - name: Creating documentation
       run: |
         chmod +x ./Documentation/scripts/generate-pdf.sh
