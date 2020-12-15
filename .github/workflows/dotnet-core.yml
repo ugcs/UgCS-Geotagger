@@ -45,6 +45,8 @@ jobs:
       uses: docker://ugcs/doker:latest
     - name: Creating documentation
       run: |
+        dos2unix ./Documentation/scripts/generate-pdf.sh
+        chmod +x ./Documentation/scripts/generate-pdf.sh
         ./Documentation/scripts/generate-pdf.sh
     - name: Uploading artifacts
       uses: actions/upload-artifact@v2
