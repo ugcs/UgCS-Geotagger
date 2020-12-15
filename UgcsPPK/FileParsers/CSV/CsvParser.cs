@@ -23,7 +23,7 @@ namespace FileParsers.CSV
             if (Template == null)
                 throw new NullReferenceException($"Template is not set");
             if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
-                ParseDateFromNameOfFile(logPath);
+                ParseDateFromNameOfFile(Path.GetFileName(logPath));
             var coordinates = new List<IGeoCoordinates>();
             using (StreamReader reader = File.OpenText(logPath))
             {

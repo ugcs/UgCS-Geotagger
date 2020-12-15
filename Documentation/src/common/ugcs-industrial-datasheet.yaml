@@ -1,0 +1,9 @@
+fields:
+  TBD: :fixme:`TBD`
+  subtitle: Manual
+
+pdf:
+  stylesheets:
+    - stylesheets/general.yaml
+    - stylesheets/datasheet.yaml
+  break-level: 0

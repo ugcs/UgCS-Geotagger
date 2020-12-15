@@ -43,6 +43,9 @@
     <None Update="Mapping\PSFTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\SkyhubGNSS.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\PSFTemplates\SkyhubGprNmea.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

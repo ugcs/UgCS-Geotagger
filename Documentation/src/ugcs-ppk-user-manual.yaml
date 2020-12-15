@@ -1,0 +1,20 @@
+parent: common/ugcs-industrial-datasheet.yaml
+images-root: img
+
+files:
+  - common/preamble-datasheet.rst
+  - text/user/introduction.rst
+  - text/user/support-types.rst
+  - text/user/user-interface.rst
+
+fields:
+  title: UgCS-PPK
+  psf: Position Solution Files
+  ftu: Files to Update
+  start-time: Start Time
+  end-time: End Time
+  date: December 2020
+  revision: 0
+
+pdf:
+  output: ../pdf/ugcs-ppk-user-manual-r0.pdf
