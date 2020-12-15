@@ -31,6 +31,7 @@ jobs:
         mkdir $DIR
         dotnet publish -c Release -r win10-x64 -o $DIR/
         zip -r $APP_NAME-$VERSION.zip $DIR
+    - name: Uploading artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ugcs-ppk
@@ -45,6 +46,7 @@ jobs:
     - name: Creating documentation
       run: |
         ./Documentation/scripts/generate-pdf.sh
+    - name: Uploading artifacts
       uses: actions/upload-artifact@v2
       with:
         name: ugcs-ppk-documentation
