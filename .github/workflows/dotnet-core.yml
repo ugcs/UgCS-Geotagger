@@ -25,7 +25,7 @@ jobs:
         cd UgcsPPK
         dotnet restore
         cd App
-        VERSION=$(grep 'Version' UgcsPPK/App/App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+        VERSION=$(grep 'Version' App/App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
         DIR=app
         APP_NAME=ugcs-ppk
         mkdir $DIR
