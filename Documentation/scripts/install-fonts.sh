@@ -1,16 +1,34 @@
 #!/bin/bash
 
 FONTS="\
-apache/robotomono/RobotoMono-Bold.ttf \
-apache/robotomono/RobotoMono-BoldItalic.ttf \
-apache/robotomono/RobotoMono-Italic.ttf \
-apache/robotomono/RobotoMono-Light.ttf \
-apache/robotomono/RobotoMono-LightItalic.ttf \
-apache/robotomono/RobotoMono-Medium.ttf \
-apache/robotomono/RobotoMono-MediumItalic.ttf \
-apache/robotomono/RobotoMono-Regular.ttf \
-apache/robotomono/RobotoMono-Thin.ttf \
-apache/robotomono/RobotoMono-ThinItalic.ttf \
+apache/roboto/static/Roboto-Black.ttf \
+apache/roboto/static/Roboto-BlackItalic.ttf \
+apache/roboto/static/Roboto-Bold.ttf \
+apache/roboto/static/Roboto-BoldItalic.ttf \
+apache/roboto/static/Roboto-Italic.ttf \
+apache/roboto/static/Roboto-Light.ttf \
+apache/roboto/static/Roboto-LightItalic.ttf \
+apache/roboto/static/Roboto-Medium.ttf \
+apache/roboto/static/Roboto-MediumItalic.ttf \
+apache/roboto/static/Roboto-Regular.ttf \
+apache/roboto/static/Roboto-Thin.ttf \
+apache/roboto/static/Roboto-ThinItalic.ttf \
+apache/roboto/static/RobotoCondensed-Bold.ttf \
+apache/roboto/static/RobotoCondensed-BoldItalic.ttf \
+apache/roboto/static/RobotoCondensed-Italic.ttf \
+apache/roboto/static/RobotoCondensed-Light.ttf \
+apache/roboto/static/RobotoCondensed-LightItalic.ttf \
+apache/roboto/static/RobotoCondensed-Regular.ttf \
+apache/robotomono/static/RobotoMono-Bold.ttf \
+apache/robotomono/static/RobotoMono-BoldItalic.ttf \
+apache/robotomono/static/RobotoMono-Italic.ttf \
+apache/robotomono/static/RobotoMono-Light.ttf \
+apache/robotomono/static/RobotoMono-LightItalic.ttf \
+apache/robotomono/static/RobotoMono-Medium.ttf \
+apache/robotomono/static/RobotoMono-MediumItalic.ttf \
+apache/robotomono/static/RobotoMono-Regular.ttf \
+apache/robotomono/static/RobotoMono-Thin.ttf \
+apache/robotomono/static/RobotoMono-ThinItalic.ttf \
 ofl/ptmono/PTM55FT.ttf \
 ofl/ptsans/PT_Sans-Web-Bold.ttf \
 ofl/ptsans/PT_Sans-Web-BoldItalic.ttf \
