@@ -16,6 +16,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
+    - name: Generate build number
+      uses: einaregilsson/build-number@v3
+      with:
+        token: ${{secrets.github_token}}  
     - name: Run Tests
       run: |
         cd UgcsPPK/Tests
@@ -25,12 +29,12 @@ jobs:
         cd UgcsPPK
         dotnet restore
         cd App
-        VERSION=$(grep 'Version' App/App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+        VERSION=$(grep 'Version' App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
         DIR=app
         APP_NAME=ugcs-ppk
         mkdir $DIR
         dotnet publish -c Release -r win10-x64 -o $DIR/
-        zip -r $APP_NAME-$VERSION.zip $DIR
+        zip -r $APP_NAME-$VERSION.$BUILD_NUMBER.zip $DIR
     - name: Uploading artifacts
       uses: actions/upload-artifact@v2
       with:
