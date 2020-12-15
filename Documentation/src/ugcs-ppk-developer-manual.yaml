@@ -1,0 +1,14 @@
+parent: common/ugcs-industrial-datasheet.yaml
+images-root: img
+
+files:
+  - common/preamble-datasheet.rst
+  - text/developer/description.rst
+
+fields:
+  title: UgCS-PPK
+  date: December 2020
+  revision: 0
+
+pdf:
+  output: ../pdf/ugcs-ppk-developer-manual-r0.pdf

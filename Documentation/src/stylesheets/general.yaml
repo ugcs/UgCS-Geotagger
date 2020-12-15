@@ -1,0 +1,248 @@
+pageSetup:
+  size: A4
+  margin-top: 10mm
+  margin-bottom: 0mm
+  margin-left: 15mm
+  margin-right: 15mm
+  margin-gutter: 0cm
+  spacing-header: 5mm
+  spacing-footer: 5mm
+  firstTemplate: coverPage
+
+embeddedFonts:
+- RoadRadio
+- Roboto
+- RobotoCondensed
+- RobotoMono
+
+linkColor: '#0080C8'
+tocColor: black
+
+fontsAlias:
+  stdFont: Roboto-Regular
+  stdItalic: Roboto-Italic
+  stdBold: Roboto-Bold
+  stdBoldItalic: Roboto-BoldItalic
+  stdMono: RobotoMono-Regular
+  stdMonoBold: RobotoMono-Bold
+  stdMonoItalic: RobotoMono-Italic
+  stdMonoBoldItalic: RobotoMono-BoldItalic
+
+styles:
+
+  normal:
+    fontSize: 12pt
+
+  bodytext:
+    spaceBefore: 10
+    spaceAfter: 10
+    alignment: TA_LEFT
+
+  heading1:
+    fontName: RoadRadio
+    fontSize: 24pt
+    borderPadding: [0, 0, 5, 0]
+    borderWidth: 3
+    borderRadius: 5
+    borderColor: '#0080C8'
+    leftIndent: 0
+    rightIndent: 0
+    alignment: TA_CENTER
+    spaceBefore: 12
+    spaceAfter: 18
+
+  heading2:
+    fontName: stdBold
+    fontSize: 20pt
+    spaceAfter: 12
+
+  heading3:
+    fontName: stdBoldItalic
+    fontSize: 16pt
+
+  bullet-list:
+    spaceBefore: -8
+    spaceAfter: 4
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [RIGHTPADDING, [0, 0], [1, -1], 0]
+      - [TOPPADDING, [0, 0], [-1, -1], 8]
+
+  item-list:
+    parent: bodytext
+    colWidths: [1.3cm,null]
+    spaceBefore: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP ]
+      - [RIGHTPADDING, [0, 0], [1, -1], 0 ]
+      - [TOPPADDING, [0, 0], [-1, -1], 10 ]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 10 ]
+
+  table:
+    alignment: TA_CENTER
+    wordWrap: null
+    commands:
+      - [LINEBELOW, [0, -1], [-1, -1], 1, '#607180']
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [TOPPADDING, [0, 0], [-1, 0], 3]
+      - [BOTTOMPADDING, [0, 0], [-1, 0], 6]
+      - [TOPPADDING, [0, 1], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 1], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EFF1F3']]
+
+  table-title:
+    fontName: RobotoCondensed-Italic
+    fontSize: 12pt
+    alignment: TA_RIGHT
+
+  table-heading:
+    alignment : TA_LEFT
+    valign: MIDDLE
+    textColor: white
+    backColor: '#0080C8'
+    fontName: RoadRadio
+    fontSize: 14pt
+    wordWrap: null
+
+  toc1:
+    fontName: stdBold
+    fontSize: 16pt
+
+  toc2:
+    fontSize: 12pt
+
+  code:
+    backColor: '#EEEEEE'
+    borderColor: '#EEEEEE'
+    borderWidth: 2
+    borderRadius: 4
+    borderPadding: 6
+
+  # Custom Styles
+
+  revisions-table:
+    colWidths: [15%, 15%, 70%]
+    spaceBefore: 0
+    spaceAfter: 24
+    commands:
+      - [LINEBELOW, [0, -1], [-1, -1], 1, '#607180']
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [TOPPADDING, [0, 0], [-1, 0], 3]
+      - [BOTTOMPADDING, [0, 0], [-1, 0], 6]
+      - [TOPPADDING, [0, 1], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 1], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EFF1F3']]
+
+  revision-list:
+    parent: bullet-list
+    spaceBefore: -4
+    spaceAfter: 4
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [RIGHTPADDING, [0, 0], [1, -1], 0]
+      - [TOPPADDING, [0, 0], [-1, -1], 4]
+
+  header-table:
+    colWidths: [40%, 60%]
+    commands:
+      - [LINEBELOW, [0, -1], [-1, -1], 3, '#EFF1F3']
+
+  header-title:
+    fontName: stdItalic
+    fontSize: 10pt
+    alignment: TA_RIGHT
+
+  header-section:
+    fontName: stdBold
+    fontSize: 12pt
+
+  footer-table:
+    colWidths: [null, 12mm, null]
+    commands:
+      - [TOPPADDING, [0, 0], [-1, 0], 8]
+
+  footer-copyright:
+    fontName: RobotoCondensed-Regular
+    fontSize: 10pt
+
+  footer-page:
+    borderWidth: 2
+    borderPadding: 3
+    borderRadius: 5
+    borderColor: '#0080C8'
+    backColor: '#0080C8'
+    textColor: white
+    fontName: RobotoCondensed-Bold
+    fontSize: 10pt
+    alignment: TA_CENTER
+
+  footer-date:
+    fontName: RobotoCondensed-Regular
+    fontSize: 10pt
+    alignment: TA_RIGHT
+
+  specs-table:
+    parent: table
+    colWidths: [30%, 70%]
+    spaceBefore: 0
+    spaceAfter: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [TOPPADDING, [0, 0], [-1, 0], 3]
+      - [BOTTOMPADDING, [0, 0], [-1, 0], 6]
+      - [TOPPADDING, [0, 1], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 1], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EFF1F3']]
+
+  last-specs-table:
+    parent: table
+    colWidths: [30%, 70%]
+    spaceBefore: 0
+    spaceAfter: 0
+
+  container-table:
+    parent: table
+    spaceBefore: 0
+    spaceAfter: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 12]
+
+  pinout-container-table:
+    parent: container-table
+    colWidths: [46mm, null]
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [TOPPADDING, [0, 0], [0, -1], 42]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 12]
+
+  pinout-table:
+    parent: table
+    colWidths: [15%, 25%, 60%]
+
+  overview-table:
+    parent: table
+    colWidths: [10mm, null]
+    spaceBefore: 0
+    spaceAfter: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+
+  two-column-table:
+    parent: table
+    colWidths: [50%, 50%]
+    spaceBefore: 0
+    spaceAfter: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [TOPPADDING, [0, 0], [-1, -1], 3]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 6]
+
+  fixme:
+    backColor: red
+    textColor: white
+    fontName: stdBold
+
+  terminal:
+    fontSize: 9pt
+    fontName: stdMono

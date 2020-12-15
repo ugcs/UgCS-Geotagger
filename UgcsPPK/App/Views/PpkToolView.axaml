@@ -52,7 +52,7 @@
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Positioning Solutions Files:</TextBlock>
+    <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
     <DataGrid Grid.Row="1" Grid.Column="0" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name" Width="0.3*">

@@ -1,0 +1,49 @@
+pageSetup:
+  size: A4
+  margin-top: 10mm
+  margin-bottom: 8mm
+  margin-left: 8mm
+  margin-right: 8mm
+  margin-gutter: 0cm
+  spacing-header: 30mm
+  spacing-footer: 5mm
+  firstTemplate: oneColumn
+
+pageTemplates:
+  oneColumn:
+    background: img/cover-datasheet.pdf
+
+styles:
+  title:
+    fontName: RoadRadio
+    fontSize: 26pt
+    textColor: '#0080C8'
+    spaceBefore: 0
+    spaceAfter: 0
+    alignment: TA_RIGHT
+
+  subtitle:
+    fontSize: 22pt
+    textColor: black
+    spaceBefore: 3
+    spaceAfter: 0
+
+  header-table:
+    colWidths: [70%, 30%]
+    commands:
+      - [LINEBELOW, [0, -1], [-1, -1], 3, '#EFF1F3']
+
+  datasheet-footer-table:
+    colWidths: [null, 50mm, null]
+    commands:
+      - [TOPPADDING, [0, 0], [-1, 0], 8]
+
+  footer-date:
+    fontName: RobotoCondensed-Regular
+    fontSize: 10pt
+    alignment: TA_CENTER
+
+  footer-link:
+    fontName: stdBold
+    fontSize: 10pt
+    alignment: TA_RIGHT
