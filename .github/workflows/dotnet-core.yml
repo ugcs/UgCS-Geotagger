@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://ugcs/doker:latest 
     steps:
+    - uses: actions/checkout@v2
     - name: Creating documentation
       run: |
         chmod +x ./Documentation/scripts/generate-pdf.sh
