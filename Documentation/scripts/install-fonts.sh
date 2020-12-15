@@ -1,24 +1,6 @@
 #!/bin/bash
 
 FONTS="\
-ofl/roboto/static/Roboto-Black.ttf \
-ofl/roboto/static/Roboto-BlackItalic.ttf \
-ofl/roboto/static/Roboto-Bold.ttf \
-ofl/roboto/static/Roboto-BoldItalic.ttf \
-ofl/roboto/static/Roboto-Italic.ttf \
-ofl/roboto/static/Roboto-Light.ttf \
-ofl/roboto/static/Roboto-LightItalic.ttf \
-ofl/roboto/static/Roboto-Medium.ttf \
-ofl/roboto/static/Roboto-MediumItalic.ttf \
-ofl/roboto/static/Roboto-Regular.ttf \
-ofl/roboto/static/Roboto-Thin.ttf \
-ofl/roboto/static/Roboto-ThinItalic.ttf \
-ofl/roboto/static/RobotoCondensed-Bold.ttf \
-ofl/roboto/static/RobotoCondensed-BoldItalic.ttf \
-ofl/roboto/static/RobotoCondensed-Italic.ttf \
-ofl/roboto/static/RobotoCondensed-Light.ttf \
-ofl/roboto/static/RobotoCondensed-LightItalic.ttf \
-ofl/roboto/static/RobotoCondensed-Regular.ttf \
 apache/robotomono/RobotoMono-Bold.ttf \
 apache/robotomono/RobotoMono-BoldItalic.ttf \
 apache/robotomono/RobotoMono-Italic.ttf \
