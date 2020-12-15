@@ -31,7 +31,7 @@ jobs:
         mkdir $DIR
         dotnet publish -c Release -r win10-x64 -o $DIR/
         zip -r $APP_NAME-$VERSION.zip $DIR
-    - uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2
       with:
         name: ugcs-ppk
         path: UgcsPPK/App/*.zip
@@ -41,11 +41,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup Docker image
-    - uses: docker://ugcs/doker:latest
+      uses: docker://ugcs/doker:latest
     - name: Creating documentation
       run: |
         ./Documentation/scripts/generate-pdf.sh
-    - uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2
       with:
         name: ugcs-ppk-documentation
         path: Documentation/pdf/*.pdf
