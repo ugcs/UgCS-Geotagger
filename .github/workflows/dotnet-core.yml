@@ -10,6 +10,12 @@ jobs:
   build_application:
 
     runs-on: ubuntu-latest
+    env:
+      SOLUTION_FOLDER: UgcsPPK
+      APP_FOLDER: App
+      APP_NAME: ugcs-ppk
+      TESTS_FOLDER: Tests
+      PUBLISH_FOLDER: output
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -22,19 +28,17 @@ jobs:
         token: ${{secrets.github_token}}  
     - name: Run Tests
       run: |
-        cd UgcsPPK/Tests
+        cd $SOLUTION_FOLDER/$TESTS_FOLDER
         dotnet test
     - name: Build
       run: |
-        cd UgcsPPK
+        cd $SOLUTION_FOLDER
         dotnet restore
-        cd App
+        cd $APP_FOLDER
         VERSION=$(grep 'Version' App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
-        DIR=app
-        APP_NAME=ugcs-ppk
-        mkdir $DIR
-        dotnet publish -c Release -r win10-x64 -o $DIR/
-        zip -r $APP_NAME-$VERSION.$BUILD_NUMBER.zip $DIR
+        mkdir $PUBLISH_FOLDER
+        dotnet publish -c Release -r win10-x64 -o $PUBLISH_FOLDER/
+        zip -r $APP_NAME-$VERSION.$BUILD_NUMBER.zip $PUBLISH_FOLDER
     - name: Uploading artifacts
       uses: actions/upload-artifact@v2
       with:
