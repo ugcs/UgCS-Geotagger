@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>ugcs-ppk</AssemblyName>
     <RootNamespace>UgCSPPK</RootNamespace>
@@ -17,6 +17,10 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
     <PackageReference Include="log4net" Version="2.0.12" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
+      <PackageReference Include="NSubsys" Version="1.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FileParsers\FileParsers.csproj" />
@@ -56,4 +60,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <!--NSubSys package does not trigger automatically in dotnet core 3.0-->
+  <Target Name="HideConsole" AfterTargets="Compile" Condition="$(RuntimeIdentifier.StartsWith('win'))">
+    <NSubsys TargetFile="$(AppHostIntermediatePath)" />
+  </Target>
 </Project>
