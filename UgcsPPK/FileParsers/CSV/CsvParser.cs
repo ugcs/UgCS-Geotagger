@@ -77,18 +77,26 @@ namespace FileParsers.CSV
             string line;
             var traceCount = 0;
             CountOfReplacedLines = 0;
-            var dict = coordinates.ToDictionary(k => k.TraceNumber);
+            var dict = coordinates.ToDictionary(k => k.TraceNumber);        
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
-                line = SkipLines(reader);
-                ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                if (Template.SkipLinesTo != null)
+                {
+                    line = SkipLines(reader);
+                    ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                }
+                if (Template.Format.HasHeader)
+                {
+                    line = reader.ReadLine();
+                    ppkFile.WriteLine(Regex.Replace(line, @"\s", ""));
+                }
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (token.IsCancellationRequested)
                         break;
                     try
                     {
-                        if (line.StartsWith(Template.Format.CommentPrefix))
+                        if (line.StartsWith(Template.Format.CommentPrefix) || string.IsNullOrWhiteSpace(line))
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                         var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ? int.Parse(data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
@@ -97,7 +105,7 @@ namespace FileParsers.CSV
                         {
                             data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
                             data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
-                            ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
+                            ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }
                     }

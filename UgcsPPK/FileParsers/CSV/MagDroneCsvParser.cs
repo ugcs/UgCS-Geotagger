@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace FileParsers.CSV
@@ -93,8 +94,16 @@ namespace FileParsers.CSV
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
-                line = SkipLines(reader);
-                ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                if (Template.SkipLinesTo != null)
+                {
+                    line = SkipLines(reader);
+                    ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                }
+                if (Template.Format.HasHeader)
+                {
+                    line = reader.ReadLine();
+                    ppkFile.WriteLine(Regex.Replace(line, @"\s", ""));
+                }
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (token.IsCancellationRequested)
@@ -112,7 +121,7 @@ namespace FileParsers.CSV
                             data[(int)Template.DataMapping.Latitude.Index] = coordinate.Latitude.ToString(format);
                             data[(int)Template.DataMapping.Date.Index] = coordinate.DateTime.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
                             data[(int)Template.DataMapping.Time.Index] = coordinate.DateTime.ToString(Template.DataMapping.Time.Format, CultureInfo.InvariantCulture);
-                            ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
+                            ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }
                     }

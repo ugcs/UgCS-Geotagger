@@ -1,4 +1,4 @@
-  name: "Nmea log"
+  name: "Pergam LMM"
   code: "nmea" 
   file-type: CSV 
   match-regex: >-

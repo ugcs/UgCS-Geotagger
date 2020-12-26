@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace FileParsers.CSV
@@ -50,9 +51,6 @@ namespace FileParsers.CSV
             return coordinates;
         }
 
-
-
-
         public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
@@ -68,8 +66,16 @@ namespace FileParsers.CSV
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
-                line = SkipLines(reader);
-                ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] {'\n' }));
+                if (Template.SkipLinesTo != null)
+                {
+                    line = SkipLines(reader);
+                    ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                }
+                if (Template.Format.HasHeader)
+                {
+                    line = reader.ReadLine();
+                    ppkFile.WriteLine(Regex.Replace(line, @"\s", ""));
+                }
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (token.IsCancellationRequested)
