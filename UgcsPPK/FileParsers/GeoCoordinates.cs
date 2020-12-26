@@ -6,6 +6,7 @@ namespace FileParsers
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public double Altitude { get; set; }
         public double TimeInMs { get; set; }
         public int TraceNumber { get; set; }
         private DateTime _dateTime;
@@ -30,17 +31,25 @@ namespace FileParsers
             TraceNumber = traceNumber;
         }
 
-        public GeoCoordinates(DateTime date, double latitide, double longitude)
+        public GeoCoordinates(DateTime date, double latitide, double longitude, double altitude)
         {
             DateTime = date;
             Latitude = latitide;
             Longitude = longitude;
+            Altitude = altitude;
         }
 
         public GeoCoordinates(double latitide, double longitude)
         {
             Latitude = latitide;
             Longitude = longitude;
+        }
+
+        public GeoCoordinates(double latitide, double longitude, double altitude)
+        {
+            Latitude = latitide;
+            Longitude = longitude;
+            Altitude = altitude;
         }
 
         public GeoCoordinates()

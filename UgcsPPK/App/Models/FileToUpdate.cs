@@ -152,7 +152,12 @@ namespace UgCSPPK.Models
 
         public int CalculateCountOfLines()
         {
-            return LinkedFile != null ? Coordinates.Count * 2 : Coordinates.Count;
+            if (LinkedFile != null)
+            {
+                var segyLinesCount = SegyParser.Parse(LinkedFile).Count;
+                return segyLinesCount + Coordinates.Count;
+            }
+            return Coordinates.Count;
         }
     }
 

@@ -14,6 +14,7 @@ namespace FileParsers.SegYLog
         private const int SamplesPerTraceOffset = 3222;
         private const int HeadersOffset = 3600;
         private const int TraceNumberOffset = 8;
+        private const int AltitudeOffset = 40;
         private const int ScalarOffset = 70;
         private const int LongitudeOffset = 72;
         private const int LatitudeOffset = 76;
@@ -27,6 +28,20 @@ namespace FileParsers.SegYLog
         public string PayloadType { get; private set; }
         public short TracesLength { get; private set; }
 
+        private int _countOfReplacedLines;
+
+        public int CountOfReplacedLines
+        {
+            get => _countOfReplacedLines;
+            private set
+            {
+                _countOfReplacedLines = value;
+                if (CountOfReplacedLines % 100 == 0)
+                    OnOneHundredLinesReplaced?.Invoke(CountOfReplacedLines);
+            }
+        }
+
+        public event Action<int> OnOneHundredLinesReplaced;
         public List<IGeoCoordinates> Parse(string segyPath)
         {
             if (!File.Exists(segyPath))
@@ -77,9 +92,10 @@ namespace FileParsers.SegYLog
 
         private GeoCoordinates CreateGprCoordinates(byte[] data, int i)
         {
+            var altitude = BitConverter.ToSingle(data, i + AltitudeOffset);
             var longitude = (BitConverter.ToDouble(data, i + LongitudeGprOffset) - BitConverter.ToDouble(data, i + LongitudeGprOffset) % 1 / 60) / 100f;
             var latitude = (BitConverter.ToDouble(data, i + LatitudeGprOffset) - BitConverter.ToDouble(data, i + LatitudeGprOffset) % 1 / 60) / 100f;
-            return new GeoCoordinates(latitude, longitude);
+            return new GeoCoordinates(latitude, longitude, altitude);
         }
 
         private double ConvertToGrpFormat(double value)
@@ -102,8 +118,10 @@ namespace FileParsers.SegYLog
             var result = new Result();
             var startPosition = HeadersOffset;
             byte[] bytes = File.ReadAllBytes(oldFile);
+            CountOfReplacedLines = 0;
             byte[] lonToBytes;
             byte[] latToBytes;
+            byte[] altToBytes;
             for (int i = startPosition; i < bytes.Length; i += TraceHeaderOffset + TracesLength * 2)
             {
                 if (token.IsCancellationRequested)
@@ -123,10 +141,13 @@ namespace FileParsers.SegYLog
                                 bytes[i + LatitudeGprOffset + j] = latToBytes[j];
                             lonToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Longitude));
                             latToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Latitude));
+                            altToBytes = BitConverter.GetBytes((float)coordinate.Altitude);
                             for (int j = 0; j < sizeof(float); j++)
                                 bytes[i + LongitudeOffset + j] = lonToBytes[j];
                             for (int j = 0; j < sizeof(float); j++)
                                 bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            for (int j = 0; j < sizeof(float); j++)
+                                bytes[i + AltitudeOffset + j] = altToBytes[j];
                             break;
 
                         case EchoSounder:
@@ -143,6 +164,7 @@ namespace FileParsers.SegYLog
                     }
                     result.CountOfReplacedLines++;
                 }
+                CountOfReplacedLines++;
                 result.CountOfLines++;
             }
             File.WriteAllBytes(newFile, bytes);

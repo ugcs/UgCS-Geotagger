@@ -372,9 +372,11 @@ namespace UgCSPPK.ViewModels
                         fileToUpdateTotalLines = ftu.Coordinates.Count;
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
+                        ftu.SegyParser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         var message = await Task.Run(() => ftu.UpdateCoordinates(source));
                         Interpolator.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.Parser.OnOneHundredLinesReplaced -= UpdateProgressbar;
+                        ftu.SegyParser.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         await MessageBoxView.Show(App.App.CurrentWindow, message, "Info", MessageBoxView.MessageBoxButtons.Ok);
                     }
                 }

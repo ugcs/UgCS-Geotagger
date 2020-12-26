@@ -76,6 +76,7 @@ namespace FileParsers.CSV
             using StreamReader reader = File.OpenText(oldFile);
             string line;
             var traceCount = 0;
+            CountOfReplacedLines = 0;
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
@@ -130,7 +131,6 @@ namespace FileParsers.CSV
                 Template.DataMapping.Timestamp.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Timestamp.Header));
             if (Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Header != null)
                 Template.DataMapping.TraceNumber.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.TraceNumber.Header));
-
             if (Template.DataMapping.Latitude.Index == -1 || Template.DataMapping.Longitude.Index == -1)
                 throw new ColumnsMatchingException("Column names are not matched");
         }

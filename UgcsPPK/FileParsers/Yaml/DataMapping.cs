@@ -11,6 +11,9 @@ namespace FileParsers.Yaml
         [YamlMember(Alias = "longitude")]
         public BaseData Longitude { get; set; }
 
+        [YamlMember(Alias = "altitude")]
+        public BaseData Altitude { get; set; }
+
         [YamlMember(Alias = "date")]
         public Date Date { get; set; }
 
