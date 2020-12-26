@@ -98,6 +98,7 @@ namespace UgCSPPK.ViewModels
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
             openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Solution Files", Extensions = { "pos", "csv"} });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             if (chosenFiles != null)
             {
@@ -145,6 +146,7 @@ namespace UgCSPPK.ViewModels
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
             openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Log", Extensions = { "csv", "log" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             if (chosenFiles != null)
             {

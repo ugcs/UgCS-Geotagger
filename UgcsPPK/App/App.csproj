@@ -41,6 +41,9 @@
     <None Update="Mapping\FTUTemplates\MagDrone.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\SkyhubECHO.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\SkyhubGpr.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
