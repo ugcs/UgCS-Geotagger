@@ -31,6 +31,7 @@ namespace FileParsers
                     continue;
                 coordinates.Latitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
                 coordinates.Longitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
+                coordinates.Altitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Altitude, ppkCoordinates[rightBorderIndex].Altitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
                 correctedTraces.Add(coordinates);
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)

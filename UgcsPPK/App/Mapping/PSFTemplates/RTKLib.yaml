@@ -18,6 +18,8 @@
       index: 1
     longitude:
       index: 2
+    altitude:
+      index: 3
     date-time:
       index: 0
       format: 'yyyy/MM/dd HH:mm:ss.fff'

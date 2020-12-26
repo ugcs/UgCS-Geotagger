@@ -39,7 +39,9 @@ namespace FileParsers.FixedColumnWidth
                     var date = ParseDateTime(data.ToArray());
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
-                    coordinates.Add(new GeoCoordinates(date, lat, lon));
+                    var alt = Template.DataMapping.Altitude != null && Template.DataMapping.Altitude.Index != null ?
+                        ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
+                    coordinates.Add(new GeoCoordinates(date, lat, lon, alt));
                 }
             }
             return coordinates;
