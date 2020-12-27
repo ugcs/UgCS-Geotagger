@@ -11,9 +11,14 @@ namespace FileParsers
 
         public static event Action<int> OnOneHundredLinesReplaced;
 
-        public static List<IGeoCoordinates> SetPpkCorrectedCoordinates(List<IGeoCoordinates> csvCoordinates, List<IGeoCoordinates> ppkCoordinates, CancellationTokenSource token)
+        public static List<IGeoCoordinates> CreatePpkCorrectedCoordinates(List<IGeoCoordinates> csvCoordinates, List<IGeoCoordinates> ppkCoordinates, int timeOffset, CancellationTokenSource token)
         {
             var correctedTraces = new List<IGeoCoordinates>();
+            if (timeOffset != 0)
+            {
+                foreach (var c in ppkCoordinates)
+                    c.TimeInMs = c.TimeInMs + timeOffset;
+            }
             var min = ppkCoordinates.First().TimeInMs;
             var max = ppkCoordinates.Last().TimeInMs;
             var countOfReplacedLines = 0;
