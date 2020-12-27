@@ -150,6 +150,8 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
@@ -161,9 +163,11 @@
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
       <Button Grid.Row="1" Grid.Column="0" Classes="Add" Command="{Binding BrowseFolder}" IsEnabled="{Binding !IsProcessFiles}">Add Folder</Button>
       <Button Grid.Row="1" Grid.Column="1" Classes="Remove" Command="{Binding Clear}" IsEnabled="{Binding !IsProcessFiles}">Clear</Button>
-      <Button Grid.Row="1" Grid.Column="3" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
+      <TextBlock Grid.Row="1" Grid.Column="3" Margin="0 6 6 6" FontSize="18" VerticalAlignment="Center">Time Offset, ms:</TextBlock>
+      <TextBox Grid.Row="1" Grid.Column="4" Margin="0 6 6 6" Width="100" Text="{Binding TimeOffset}" FontSize="14"></TextBox>
+      <Button Grid.Row="1" Grid.Column="5" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
       <ProgressBar  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="12 0 0 0"  Value="{Binding UpdatingFileProgressBarValue}"  IsVisible="{Binding IsProcessFiles}"></ProgressBar>
-      <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Items="{Binding Messages}" IsReadOnly="True">
+      <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Items="{Binding Messages}" IsReadOnly="True">
         <DataGrid.Columns>
           <DataGridTemplateColumn  Header="Messages" Width="*" IsReadOnly="True"> 
             <DataGridTemplateColumn.CellTemplate>

@@ -85,7 +85,7 @@ namespace UgCSPPK.Models
                 CoveringStatus = CoveringStatus.NotCovered;
         }
 
-        public Task<string> UpdateCoordinates(CancellationTokenSource source)
+        public Task<string> UpdateCoordinates(CancellationTokenSource source, int timeOffset)
         {
             string message;
             if (CoverageFiles.Count == 0)
@@ -100,7 +100,7 @@ namespace UgCSPPK.Models
                 coverageCoordinates.AddRange(f.Coordinates);
             try
             {
-                correctedCoordinates = Interpolator.SetPpkCorrectedCoordinates(Coordinates, coverageCoordinates, source);
+                correctedCoordinates = Interpolator.CreatePpkCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
                 var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
                 var result = Parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates, source);
                 message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";

@@ -83,6 +83,18 @@ namespace UgCSPPK.ViewModels
             }
         }
 
+        private string _timeOffset = "0";
+
+        public string TimeOffset
+        {
+            get => _timeOffset;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _timeOffset, value);
+            }
+        }
+
+
         public PpkToolViewModel()
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
@@ -357,6 +369,13 @@ namespace UgCSPPK.ViewModels
                 CancelProcessing();
             else
             {
+                var isTimeOffsetCorrect = int.TryParse(TimeOffset, out int timeOffset);
+                if (!isTimeOffsetCorrect)
+                {
+                    await MessageBoxView.Show(App.App.CurrentWindow, "Time Offset is incorrect", "Error", MessageBoxView.MessageBoxButtons.Ok);
+                    return;
+                }
+
                 UpdatingFileProgressBarValue = 0.00;
                 IsProcessFiles = true;
                 source = new CancellationTokenSource();
@@ -375,7 +394,7 @@ namespace UgCSPPK.ViewModels
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced += UpdateProgressbar;
-                        var message = await Task.Run(() => ftu.UpdateCoordinates(source));
+                        var message = await Task.Run(() => ftu.UpdateCoordinates(source, timeOffset));
                         Interpolator.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.Parser.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced -= UpdateProgressbar;
