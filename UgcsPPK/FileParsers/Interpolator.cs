@@ -17,7 +17,7 @@ namespace FileParsers
             if (timeOffset != 0)
             {
                 foreach (var c in ppkCoordinates)
-                    c.TimeInMs = c.TimeInMs + timeOffset;
+                    c.TimeInMs += timeOffset;
             }
             var min = ppkCoordinates.First().TimeInMs;
             var max = ppkCoordinates.Last().TimeInMs;
@@ -41,6 +41,12 @@ namespace FileParsers
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)
                     OnOneHundredLinesReplaced?.Invoke(countOfReplacedLines);
+            }
+
+            if (timeOffset != 0)
+            {
+                foreach (var c in ppkCoordinates)
+                    c.TimeInMs -= timeOffset;
             }
             return correctedTraces;
         }

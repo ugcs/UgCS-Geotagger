@@ -92,7 +92,15 @@ namespace FileParsers
         {
             if (Template.DataMapping.DateTime != null && Template.DataMapping.DateTime?.Index != -1)
             {
-                return ParseDateAndTime(Template.DataMapping.DateTime, data[(int)Template.DataMapping.DateTime.Index]);
+                switch (Template.DataMapping.DateTime.Type)
+                {
+                    case Yaml.Data.Type.GPST:
+                        return GpsToUTC(data[(int)Template.DataMapping.DateTime.Index]);
+
+                    case Yaml.Data.Type.UTC:
+                    default:
+                        return ParseDateAndTime(Template.DataMapping.DateTime, data[(int)Template.DataMapping.DateTime.Index]);
+                }
             }
             else if (Template.DataMapping.Time != null && Template.DataMapping.Time.Index != -1 && Template.DataMapping?.Date != null && Template.DataMapping.Date?.Index != null)
             {
@@ -111,6 +119,18 @@ namespace FileParsers
             }
             else
                 throw new IncorrectDateFormatException("Cannot parse DateTime form file");
+        }
+
+        // TODO: Add tests for new format
+        private System.DateTime GpsToUTC(string gpsTime)
+        {
+            var data = gpsTime.Split(new[] { " " }, StringSplitOptions.None);
+            var weeksInDays = int.Parse(data[0]);
+            var secondsAndMs = double.Parse(data[1], CultureInfo.InvariantCulture);
+            System.DateTime datum = new System.DateTime(1980, 1, 6, 0, 0, 0);
+            System.DateTime week = datum.AddDays(weeksInDays * 7);
+            System.DateTime time = week.AddSeconds(secondsAndMs);
+            return time;
         }
 
         private System.DateTime ParseDateAndTime(Yaml.Data.DateTime data, string column)
