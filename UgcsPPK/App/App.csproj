@@ -47,6 +47,9 @@
     <None Update="Mapping\FTUTemplates\SkyhubGpr.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\PSFTemplates\RTKLibKlau.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\PSFTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
