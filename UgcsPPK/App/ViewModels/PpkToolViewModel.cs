@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -387,14 +388,15 @@ namespace UgCSPPK.ViewModels
                 }
                 foreach (var ftu in filesToUpdate)
                 {
-                    messages.Add("Start Processing");
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
                     {
                         fileToUpdateTotalLines = ftu.Coordinates.Count;
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced += UpdateProgressbar;
+                        ftu.OnProcessingStatus += AddMessage;
                         var message = await Task.Run(() => ftu.UpdateCoordinates(source, timeOffset));
+                        ftu.OnProcessingStatus -= AddMessage;
                         Interpolator.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.Parser.OnOneHundredLinesReplaced -= UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced -= UpdateProgressbar;
@@ -403,6 +405,14 @@ namespace UgCSPPK.ViewModels
                 }
                 IsProcessFiles = false;
             }
+        }
+
+        private void AddMessage(string message)
+        {
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                messages.Add(message);
+            });
         }
 
         private void UpdateProgressbar(int lines)

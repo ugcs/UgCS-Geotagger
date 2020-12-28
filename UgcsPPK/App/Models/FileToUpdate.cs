@@ -29,7 +29,7 @@ namespace UgCSPPK.Models
         public string ResultMessage { get; private set; } = "";
         public HashSet<PositioningSolutionFile> CoverageFiles { get; private set; } = new HashSet<PositioningSolutionFile>();
         public string LinkedFile { get; set; }
-
+        public event Action<string> OnProcessingStatus;
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
@@ -87,6 +87,7 @@ namespace UgCSPPK.Models
 
         public Task<string> UpdateCoordinates(CancellationTokenSource source, int timeOffset)
         {
+
             string message;
             if (CoverageFiles.Count == 0)
             {
@@ -98,6 +99,10 @@ namespace UgCSPPK.Models
             var coverageCoordinates = new List<IGeoCoordinates>();
             foreach (var f in CoverageFiles)
                 coverageCoordinates.AddRange(f.Coordinates);
+            OnProcessingStatus?.Invoke($"Start Processing {FileName}");
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            var elapsedMs = watch.ElapsedMilliseconds;
             try
             {
                 correctedCoordinates = Interpolator.CreatePpkCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
@@ -111,16 +116,24 @@ namespace UgCSPPK.Models
                 message = $"Error during updating {FilePath}: {e.Message}";
                 log.Error(e.Message);
             }
+            finally
+            {
+                watch.Stop();
+                OnProcessingStatus?.Invoke($"Finished Processing {FileName}, {(watch.ElapsedMilliseconds / (double)1000).ToString(CultureInfo.InvariantCulture)}s ");
+            }
             if (source.IsCancellationRequested)
                 return Task.FromResult(message);
             try
             {
                 if (LinkedFile != null)
                 {
+                    watch.Reset();
+                    watch.Start();
+                    OnProcessingStatus?.Invoke($"Start Processing {Path.GetFileName(LinkedFile)}");
                     SegyParser.Parse(LinkedFile);
                     var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
                     var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
-                    message += $"\n{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
+                    message += $"\n{Path.GetFileName(LinkedFile)}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
                     log.Info(message);
                     return Task.FromResult(message);
                 }
@@ -129,6 +142,11 @@ namespace UgCSPPK.Models
             {
                 message += $"\nError during updating {LinkedFile}: {e.Message}";
                 log.Error(e.Message);
+            }
+            finally
+            {
+                watch.Stop();
+                OnProcessingStatus?.Invoke($"End Processing {Path.GetFileName(LinkedFile)}, {(watch.ElapsedMilliseconds / (double)1000).ToString(CultureInfo.InvariantCulture)}s");
             }
             return Task.FromResult(message);
         }
