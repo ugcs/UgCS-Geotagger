@@ -18,7 +18,6 @@ namespace App.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            this.Title = "UgCS-PPK " + Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         }
     }
 }
