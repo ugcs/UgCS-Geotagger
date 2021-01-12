@@ -17,7 +17,7 @@ jobs:
       TESTS_FOLDER: Tests
       PUBLISH_FOLDER: output
       ARTIFACT_NAME: ugcs-ppk
-      VIEWS_FOLDER: ugcs-ppk
+      VIEWS_FOLDER: Views
       DISPLAY_NAME: UgCS-PPK
     steps:
     - uses: actions/checkout@v2
