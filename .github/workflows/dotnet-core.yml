@@ -40,7 +40,7 @@ jobs:
         cd $APP_FOLDER
         VERSION=$(grep 'Version' App.csproj | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
         cd $VIEWS_FOLDER
-        sed -i 's#Title="$DISPLAY_NAME"#Title="$DISPLAY_NAME '$VERSION.$BUILD_NUMBER'"#g' MainWindow.xaml
+        sed -i 's#Title="$DISPLAY_NAME"#Title="$DISPLAY_NAME '$VERSION.$BUILD_NUMBER'"#g' MainWindow.axaml
         cd ../
         mkdir $PUBLISH_FOLDER
         dotnet publish -c Release -r win10-x64 -o $PUBLISH_FOLDER/
