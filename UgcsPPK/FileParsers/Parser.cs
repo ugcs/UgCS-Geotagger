@@ -92,15 +92,11 @@ namespace FileParsers
         {
             if (Template.DataMapping.DateTime != null && Template.DataMapping.DateTime?.Index != -1)
             {
-                switch (Template.DataMapping.DateTime.Type)
+                return Template.DataMapping.DateTime.Type switch
                 {
-                    case Yaml.Data.Type.GPST:
-                        return GpsToUTC(data[(int)Template.DataMapping.DateTime.Index]);
-
-                    case Yaml.Data.Type.UTC:
-                    default:
-                        return ParseDateAndTime(Template.DataMapping.DateTime, data[(int)Template.DataMapping.DateTime.Index]);
-                }
+                    Yaml.Data.Type.GPST => GpsToUTC(data[(int)Template.DataMapping.DateTime.Index]),
+                    _ => ParseDateAndTime(Template.DataMapping.DateTime, data[(int)Template.DataMapping.DateTime.Index]),
+                };
             }
             else if (Template.DataMapping.Time != null && Template.DataMapping.Time.Index != -1 && Template.DataMapping?.Date != null && Template.DataMapping.Date?.Index != null)
             {

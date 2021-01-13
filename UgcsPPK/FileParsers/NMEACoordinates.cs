@@ -2,7 +2,6 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace FileParsers
 {
@@ -26,9 +25,10 @@ namespace FileParsers
         public string VarDir { get; set; }
         public string ModeInd { get; set; }
         public CultureInfo Format { get; set; }
+
         public string ConvertToNMEACoordringates(double coordinate)
         {
-            return Math.Abs((Math.Truncate(coordinate) * 100 + (coordinate - Math.Truncate(coordinate)) * 60)).ToString("0.####" ,Format ?? CultureInfo.InvariantCulture);
+            return Math.Abs((Math.Truncate(coordinate) * 100 + (coordinate - Math.Truncate(coordinate)) * 60)).ToString("0.####", Format ?? CultureInfo.InvariantCulture);
         }
 
         public double ConvertToGoogleCoordinates(string coordinate, string cardinalDirection)
@@ -62,7 +62,7 @@ namespace FileParsers
         {
             var data = message.Split(new[] { "," }, StringSplitOptions.None);
             if (data[0].Contains("$"))
-                data[0] = data[0].Replace("$","").Trim();
+                data[0] = data[0].Replace("$", "").Trim();
             if (data[0] != "GPRMC" && data[0] != "GNRMC")
                 throw new UnknownNMEATypeException("Unsupported NMEA type");
             NMEAType = data[0].Substring(0);
@@ -81,7 +81,7 @@ namespace FileParsers
             Latitude = ConvertToGoogleCoordinates(NMEALatitude, NorthOrSouth);
             Longitude = ConvertToGoogleCoordinates(NMEALongitude, EastOrWest);
         }
-        
+
         public void SetNewNmeaCoordinates()
         {
             NMEALatitude = ConvertToNMEACoordringates(Latitude);

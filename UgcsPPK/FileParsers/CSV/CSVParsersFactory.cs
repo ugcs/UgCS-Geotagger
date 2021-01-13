@@ -6,6 +6,7 @@ namespace FileParsers.CSV
     {
         private const string MagDrone = "magdrone";
         private const string NMEA = "nmea";
+
         public CsvParser CreateCSVParser(Template template)
         {
             return template.Code switch

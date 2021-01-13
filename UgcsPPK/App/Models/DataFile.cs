@@ -16,6 +16,8 @@ namespace UgCSPPK.Models
         private readonly CSVParsersFactory cSVParsersFactory = new CSVParsersFactory();
         protected static ILog log = LogManager.GetLogger(typeof(DataFile));
         public const string PPK = "PPK";
+        public const string PositionSolutionFileAbbr = "PSF";
+        public const string FileToUpdateAbbr = "FTU";
         public List<IGeoCoordinates> Coordinates { get; }
         public string FileName { get; protected set; }
         public string FilePath { get; protected set; }

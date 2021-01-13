@@ -171,6 +171,5 @@ namespace Tests
             var template = deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
-
     }
 }
