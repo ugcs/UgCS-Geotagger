@@ -42,6 +42,7 @@ namespace FileParsers.SegYLog
         }
 
         public event Action<int> OnOneHundredLinesReplaced;
+
         public List<IGeoCoordinates> Parse(string segyPath)
         {
             if (!File.Exists(segyPath))

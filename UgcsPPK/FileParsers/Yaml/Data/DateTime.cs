@@ -7,6 +7,7 @@ namespace FileParsers.Yaml.Data
     {
         [YamlMember(Alias = "format")]
         public string Format { get; set; }
+
         [YamlMember(Alias = "type")]
         public Type Type { get; set; }
     }

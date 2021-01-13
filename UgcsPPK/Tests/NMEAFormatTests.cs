@@ -4,9 +4,10 @@ using System.Globalization;
 
 namespace Tests
 {
-    public class NMEAFormatTests: Test
+    public class NMEAFormatTests : Test
     {
         private const double Delta = 0.00001;
+
         [SetUp]
         public void Setup()
         {
@@ -62,7 +63,6 @@ namespace Tests
             Assert.Pass("Test Passed");
         }
 
-
         [Test]
         public void TestCheckSumCalculation()
         {
@@ -80,6 +80,5 @@ namespace Tests
             var secondChecksum = coordinate.CalculateCheckSum().ToString("X");
             Assert.IsTrue(ckecksum == "69" && secondChecksum == "6F");
         }
-
     }
 }

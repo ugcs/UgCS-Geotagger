@@ -29,7 +29,9 @@ namespace UgCSPPK.Models
         public string ResultMessage { get; private set; } = "";
         public HashSet<PositioningSolutionFile> CoverageFiles { get; private set; } = new HashSet<PositioningSolutionFile>();
         public string LinkedFile { get; set; }
+
         public event Action<string> OnProcessingStatus;
+
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
@@ -87,7 +89,6 @@ namespace UgCSPPK.Models
 
         public Task<string> UpdateCoordinates(CancellationTokenSource source, int timeOffset)
         {
-
             string message;
             if (CoverageFiles.Count == 0)
             {

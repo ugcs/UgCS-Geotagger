@@ -3,8 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:conv="clr-namespace:UgCSPPK.Converters;assembly=ugcs-ppk"
+             xmlns:model="clr-namespace:UgCSPPK.Models;assembly=ugcs-ppk"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="UgCSPPK.Views.PpkToolView">
+             x:Class="UgCSPPK.Views.PpkToolView"
+            >
   <UserControl.Resources>
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
     <conv:FileNameConverter x:Key="FileNameConverter" />
@@ -53,7 +55,8 @@
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
-    <DataGrid Grid.Row="1" Grid.Column="0" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
+    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Name="{x:Static model:DataFile.PositionSolutionFileAbbr}">  
+    <DataGrid Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name" Width="0.3*">
           <DataGridTemplateColumn.CellTemplate>
@@ -85,6 +88,7 @@
         </DataGridTemplateColumn>
       </DataGrid.Columns>
     </DataGrid>
+    </StackPanel>
     <Grid Grid.Row="2" Grid.Column="0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -94,11 +98,12 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddPositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}" ></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding ChooseFiles}" IsEnabled="{Binding !IsProcessFiles}" CommandParameter="{x:Static model:DataFile.PositionSolutionFileAbbr}"></Button>
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}"></Button>
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
-    <DataGrid Grid.Row="4" Grid.Column="0" Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
+    <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Name="{x:Static model:DataFile.FileToUpdateAbbr}">
+    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
@@ -144,6 +149,7 @@
         </DataGridTemplateColumn>
       </DataGrid.Columns>
     </DataGrid>
+    </StackPanel>
     <Grid Grid.Row="5" Grid.Column="0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -159,7 +165,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding AddFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding ChooseFiles}" IsEnabled="{Binding !IsProcessFiles}" CommandParameter="{x:Static model:DataFile.FileToUpdateAbbr}"></Button>
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemoveFileToUpdate}" IsEnabled="{Binding !IsProcessFiles}"></Button>
       <Button Grid.Row="1" Grid.Column="0" Classes="Add" Command="{Binding BrowseFolder}" IsEnabled="{Binding !IsProcessFiles}">Add Folder</Button>
       <Button Grid.Row="1" Grid.Column="1" Classes="Remove" Command="{Binding Clear}" IsEnabled="{Binding !IsProcessFiles}">Clear</Button>

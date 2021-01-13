@@ -77,7 +77,7 @@ namespace FileParsers.CSV
             string line;
             var traceCount = 0;
             CountOfReplacedLines = 0;
-            var dict = coordinates.ToDictionary(k => k.TraceNumber);        
+            var dict = coordinates.ToDictionary(k => k.TraceNumber);
             using (StreamWriter ppkFile = new StreamWriter(newFile))
             {
                 if (Template.SkipLinesTo != null)

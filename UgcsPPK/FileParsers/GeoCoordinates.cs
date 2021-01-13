@@ -10,6 +10,7 @@ namespace FileParsers
         public double TimeInMs { get; set; }
         public int TraceNumber { get; set; }
         private DateTime _dateTime;
+
         public DateTime DateTime
         {
             get

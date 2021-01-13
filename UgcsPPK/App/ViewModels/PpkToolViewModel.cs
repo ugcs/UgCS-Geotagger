@@ -95,7 +95,6 @@ namespace UgCSPPK.ViewModels
             }
         }
 
-
         public PpkToolViewModel()
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
@@ -104,24 +103,49 @@ namespace UgCSPPK.ViewModels
             CreateTemplates();
         }
 
-        private async void AddPositioningSolutionFile()
+        private async void ChooseFiles(string type)
         {
             if (isDialogOpen)
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Solution Files", Extensions = { "pos", "csv"} });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "Data files", Extensions = { "pos", "csv", "log" } });
             openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
-            if (chosenFiles != null)
+            AddFiles(chosenFiles, type);
+            isDialogOpen = false;
+        }
+
+        public void AddFiles(IEnumerable<string> files, string fileType)
+        {
+            if (files != null)
             {
-                foreach (var file in chosenFiles)
+                foreach (var file in files)
                 {
-                    var template = FindTemplate(psfTemplates, file);
+                    Template template = fileType switch
+                    {
+                        DataFile.FileToUpdateAbbr => FindTemplate(ftuTemplates, file),
+                        DataFile.PositionSolutionFileAbbr => FindTemplate(psfTemplates, file),
+                        _ => null,
+                    };
                     if (template != null)
                     {
-                        var psf = new PositioningSolutionFile(file, template);
-                        positioningSolutionFiles.Add(psf);
+                        DataFile dataFile;
+                        switch (fileType)
+                        {
+                            case DataFile.FileToUpdateAbbr:
+                                dataFile = new FileToUpdate(file, template);
+                                filesToUpdate.Add(dataFile as FileToUpdate);
+                                break;
+
+                            case DataFile.PositionSolutionFileAbbr:
+                                dataFile = new PositioningSolutionFile(file, template);
+                                positioningSolutionFiles.Add(dataFile as PositioningSolutionFile);
+                                break;
+
+                            default:
+                                return;
+                        }
                         foreach (var f in filesToUpdate)
                         {
                             f.CheckCoveringStatus(positioningSolutionFiles.ToList());
@@ -130,9 +154,8 @@ namespace UgCSPPK.ViewModels
                     else
                         messages.Add($"Template for {file} was not found");
                 }
-                GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
+                GetLastOpenedDirectory(files.FirstOrDefault() ?? "");
             }
-            isDialogOpen = false;
         }
 
         private void RemovePositioningSolutionFile()
@@ -150,37 +173,6 @@ namespace UgCSPPK.ViewModels
             {
                 f.CheckCoveringStatus(positioningSolutionFiles.ToList());
             }
-        }
-
-        private async void AddFileToUpdate()
-        {
-            if (isDialogOpen)
-                return;
-            isDialogOpen = true;
-            OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "Position Log", Extensions = { "csv", "log" } });
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
-            var chosenFiles = await openDialog.ShowAsync(new Window());
-            if (chosenFiles != null)
-            {
-                foreach (var file in chosenFiles)
-                {
-                    var template = FindTemplate(ftuTemplates, file);
-                    if (template != null)
-                    {
-                        var ftu = new FileToUpdate(file, template);
-                        filesToUpdate.Add(ftu);
-                        foreach (var f in filesToUpdate)
-                        {
-                            f.CheckCoveringStatus(positioningSolutionFiles.ToList());
-                        }
-                    }
-                    else
-                        messages.Add($"Template for {file} was not found");
-                }
-                GetLastOpenedDirectory(chosenFiles.FirstOrDefault() ?? "");
-            }
-            isDialogOpen = false;
         }
 
         private void RemoveFileToUpdate()

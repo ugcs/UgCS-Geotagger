@@ -1,5 +1,4 @@
-﻿
-using FileParsers.Yaml;
+﻿using FileParsers.Yaml;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -85,7 +84,7 @@ namespace FileParsers.CSV
                         if (line.StartsWith(Template.Format.CommentPrefix))
                             continue;
                         var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
-                        var traceNumber =  traceCount;
+                        var traceNumber = traceCount;
                         var coordinateFound = dict.TryGetValue(traceNumber, out IGeoCoordinates coordinate);
                         if (coordinateFound)
                         {
