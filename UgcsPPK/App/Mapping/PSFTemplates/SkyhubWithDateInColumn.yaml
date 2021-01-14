@@ -7,7 +7,7 @@
   file-type: CSV 
   # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
-    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,Velocity,RTK Status,Latitude RTK,Longitude RTK,Altitude RTK,ALT:Altitude,ALT:Filtered Altitude,GNSS:Date,GNSS:Time,GNSS:Latitude,GNSS:Longitude,GNSS:Altitude,GNSS:Quality Indicator,GNSS:Satellites,GNSS:HDOP,GNSS:Undulation,GPR:Trace$
+    ^\s*Elapsed,Date,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,Velocity
   file-format:
   # Applies to CSV type. 'true' if file has headers, otherwise false
     has-header: true
@@ -27,9 +27,5 @@
       header: Time
       format: 'HH:mm:ss.fff'  
     date:
-    # Source to parse date. Avaliable values are FileName and Column. Column is default value
-      source: FileName
-      regex: '\d{4}-\d{2}-\d{2}'
-      format: 'yyyy-MM-dd'
-    trace-number:
-      header: "GPR:Trace"
+      header: Date
+      format: 'yyyy/MM/dd'  
