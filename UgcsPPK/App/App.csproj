@@ -41,11 +41,11 @@
     <None Update="Mapping\FTUTemplates\MagDrone.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\SkyhubECHO.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Mapping\FTUTemplates\SkyhubGpr.yaml">
+    <None Update="Mapping\FTUTemplates\SkyhubWithDateInName.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\SkyhubWithDateInColumn.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\RTKLibKlau.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -53,16 +53,10 @@
     <None Update="Mapping\PSFTemplates\RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\SkyhubGNSS.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="Mapping\PSFTemplates\SkyhubWithDateInColumn.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\PSFTemplates\SkyhubGprNmea.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Mapping\PSFTemplates\SkyhubMag.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Mapping\PSFTemplates\SkyhubGpr.yaml">
+    <None Update="Mapping\PSFTemplates\SkyhubWithDateInName.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
