@@ -3,7 +3,6 @@
 set -e
 cd "$(dirname "$(readlink -f "${0}")")/../src"
 
-doker --pdf ugcs-ppk-developer-manual.yaml 1> /dev/null
 doker --pdf ugcs-ppk-user-manual.yaml 1> /dev/null
 
 if [ "$1" == "-o" ]; then
