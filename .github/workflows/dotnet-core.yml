@@ -60,6 +60,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Creating documentation
       run: |
+        chmod +x ./Documentation/scripts/install-fonts.sh
+        ./Documentation/scripts/install-fonts.sh
         chmod +x ./Documentation/scripts/generate-pdf.sh
         ./Documentation/scripts/generate-pdf.sh
     - name: Uploading artifacts
