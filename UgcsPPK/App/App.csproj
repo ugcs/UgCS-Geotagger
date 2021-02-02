@@ -29,6 +29,15 @@
     <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\1-SkyhubWithDateInNameRTK.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\2-SkyhubWithDateInName.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\3-SkyhubWithDateInColumn.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\MagArrow.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -50,11 +59,20 @@
     <None Update="Mapping\FTUTemplates\SkyhubWithDateInColumn.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\PSFTemplates\1-SkyhubRTK.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\PSFTemplates\2-RTKLibKlau.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\1-RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\2-SkyhubWithDateInName.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\3-SkyhubWithDateInColumn.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\SkyhubRTK.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
