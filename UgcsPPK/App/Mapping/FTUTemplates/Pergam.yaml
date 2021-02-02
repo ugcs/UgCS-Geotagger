@@ -1,5 +1,5 @@
-  name: "Pergam LMM"
-  code: "nmea" 
+  name: "Pergam Methane Detector"
+  code: "pergam" 
   file-type: CSV 
   match-regex: >-
     ^\s*Mess_GGA
