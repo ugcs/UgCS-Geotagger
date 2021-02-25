@@ -1,4 +1,5 @@
 ﻿using FileParsers.Exceptions;
+using FileParsers.Yaml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,7 @@ namespace FileParsers.SegYLog
         private const string Gpr = "Georadar's settings information";
         private const string EchoSounder = "Echosounder's settings information";
         private const string Unknown = "Unknown";
+        private readonly bool isAltitudeSet = false;
         public string PayloadType { get; private set; }
         public short TracesLength { get; private set; }
 
@@ -42,6 +44,12 @@ namespace FileParsers.SegYLog
         }
 
         public event Action<int> OnOneHundredLinesReplaced;
+
+        public SegYLogParser(bool isAltitudeSet)
+        {
+            this.isAltitudeSet = isAltitudeSet;
+        }
+
 
         public List<IGeoCoordinates> Parse(string segyPath)
         {
@@ -147,8 +155,11 @@ namespace FileParsers.SegYLog
                                 bytes[i + LongitudeOffset + j] = lonToBytes[j];
                             for (int j = 0; j < sizeof(float); j++)
                                 bytes[i + LatitudeOffset + j] = latToBytes[j];
-                            for (int j = 0; j < sizeof(float); j++)
-                                bytes[i + AltitudeOffset + j] = altToBytes[j];
+                            if (isAltitudeSet)
+                            {
+                                for (int j = 0; j < sizeof(float); j++)
+                                    bytes[i + AltitudeOffset + j] = altToBytes[j];
+                            }
                             break;
 
                         case EchoSounder:

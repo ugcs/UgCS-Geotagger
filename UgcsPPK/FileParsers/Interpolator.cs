@@ -11,32 +11,32 @@ namespace FileParsers
 
         public static event Action<int> OnOneHundredLinesReplaced;
 
-        public static List<IGeoCoordinates> CreatePpkCorrectedCoordinates(List<IGeoCoordinates> csvCoordinates, List<IGeoCoordinates> ppkCoordinates, int timeOffset, CancellationTokenSource token)
+        public static List<IGeoCoordinates> CreatePpkCorrectedCoordinates(List<IGeoCoordinates> ftuCoordinates, List<IGeoCoordinates> psfCoordinates, int timeOffset, CancellationTokenSource token)
         {
             var correctedTraces = new List<IGeoCoordinates>();
             if (timeOffset != 0)
             {
-                foreach (var c in ppkCoordinates)
+                foreach (var c in psfCoordinates)
                     c.TimeInMs += timeOffset;
             }
-            var min = ppkCoordinates.First().TimeInMs;
-            var max = ppkCoordinates.Last().TimeInMs;
+            var min = psfCoordinates.First().TimeInMs;
+            var max = psfCoordinates.Last().TimeInMs;
             var countOfReplacedLines = 0;
-            foreach (var coordinates in csvCoordinates)
+            foreach (var coordinates in ftuCoordinates)
             {
                 if (token.IsCancellationRequested)
                     break;
                 if (coordinates.TimeInMs < min || coordinates.TimeInMs > max)
                     continue;
-                var leftValue = ppkCoordinates.Last(c => c.TimeInMs <= coordinates.TimeInMs);
-                var leftBorderIndex = ppkCoordinates.IndexOf(leftValue);
-                leftBorderIndex -= leftBorderIndex == ppkCoordinates.Count - 1 ? 1 : 0;
+                var leftValue = psfCoordinates.Last(c => c.TimeInMs <= coordinates.TimeInMs);
+                var leftBorderIndex = psfCoordinates.IndexOf(leftValue);
+                leftBorderIndex -= leftBorderIndex == psfCoordinates.Count - 1 ? 1 : 0;
                 var rightBorderIndex = leftBorderIndex + 1;
-                if (ppkCoordinates[rightBorderIndex].TimeInMs - ppkCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
+                if (psfCoordinates[rightBorderIndex].TimeInMs - psfCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
                     continue;
-                coordinates.Latitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].Latitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                coordinates.Longitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].Longitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
-                coordinates.Altitude = Interpolate(coordinates.TimeInMs, ppkCoordinates[leftBorderIndex].Altitude, ppkCoordinates[rightBorderIndex].Altitude, ppkCoordinates[rightBorderIndex].TimeInMs, ppkCoordinates[leftBorderIndex].TimeInMs);
+                coordinates.Latitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Latitude, psfCoordinates[rightBorderIndex].Latitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
+                coordinates.Longitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Longitude, psfCoordinates[rightBorderIndex].Longitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
+                coordinates.Altitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Altitude, psfCoordinates[rightBorderIndex].Altitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
                 correctedTraces.Add(coordinates);
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)
@@ -45,7 +45,7 @@ namespace FileParsers
 
             if (timeOffset != 0)
             {
-                foreach (var c in ppkCoordinates)
+                foreach (var c in psfCoordinates)
                     c.TimeInMs -= timeOffset;
             }
             return correctedTraces;

@@ -51,6 +51,8 @@ namespace FileParsers.CSV
                     var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
+                    var alt = Template.DataMapping.Altitude?.Index != null &&
+                        Template.DataMapping.Altitude?.Index != -1 ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
                     var timestamp = ParseInt(Template.DataMapping.Timestamp, data[(int)Template.DataMapping.Timestamp.Index]);
                     var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
@@ -59,7 +61,7 @@ namespace FileParsers.CSV
                         if (firstDateTime != null)
                         {
                             var dateTime = firstDateTime.Value.AddMilliseconds(timestamp - timestampOfTheFirsDatetTime);
-                            coordinates.Add(new GeoCoordinates(dateTime, lat, lon, traceNumber));
+                            coordinates.Add(new GeoCoordinates(dateTime, lat, lon, alt, traceNumber));
                         }
                         else
                             continue;
@@ -71,7 +73,7 @@ namespace FileParsers.CSV
                             firstDateTime = date;
                             timestampOfTheFirsDatetTime = timestamp;
                         }
-                        coordinates.Add(new GeoCoordinates(date, lat, lon, traceNumber));
+                        coordinates.Add(new GeoCoordinates(date, lat, lon, alt, traceNumber));
                     }
                     traceCount++;
                 }
@@ -119,6 +121,8 @@ namespace FileParsers.CSV
                         {
                             data[(int)Template.DataMapping.Longitude.Index] = coordinate.Longitude.ToString(format);
                             data[(int)Template.DataMapping.Latitude.Index] = coordinate.Latitude.ToString(format);
+                            if (Template.DataMapping.Altitude?.Index != null && Template.DataMapping.Altitude.Index != -1)
+                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude.ToString(format);
                             data[(int)Template.DataMapping.Date.Index] = coordinate.DateTime.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
                             data[(int)Template.DataMapping.Time.Index] = coordinate.DateTime.ToString(Template.DataMapping.Time.Format, CultureInfo.InvariantCulture);
                             ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));

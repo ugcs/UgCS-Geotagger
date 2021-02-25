@@ -23,6 +23,8 @@
       header: Latitude
     longitude:
       header: Longitude
+    altitude:
+      header: Altitude
     time:
       header: Time
       format: 'HH:mm:ss.fff'  

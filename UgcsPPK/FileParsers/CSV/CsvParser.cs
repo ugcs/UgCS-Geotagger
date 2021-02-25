@@ -45,11 +45,13 @@ namespace FileParsers.CSV
                     var data = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None);
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
+                    var alt = Template.DataMapping.Altitude?.Index != null &&
+                        Template.DataMapping.Altitude?.Index != -1 ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
                     var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     traceCount++;
                     var date = ParseDateTime(data);
-                    coordinates.Add(new GeoCoordinates(date, lat, lon, traceNumber));
+                    coordinates.Add(new GeoCoordinates(date, lat, lon, alt, traceNumber));
                 }
             }
             return coordinates;
@@ -105,6 +107,8 @@ namespace FileParsers.CSV
                         {
                             data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
                             data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
+                            if (Template.DataMapping.Altitude?.Index != null && Template.DataMapping.Altitude.Index != -1)
+                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude.ToString(format);
                             ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }
@@ -139,6 +143,8 @@ namespace FileParsers.CSV
                 Template.DataMapping.Timestamp.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Timestamp.Header));
             if (Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Header != null)
                 Template.DataMapping.TraceNumber.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.TraceNumber.Header));
+            if (Template.DataMapping.Altitude != null && Template.DataMapping.Altitude.Header != null)
+                Template.DataMapping.Altitude.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Altitude.Header));
             if (Template.DataMapping.Latitude.Index == -1 || Template.DataMapping.Longitude.Index == -1)
                 throw new ColumnsMatchingException("Column names are not matched");
         }

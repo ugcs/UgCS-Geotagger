@@ -24,11 +24,12 @@ namespace FileParsers
             }
         }
 
-        public GeoCoordinates(DateTime dateTime, double latitide, double longitude, int traceNumber)
+        public GeoCoordinates(DateTime dateTime, double latitide, double longitude, double altitude, int traceNumber)
         {
             DateTime = dateTime;
             Latitude = latitide;
             Longitude = longitude;
+            Altitude = altitude;
             TraceNumber = traceNumber;
         }
 

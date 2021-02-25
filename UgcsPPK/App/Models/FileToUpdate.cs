@@ -15,6 +15,7 @@ namespace UgCSPPK.Models
 {
     public class FileToUpdate : DataFile
     {
+        private readonly bool isAltitudeSet = false;
         private CoveringStatus _coveringStatus = CoveringStatus.NotCovered;
 
         public CoveringStatus CoveringStatus
@@ -35,9 +36,11 @@ namespace UgCSPPK.Models
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
+            isAltitudeSet = template.DataMapping.Altitude?.Index != -1;
+            SegyParser = new SegYLogParser(isAltitudeSet);
         }
 
-        public SegYLogParser SegyParser { get; } = new SegYLogParser();
+        public SegYLogParser SegyParser { get; private set; }
 
         private void FindLinkedFile(string filePath)
         {
@@ -133,7 +136,7 @@ namespace UgCSPPK.Models
                     OnProcessingStatus?.Invoke($"Start Processing {Path.GetFileName(LinkedFile)}");
                     SegyParser.Parse(LinkedFile);
                     var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
-                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
+                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates,  source);
                     message += $"\n{Path.GetFileName(LinkedFile)}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
                     log.Info(message);
                     return Task.FromResult(message);
