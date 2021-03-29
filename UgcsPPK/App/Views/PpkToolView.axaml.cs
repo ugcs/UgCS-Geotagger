@@ -21,11 +21,14 @@ namespace UgCSPPK.Views
 
         private void OnDrop(object sender, DragEventArgs e)
         {
-            if (e.Source is StackPanel dragDropPanel)
+            this.Cursor = new Cursor(StandardCursorType.Wait);
+            var dragDropPanel = e.Source as Control;
+            var nameOfPanel = dragDropPanel?.Tag;
+            if (nameOfPanel != null)
             {
                 var files = e.Data.GetFileNames();
                 var dataContext = DataContext as PpkToolViewModel;
-                switch (dragDropPanel.Name)
+                switch (nameOfPanel)
                 {
                     case DataFile.PositionSolutionFileAbbr:
                         dataContext.AddFiles(files, DataFile.PositionSolutionFileAbbr);
@@ -36,9 +39,10 @@ namespace UgCSPPK.Views
                         break;
 
                     default:
-                        return;
+                        break;
                 }
             }
+            this.Cursor = new Cursor(StandardCursorType.Arrow);
         }
     }
 }

@@ -98,7 +98,10 @@ namespace UgCSPPK.ViewModels
         public PpkToolViewModel()
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
+            var dataGridSortDescription = DataGridSortDescription.FromPath("StartTime");
+            PositionSolutionFiles.SortDescriptions.Add(dataGridSortDescription);
             FilesToUpdate = new DataGridCollectionView(filesToUpdate);
+            FilesToUpdate.SortDescriptions.Add(dataGridSortDescription);
             Messages = new DataGridCollectionView(messages);
             CreateTemplates();
         }

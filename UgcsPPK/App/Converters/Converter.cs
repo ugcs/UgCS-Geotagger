@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data.Converters;
+using Avalonia.Input;
 using System;
 using System.Globalization;
 using System.IO;
@@ -52,6 +53,14 @@ namespace UgCSPPK.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (bool)value ? "Cancel" : "Process Files";
+        }
+    }
+
+    public class CursorConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? StandardCursorType.Wait : StandardCursorType.Arrow;
         }
     }
 }

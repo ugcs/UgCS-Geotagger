@@ -55,8 +55,21 @@
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
-    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Name="{x:Static model:DataFile.PositionSolutionFileAbbr}">  
-    <DataGrid Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
+    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}">  
+    <DataGrid Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Background="Transparent" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}" Height="200">
+    <DataGrid.Styles>
+    <Style Selector="Grid">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.PositionSolutionFileAbbr}"/>
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.PositionSolutionFileAbbr}"/>
+    </Style>
+    </DataGrid.Styles>
+
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name" Width="0.3*">
           <DataGridTemplateColumn.CellTemplate>
@@ -102,8 +115,20 @@
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}"></Button>
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
-    <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Name="{x:Static model:DataFile.FileToUpdateAbbr}">
-    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
+    <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Tag="{x:Static model:DataFile.FileToUpdateAbbr}">
+    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}" Height="200">
+        <DataGrid.Styles>
+    <Style Selector="Grid">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.FileToUpdateAbbr}"/>
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.FileToUpdateAbbr}"/>
+    </Style>
+    </DataGrid.Styles>
       <DataGrid.Columns>
         <DataGridTemplateColumn  Header="Name" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
