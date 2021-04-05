@@ -27,16 +27,16 @@
   # Mapping data from source file to data. Requierd fields (latitude, longitude, time and date or date-time)
   data-mapping:
     latitude:
-      header: ' Latitude [Decimal Degrees]'
+      header: 'Latitude [Decimal Degrees]'
     longitude:
-      header: ' Longitude [Decimal Degrees]'
+      header: 'Longitude [Decimal Degrees]'
     altitude:
-      header: ' Altitude [m]'
+      header: 'Altitude [m]'
     time:
-      header: ' GPSTime [hh:mm:ss.sss]'
+      header: 'GPSTime [hh:mm:ss.sss]'
       format: 'HH:mm:ss.fff'
     date:
-      header: ' GPSDate'
+      header: 'GPSDate'
       format: 'yyyy/MM/dd'
     timestamp:
       header: 'Timestamp [ms]'

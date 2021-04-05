@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using UgCSPPK.Models;
@@ -21,7 +23,6 @@ namespace UgCSPPK.Views
 
         private void OnDrop(object sender, DragEventArgs e)
         {
-            this.Cursor = new Cursor(StandardCursorType.Wait);
             var dragDropPanel = e.Source as Control;
             var nameOfPanel = dragDropPanel?.Tag;
             if (nameOfPanel != null)
@@ -42,7 +43,6 @@ namespace UgCSPPK.Views
                         break;
                 }
             }
-            this.Cursor = new Cursor(StandardCursorType.Arrow);
         }
     }
 }

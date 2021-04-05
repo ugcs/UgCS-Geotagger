@@ -54,7 +54,7 @@ namespace FileParsers.CSV
                     var alt = Template.DataMapping.Altitude?.Index != null &&
                         Template.DataMapping.Altitude?.Index != -1 ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
                     var timestamp = ParseInt(Template.DataMapping.Timestamp, data[(int)Template.DataMapping.Timestamp.Index]);
-                    var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
+                    var traceNumber = Template.DataMapping?.TraceNumber != null && Template.DataMapping.TraceNumber?.Index != -1 ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     var isRowHasTime = DateTime.TryParse(data[(int)Template.DataMapping.Time.Index], out _);
                     if (!isRowHasTime)

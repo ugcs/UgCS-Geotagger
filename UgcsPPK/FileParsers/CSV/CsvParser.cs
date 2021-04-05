@@ -47,7 +47,7 @@ namespace FileParsers.CSV
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
                     var alt = Template.DataMapping.Altitude?.Index != null &&
                         Template.DataMapping.Altitude?.Index != -1 && !string.IsNullOrEmpty(data[(int)Template.DataMapping.Altitude.Index]) ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
-                    var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
+                    var traceNumber = Template.DataMapping?.TraceNumber != null && Template.DataMapping.TraceNumber?.Index != -1 ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     traceCount++;
                     var date = ParseDateTime(data);

@@ -11,7 +11,8 @@
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
     <conv:FileNameConverter x:Key="FileNameConverter" />
     <conv:ProcessFilesButtonTextConverter x:Key="ProcessFilesButtonTextConverter" />
-    <conv:DateTimeFormatConverter x:Key="DateTimeFormatConverter" /> 
+    <conv:DateTimeFormatConverter x:Key="DateTimeFormatConverter" />
+    <conv:CursorConverter x:Key="CursorConverter" />
   </UserControl.Resources>
   <UserControl.Styles>
     <Style Selector="Button">
@@ -38,11 +39,9 @@
       <Setter Property="Content" Value="Remove"/>
       <Setter Property="Margin" Value="0 6 6 6"/>
     </Style>
-    <Style Selector="DataGrid">
-      <Setter Property="Margin" Value="12 6 6 6"/>
-    </Style>
-  </UserControl.Styles>
-  <Grid>
+      </UserControl.Styles>
+  
+  <Grid Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
@@ -54,10 +53,11 @@
       <RowDefinition Height="200" />
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-
+    <TextBlock Grid.Row="0" IsVisible="{Binding IsLongProcess}" Text="Loading.." Height="200" Width="200"></TextBlock>
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
-    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}">  
-    <DataGrid Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Background="Transparent" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}" Height="200">
+    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">  
+    <DataGrid Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Background="Transparent" Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}" Height="200"
+              Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">
     <DataGrid.Styles>
     <Style Selector="Grid">
       <Setter
@@ -117,7 +117,7 @@
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
     <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Tag="{x:Static model:DataFile.FileToUpdateAbbr}">
-    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}" Height="200">
+    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}" Height="200" Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">
         <DataGrid.Styles>
     <Style Selector="Grid">
       <Setter
@@ -199,7 +199,8 @@
       <TextBox Grid.Row="1" Grid.Column="4" Margin="0 6 6 6" Width="100" Text="{Binding TimeOffset}" FontSize="14"></TextBox>
       <Button Grid.Row="1" Grid.Column="5" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
       <ProgressBar  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="12 0 0 0"  Value="{Binding UpdatingFileProgressBarValue}"  IsVisible="{Binding IsProcessFiles}"></ProgressBar>
-      <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Items="{Binding Messages}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0 0 0 12">
+      <DataGrid Grid.Row="3" Grid.Column="0" Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}"
+                Grid.ColumnSpan="6" Items="{Binding Messages}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0 0 0 12">
         <DataGrid.Columns>
           <DataGridTemplateColumn  Header="Messages" Width="*" IsReadOnly="True"> 
             <DataGridTemplateColumn.CellTemplate>

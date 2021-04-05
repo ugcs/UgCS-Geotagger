@@ -25,7 +25,6 @@ namespace FileParsers.SegYLog
         private const short HourOffset = 160;
         private const short MinuteOffset = 162;
         private const short SecondOffset = 164;
-        private const short TimeCodeOffset = 166;
         private const short MSecondOffset = 168;
         private const short LongitudeGprOffset = 182;
         private const short LatitudeGprOffset = 190;

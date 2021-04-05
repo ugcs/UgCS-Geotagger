@@ -70,7 +70,7 @@ namespace UgCSPPK.Converters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? StandardCursorType.Wait : StandardCursorType.Arrow;
+            return (bool)value ? new Cursor(StandardCursorType.Wait) : new Cursor(StandardCursorType.Arrow);
         }
     }
 }

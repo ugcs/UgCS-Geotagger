@@ -34,7 +34,7 @@ namespace UgCSPPK.ViewModels
         private readonly List<Template> ftuTemplates = new List<Template>();
         private readonly ObservableCollection<string> messages = new ObservableCollection<string>();
         private CancellationTokenSource source;
-        private int fileToUpdateTotalLines;
+        private int totalProgressBarValue;
         public DataGridCollectionView FilesToUpdate { get; }
 
         public DataGridCollectionView PositionSolutionFiles { get; }
@@ -123,7 +123,7 @@ namespace UgCSPPK.ViewModels
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "Data files", Extensions = { "pos", "csv", "log" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "Data files", Extensions = { "pos", "csv", "log", "sgy" } });
             openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             AddFiles(chosenFiles, type);
@@ -393,17 +393,17 @@ namespace UgCSPPK.ViewModels
                 UpdatingFileProgressBarValue = 0.00;
                 IsProcessFiles = true;
                 source = new CancellationTokenSource();
-                fileToUpdateTotalLines = 0;
+                totalProgressBarValue = 0;
                 foreach (var ftu in filesToUpdate)
                 {
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
-                        fileToUpdateTotalLines += ftu.CalculateCountOfLines();
+                        totalProgressBarValue += ftu.CalculateCountOfLines();
                 }
                 foreach (var ftu in filesToUpdate)
                 {
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
                     {
-                        fileToUpdateTotalLines = ftu.Coordinates.Count;
+                        totalProgressBarValue = ftu.Coordinates.Count;
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced += UpdateProgressbar;
@@ -428,9 +428,9 @@ namespace UgCSPPK.ViewModels
             });
         }
 
-        private void UpdateProgressbar(int lines)
+        private void UpdateProgressbar(int value)
         {
-            UpdatingFileProgressBarValue = lines / (double)fileToUpdateTotalLines * 100;
+            UpdatingFileProgressBarValue = value / (double)totalProgressBarValue * 100;
         }
 
         private Template CreateSegyTemplate()
