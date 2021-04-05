@@ -2,6 +2,7 @@
 using FileParsers;
 using FileParsers.CSV;
 using FileParsers.FixedColumnWidth;
+using FileParsers.SegYLog;
 using FileParsers.Yaml;
 using log4net;
 using System;
@@ -26,6 +27,7 @@ namespace UgCSPPK.Models
         public DateTime EndTime { get; protected set; }
         public bool IsValid { get; protected set; }
         public Parser Parser { get; protected set; }
+        public FileType Type { get; protected set; }
 
         protected DataFile(string filePath, Template template)
         {
@@ -42,6 +44,7 @@ namespace UgCSPPK.Models
                         SetTypeOfFile(template);
                         SetStartTime(Coordinates);
                         SetEndTime(Coordinates);
+                        Type = template.FileType;
                         IsValid = true;
                     }
                     else
@@ -60,6 +63,7 @@ namespace UgCSPPK.Models
             {
                 FileType.ColumnsFixedWidth => new FixedColumnWidthParser(template),
                 FileType.CSV => cSVParsersFactory.CreateCSVParser(template),
+                FileType.Segy => new SegYLogParser(template),
                 _ => null,
             };
         }

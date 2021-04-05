@@ -9,49 +9,43 @@ using System.Threading;
 
 namespace FileParsers.SegYLog
 {
-    public class SegYLogParser : IGeoCoordinateParser
+    public class SegYLogParser : Parser
     {
-        private const int TextBytesOffset = 3200;
-        private const int SamplesPerTraceOffset = 3222;
-        private const int HeadersOffset = 3600;
-        private const int TraceNumberOffset = 8;
-        private const int AltitudeOffset = 40;
-        private const int ScalarOffset = 70;
-        private const int LongitudeOffset = 72;
-        private const int LatitudeOffset = 76;
-        private const int LongitudeGprOffset = 182;
-        private const int LatitudeGprOffset = 190;
-        private const int TraceHeaderOffset = 240;
-        private const int SecondsInDegree = 3600;
+        private const short TextBytesOffset = 3200;
+        private const short SamplesPerTraceOffset = 3222;
+        private const short SamplesFormatOffset = 3226;
+        private const short HeadersOffset = 3600;
+        private const short TraceNumberOffset = 0;
+        private const short AltitudeOffset = 40;
+        private const short ScalarOffset = 70;
+        private const short LongitudeOffset = 72;
+        private const short LatitudeOffset = 76;
+        private const short YearOffset = 156;
+        private const short DayOfYearOffset = 158;
+        private const short HourOffset = 160;
+        private const short MinuteOffset = 162;
+        private const short SecondOffset = 164;
+        private const short TimeCodeOffset = 166;
+        private const short MSecondOffset = 168;
+        private const short LongitudeGprOffset = 182;
+        private const short LatitudeGprOffset = 190;
+        private const short TraceHeaderOffset = 240;
+        private const short SecondsInDegree = 3600;
         private const string Gpr = "Georadar's settings information";
         private const string EchoSounder = "Echosounder's settings information";
         private const string Unknown = "Unknown";
         private readonly bool isAltitudeSet = false;
         public string PayloadType { get; private set; }
         public short TracesLength { get; private set; }
+        public int SampleFormatBytes { get; private set; }
 
-        private int _countOfReplacedLines;
-
-        public int CountOfReplacedLines
-        {
-            get => _countOfReplacedLines;
-            private set
-            {
-                _countOfReplacedLines = value;
-                if (CountOfReplacedLines % 100 == 0)
-                    OnOneHundredLinesReplaced?.Invoke(CountOfReplacedLines);
-            }
-        }
-
-        public event Action<int> OnOneHundredLinesReplaced;
-
-        public SegYLogParser(bool isAltitudeSet)
+        public SegYLogParser(Template template, bool isAltitudeSet) : base(template)
         {
             this.isAltitudeSet = isAltitudeSet;
         }
 
 
-        public List<IGeoCoordinates> Parse(string segyPath)
+        public override List<IGeoCoordinates> Parse(string segyPath)
         {
             if (!File.Exists(segyPath))
                 throw new FileNotFoundException($"File {segyPath} does not exist");
@@ -76,8 +70,10 @@ namespace FileParsers.SegYLog
             var coordinates = new List<IGeoCoordinates>();
             using (BinaryReader reader = new BinaryReader(File.Open(segyPath, FileMode.Open)))
             {
-                var data = reader.ReadBytes((int)reader.BaseStream.Length).Skip(HeadersOffset).ToArray();
-                for (int i = 0; i < data.Length; i += TraceHeaderOffset + TracesLength * 2)
+                var samples = (SegYSampleFormat)BitConverter.ToInt16(reader.ReadBytes(SamplesFormatOffset).Skip(SamplesFormatOffset - sizeof(short)).Take(sizeof(short)).ToArray(), 0);
+                SampleFormatBytes = samples == SegYSampleFormat.IbmFloat32BitFormat || samples == SegYSampleFormat.Integer32BitFormat ? 4 : 2;
+                var data = reader.ReadBytes((int)reader.BaseStream.Length).Skip(HeadersOffset - SamplesFormatOffset).ToArray();
+                for (int i = 0; i < data.Length; i += TraceHeaderOffset + TracesLength * SampleFormatBytes)
                 {
                     GeoCoordinates coordinate = PayloadType switch
                     {
@@ -104,7 +100,26 @@ namespace FileParsers.SegYLog
             var altitude = BitConverter.ToSingle(data, i + AltitudeOffset);
             var longitude = (BitConverter.ToDouble(data, i + LongitudeGprOffset) - BitConverter.ToDouble(data, i + LongitudeGprOffset) % 1 / 60) / 100f;
             var latitude = (BitConverter.ToDouble(data, i + LatitudeGprOffset) - BitConverter.ToDouble(data, i + LatitudeGprOffset) % 1 / 60) / 100f;
-            return new GeoCoordinates(latitude, longitude, altitude);
+            var traceNumber = BitConverter.ToInt32(data, i + TraceNumberOffset);
+            var year = BitConverter.ToInt16(data, i + YearOffset);
+            var dayOfYear = BitConverter.ToInt16(data, i + DayOfYearOffset);
+            var hours = BitConverter.ToInt16(data, i + HourOffset);
+            var minutes = BitConverter.ToInt16(data, i + MinuteOffset);
+            var seconds = BitConverter.ToInt16(data, i + SecondOffset);
+            var mSeconds = BitConverter.ToInt16(data, i + MSecondOffset);
+            if (IsTimeParameterValid(year, 0, DateTime.Now.Year + 1) && IsTimeParameterValid(dayOfYear, 0, 367)
+                && IsTimeParameterValid(hours, -1, 24) && IsTimeParameterValid(minutes, -1, 59) && IsTimeParameterValid(seconds, -1, 59)
+                && IsTimeParameterValid(mSeconds, -1, 1000))
+            {
+                var date = new DateTime(year, 1, 1);
+                date = date.AddDays(dayOfYear - 1);
+                date = date.AddHours(hours);
+                date = date.AddMinutes(minutes);
+                date = date.AddSeconds(seconds);
+                date = date.AddMilliseconds(mSeconds);
+                return new GeoCoordinates(date, latitude, longitude, altitude, traceNumber);
+            }
+            else return new GeoCoordinates(latitude, longitude, altitude, traceNumber);
         }
 
         private double ConvertToGrpFormat(double value)
@@ -122,7 +137,7 @@ namespace FileParsers.SegYLog
             return BitConverter.ToInt32(data, i);
         }
 
-        public Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             var result = new Result();
             var startPosition = HeadersOffset;
@@ -131,7 +146,7 @@ namespace FileParsers.SegYLog
             byte[] lonToBytes;
             byte[] latToBytes;
             byte[] altToBytes;
-            for (int i = startPosition; i < bytes.Length; i += TraceHeaderOffset + TracesLength * 2)
+            for (int i = startPosition; i < bytes.Length; i += TraceHeaderOffset + TracesLength * SampleFormatBytes)
             {
                 if (token.IsCancellationRequested)
                     break;
@@ -183,7 +198,12 @@ namespace FileParsers.SegYLog
             return result;
         }
 
-        public SegYLogParser()
+        private bool IsTimeParameterValid(int value, int min, int max)
+        {
+            return value > min && value < max;
+        }
+
+        public SegYLogParser(Template template) : base(template)
         {
         }
     }

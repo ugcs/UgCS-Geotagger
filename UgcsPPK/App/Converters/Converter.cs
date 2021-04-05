@@ -56,6 +56,16 @@ namespace UgCSPPK.Converters
         }
     }
 
+    public class DateTimeFormatConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var dateTime = (DateTime)value;
+            return dateTime.ToString("dd.MM.yyyy HH:mm:ss.fff");
+        }
+    }
+
+
     public class CursorConverter : Converter
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)

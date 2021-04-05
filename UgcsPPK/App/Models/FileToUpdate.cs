@@ -36,14 +36,16 @@ namespace UgCSPPK.Models
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
-            isAltitudeSet = template.DataMapping.Altitude?.Index != -1;
-            SegyParser = new SegYLogParser(isAltitudeSet);
+            isAltitudeSet = template.DataMapping?.Altitude?.Index != -1;
+            SegyParser = new SegYLogParser(template, isAltitudeSet);
         }
 
         public SegYLogParser SegyParser { get; private set; }
 
         private void FindLinkedFile(string filePath)
         {
+            if (Type == FileType.Segy || Type == FileType.Unknown)
+                return;
             try
             {
                 var directory = Path.GetDirectoryName(filePath);
@@ -75,13 +77,15 @@ namespace UgCSPPK.Models
         {
             if (psfFiles.Count == 0)
                 return;
-            var minTime = psfFiles.Min(f => f.StartTime);
-            var maxTime = psfFiles.Max(f => f.EndTime);
+
             foreach (var f in psfFiles)
             {
                 if ((f.StartTime <= StartTime && f.EndTime >= EndTime) || (f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime) || (StartTime <= f.StartTime && f.EndTime <= EndTime))
                     CoverageFiles.Add(f);
             }
+
+            var minTime = CoverageFiles.Count > 0 ? CoverageFiles.Min(f => f.StartTime) : DateTime.Now;
+            var maxTime = CoverageFiles.Count > 0 ? CoverageFiles.Max(f => f.EndTime) : DateTime.Now;
             if (CoverageFiles.Count > 0 && minTime <= StartTime && maxTime >= EndTime)
                 CoveringStatus = CoveringStatus.Covered;
             else if (CoverageFiles.Count > 0)
@@ -136,7 +140,7 @@ namespace UgCSPPK.Models
                     OnProcessingStatus?.Invoke($"Start Processing {Path.GetFileName(LinkedFile)}");
                     SegyParser.Parse(LinkedFile);
                     var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
-                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates,  source);
+                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
                     message += $"\n{Path.GetFileName(LinkedFile)}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
                     log.Info(message);
                     return Task.FromResult(message);

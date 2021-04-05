@@ -46,7 +46,7 @@ namespace FileParsers.CSV
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
                     var alt = Template.DataMapping.Altitude?.Index != null &&
-                        Template.DataMapping.Altitude?.Index != -1 ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
+                        Template.DataMapping.Altitude?.Index != -1 && !string.IsNullOrEmpty(data[(int)Template.DataMapping.Altitude.Index]) ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
                     var traceNumber = Template.DataMapping.TraceNumber != null && Template.DataMapping.TraceNumber.Index != null ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     traceCount++;
@@ -130,7 +130,7 @@ namespace FileParsers.CSV
         protected void FindIndexesByHeaders(string line)
         {
             List<string> headers;
-            headers = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None).ToList();
+            headers = line.Split(new[] { Template.Format.Separator }, StringSplitOptions.None).Select(header => header.TrimEnd().TrimStart()).ToList();
             Template.DataMapping.Latitude.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Latitude.Header));
             Template.DataMapping.Longitude.Index = headers.FindIndex(h => h.Equals(Template.DataMapping.Longitude.Header));
             if (Template.DataMapping.Date != null && Template.DataMapping.Date.Header != null)

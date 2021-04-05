@@ -47,11 +47,12 @@ namespace FileParsers
             Longitude = longitude;
         }
 
-        public GeoCoordinates(double latitide, double longitude, double altitude)
+        public GeoCoordinates(double latitide, double longitude, double altitude, int traceNumber)
         {
             Latitude = latitide;
             Longitude = longitude;
             Altitude = altitude;
+            TraceNumber = traceNumber;
         }
 
         public GeoCoordinates()

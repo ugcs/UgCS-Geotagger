@@ -73,6 +73,17 @@ namespace UgCSPPK.ViewModels
             }
         }
 
+        private bool _isLongProcess = false;
+
+        public bool IsLongProcess
+        {
+            get => _isLongProcess;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isLongProcess, value);
+            }
+        }
+
         private double _updatingFileProgressBarValue = 0.00;
 
         public double UpdatingFileProgressBarValue
@@ -123,6 +134,7 @@ namespace UgCSPPK.ViewModels
         {
             if (files != null)
             {
+                IsLongProcess = true;
                 foreach (var file in files)
                 {
                     Template template = fileType switch
@@ -158,6 +170,7 @@ namespace UgCSPPK.ViewModels
                         messages.Add($"Template for {file} was not found");
                 }
                 GetLastOpenedDirectory(files.FirstOrDefault() ?? "");
+                IsLongProcess = false;
             }
         }
 
@@ -195,6 +208,7 @@ namespace UgCSPPK.ViewModels
             if (isDialogOpen)
                 return;
             isDialogOpen = true;
+            IsLongProcess = true;
             OpenFolderDialog openDialog = new OpenFolderDialog
             {
                 Directory = ""
@@ -244,6 +258,7 @@ namespace UgCSPPK.ViewModels
                 }
                 GetLastOpenedDirectory(folder);
             }
+            IsLongProcess = false;
             isDialogOpen = false;
         }
 
@@ -319,6 +334,7 @@ namespace UgCSPPK.ViewModels
                     nonValidTemplates.Add(file);
                 }
             }
+            ftuTemplates.Add(CreateSegyTemplate());
             messages.Add($"Valid Templates: {ftuTemplates.Count + psfTemplates.Count}, Invalid Templates: {nonValidTemplates.Count}");
             foreach (var t in nonValidTemplates)
                 messages.Add($"Template {t} is not valid");
@@ -326,6 +342,8 @@ namespace UgCSPPK.ViewModels
 
         public Template FindTemplate(List<Template> templates, string file)
         {
+            if (file.EndsWith(".sgy"))
+                return templates.First(t => t.FileType == FileType.Segy);
             foreach (var t in templates)
             {
                 try
@@ -413,6 +431,16 @@ namespace UgCSPPK.ViewModels
         private void UpdateProgressbar(int lines)
         {
             UpdatingFileProgressBarValue = lines / (double)fileToUpdateTotalLines * 100;
+        }
+
+        private Template CreateSegyTemplate()
+        {
+            return new Template()
+            {
+                Code = "Segy",
+                FileType = FileType.Segy,
+                Name = "Segy"
+            };
         }
 
         public void CancelProcessing()

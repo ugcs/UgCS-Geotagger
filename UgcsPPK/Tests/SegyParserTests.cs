@@ -16,7 +16,7 @@ namespace Tests
         [Test]
         public void TestValidSegy()
         {
-            var parser = new SegYLogParser();
+            var parser = new SegYLogParser(null);
             try
             {
                 var result = parser.Parse(Path.GetFullPath(SegyTestDataFolder + "2020-07-29-14-37-42-gpr.sgy"));
@@ -31,7 +31,7 @@ namespace Tests
         [Test]
         public void TestUnknownSegy()
         {
-            var parser = new SegYLogParser();
+            var parser = new SegYLogParser(null);
             try
             {
                 var result = parser.Parse(Path.GetFullPath(SegyTestDataFolder + "2020-07-29-14-37-42-unknown.sgy"));

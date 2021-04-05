@@ -11,6 +11,7 @@
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
     <conv:FileNameConverter x:Key="FileNameConverter" />
     <conv:ProcessFilesButtonTextConverter x:Key="ProcessFilesButtonTextConverter" />
+    <conv:DateTimeFormatConverter x:Key="DateTimeFormatConverter" /> 
   </UserControl.Resources>
   <UserControl.Styles>
     <Style Selector="Button">
@@ -88,14 +89,14 @@
         <DataGridTemplateColumn  Header="Start Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding StartTime}" Margin="0 0 0 12"/>
+              <TextBlock Text="{Binding StartTime, Converter={StaticResource DateTimeFormatConverter}}" Margin="0 0 0 12"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="End Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding EndTime}" Margin="0 0 0 12"/>
+              <TextBlock Text="{Binding EndTime, Converter={StaticResource DateTimeFormatConverter}}" Margin="0 0 0 12"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -154,14 +155,14 @@
         <DataGridTemplateColumn  Header="Start Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding StartTime}"/>
+              <TextBlock Text="{Binding StartTime, Converter={StaticResource DateTimeFormatConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="End Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding EndTime}"/>
+              <TextBlock Text="{Binding EndTime, Converter={StaticResource DateTimeFormatConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
