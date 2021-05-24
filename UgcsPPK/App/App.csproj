@@ -29,7 +29,7 @@
     <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\1-SkyhubWithDateInNameRTK.yaml">
+    <None Update="Mapping\FTUTemplates\1-SkyhubWithDateInColumnRTK.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\2-SkyhubWithDateInName.yaml">
