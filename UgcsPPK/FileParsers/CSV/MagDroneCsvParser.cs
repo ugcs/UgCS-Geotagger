@@ -43,7 +43,7 @@ namespace FileParsers.CSV
                 format.NumberFormat.NumberDecimalSeparator = Template.Format.DecimalSeparator;
                 var traceCount = 0;
                 DateTime? firstDateTime = null;
-                var timestampOfTheFirsDatetTime = 0;
+                var timestampOfTheFirstDatetTime = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (line.StartsWith(Template.Format.CommentPrefix))
@@ -60,7 +60,7 @@ namespace FileParsers.CSV
                     if (!isRowHasTime)
                         if (firstDateTime != null)
                         {
-                            var dateTime = firstDateTime.Value.AddMilliseconds(timestamp - timestampOfTheFirsDatetTime);
+                            var dateTime = firstDateTime.Value.AddMilliseconds(timestamp.Value - timestampOfTheFirstDatetTime);
                             coordinates.Add(new GeoCoordinates(dateTime, lat, lon, alt, traceNumber));
                         }
                         else
@@ -71,7 +71,7 @@ namespace FileParsers.CSV
                         if (firstDateTime == null)
                         {
                             firstDateTime = date;
-                            timestampOfTheFirsDatetTime = timestamp;
+                            timestampOfTheFirstDatetTime = timestamp.Value;
                         }
                         coordinates.Add(new GeoCoordinates(date, lat, lon, alt, traceNumber));
                     }
@@ -119,12 +119,12 @@ namespace FileParsers.CSV
                         var coordinateFound = dict.TryGetValue(traceNumber, out IGeoCoordinates coordinate);
                         if (coordinateFound)
                         {
-                            data[(int)Template.DataMapping.Longitude.Index] = coordinate.Longitude.ToString(format);
-                            data[(int)Template.DataMapping.Latitude.Index] = coordinate.Latitude.ToString(format);
+                            data[(int)Template.DataMapping.Longitude.Index] = coordinate.Longitude?.ToString(format);
+                            data[(int)Template.DataMapping.Latitude.Index] = coordinate.Latitude?.ToString(format);
                             if (Template.DataMapping.Altitude?.Index != null && Template.DataMapping.Altitude.Index != -1)
-                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude.ToString(format);
-                            data[(int)Template.DataMapping.Date.Index] = coordinate.DateTime.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
-                            data[(int)Template.DataMapping.Time.Index] = coordinate.DateTime.ToString(Template.DataMapping.Time.Format, CultureInfo.InvariantCulture);
+                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude?.ToString(format);
+                            data[(int)Template.DataMapping.Date.Index] = coordinate.DateTime?.ToString(Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
+                            data[(int)Template.DataMapping.Time.Index] = coordinate.DateTime?.ToString(Template.DataMapping.Time.Format, CultureInfo.InvariantCulture);
                             ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }

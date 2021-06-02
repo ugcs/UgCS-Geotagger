@@ -167,7 +167,7 @@ namespace UgCSPPK.ViewModels
                         }
                     }
                     else
-                        messages.Add($"Template for {file} was not found");
+                        messages.Add($"Template for {file} was not found or {file} being used by another process");
                 }
                 GetLastOpenedDirectory(files.FirstOrDefault() ?? "");
                 IsLongProcess = false;

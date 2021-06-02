@@ -4,14 +4,14 @@ namespace FileParsers
 {
     public class GeoCoordinates : IGeoCoordinates
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double Altitude { get; set; }
-        public double TimeInMs { get; set; }
-        public int TraceNumber { get; set; }
-        private DateTime _dateTime;
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Altitude { get; set; }
+        public double? TimeInMs { get; set; }
+        public int? TraceNumber { get; set; }
+        private DateTime? _dateTime;
 
-        public DateTime DateTime
+        public DateTime? DateTime
         {
             get
             {
@@ -20,11 +20,11 @@ namespace FileParsers
             set
             {
                 _dateTime = value;
-                TimeInMs = _dateTime.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                TimeInMs = _dateTime.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             }
         }
 
-        public GeoCoordinates(DateTime dateTime, double latitide, double longitude, double altitude, int traceNumber)
+        public GeoCoordinates(DateTime? dateTime, double? latitide, double? longitude, double? altitude, int? traceNumber)
         {
             DateTime = dateTime;
             Latitude = latitide;
@@ -33,7 +33,7 @@ namespace FileParsers
             TraceNumber = traceNumber;
         }
 
-        public GeoCoordinates(DateTime date, double latitide, double longitude, double altitude)
+        public GeoCoordinates(DateTime? date, double? latitide, double? longitude, double? altitude)
         {
             DateTime = date;
             Latitude = latitide;
@@ -41,13 +41,13 @@ namespace FileParsers
             Altitude = altitude;
         }
 
-        public GeoCoordinates(double latitide, double longitude)
+        public GeoCoordinates(double? latitide, double? longitude)
         {
             Latitude = latitide;
             Longitude = longitude;
         }
 
-        public GeoCoordinates(double latitide, double longitude, double altitude, int traceNumber)
+        public GeoCoordinates(double? latitide, double? longitude, double? altitude, int? traceNumber)
         {
             Latitude = latitide;
             Longitude = longitude;

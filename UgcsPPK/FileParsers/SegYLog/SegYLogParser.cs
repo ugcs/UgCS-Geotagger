@@ -33,16 +33,9 @@ namespace FileParsers.SegYLog
         private const string Gpr = "Georadar's settings information";
         private const string EchoSounder = "Echosounder's settings information";
         private const string Unknown = "Unknown";
-        private readonly bool isAltitudeSet = false;
         public string PayloadType { get; private set; }
         public short TracesLength { get; private set; }
         public int SampleFormatBytes { get; private set; }
-
-        public SegYLogParser(Template template, bool isAltitudeSet) : base(template)
-        {
-            this.isAltitudeSet = isAltitudeSet;
-        }
-
 
         public override List<IGeoCoordinates> Parse(string segyPath)
         {
@@ -156,33 +149,48 @@ namespace FileParsers.SegYLog
                     switch (PayloadType)
                     {
                         case Gpr:
-                            lonToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Longitude));
-                            latToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Latitude));
-                            for (int j = 0; j < sizeof(double); j++)
-                                bytes[i + LongitudeGprOffset + j] = lonToBytes[j];
-                            for (int j = 0; j < sizeof(double); j++)
-                                bytes[i + LatitudeGprOffset + j] = latToBytes[j];
-                            lonToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Longitude));
-                            latToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Latitude));
-                            altToBytes = BitConverter.GetBytes((float)coordinate.Altitude);
-                            for (int j = 0; j < sizeof(float); j++)
-                                bytes[i + LongitudeOffset + j] = lonToBytes[j];
-                            for (int j = 0; j < sizeof(float); j++)
-                                bytes[i + LatitudeOffset + j] = latToBytes[j];
-                            if (isAltitudeSet)
+                            if (coordinate.Longitude.HasValue)
                             {
+                                lonToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Longitude.Value));
+                                for (int j = 0; j < sizeof(double); j++)
+                                    bytes[i + LongitudeGprOffset + j] = lonToBytes[j];
+                                lonToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Longitude.Value));
+                                for (int j = 0; j < sizeof(float); j++)
+                                    bytes[i + LongitudeOffset + j] = lonToBytes[j];
+                            }
+
+                            if (coordinate.Latitude.HasValue)
+                            {
+                                latToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Latitude.Value));
+                                for (int j = 0; j < sizeof(double); j++)
+                                    bytes[i + LatitudeGprOffset + j] = latToBytes[j];
+                                latToBytes = BitConverter.GetBytes((float)ConvertToGrpFormat(coordinate.Latitude.Value));
+                                for (int j = 0; j < sizeof(float); j++)
+                                    bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            }
+
+                            if (coordinate.Altitude.HasValue)
+                            {
+                                altToBytes = BitConverter.GetBytes((float)coordinate.Altitude);
                                 for (int j = 0; j < sizeof(float); j++)
                                     bytes[i + AltitudeOffset + j] = altToBytes[j];
                             }
                             break;
 
                         case EchoSounder:
-                            lonToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Longitude));
-                            latToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Latitude));
-                            for (int j = 0; j < sizeof(int); j++)
-                                bytes[i + LongitudeOffset + j] = lonToBytes[j];
-                            for (int j = 0; j < sizeof(int); j++)
-                                bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            if (coordinate.Longitude.HasValue)
+                            {
+                                lonToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Longitude.Value));
+                                for (int j = 0; j < sizeof(int); j++)
+                                    bytes[i + LongitudeOffset + j] = lonToBytes[j];
+                            }
+
+                            if (coordinate.Latitude.HasValue)
+                            {
+                                latToBytes = BitConverter.GetBytes(ConvertToEchoSounderFormat(coordinate.Latitude.Value));
+                                for (int j = 0; j < sizeof(int); j++)
+                                    bytes[i + LatitudeOffset + j] = latToBytes[j];
+                            }
                             break;
 
                         default:

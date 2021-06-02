@@ -40,7 +40,7 @@ namespace FileParsers.FixedColumnWidth
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
                     var alt = Template.DataMapping.Altitude?.Index != null ?
-                        ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
+                        ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : null;
                     coordinates.Add(new GeoCoordinates(date, lat, lon, alt));
                 }
             }

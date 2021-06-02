@@ -77,7 +77,7 @@ namespace UgCSPPK.Models
         {
             try
             {
-                StartTime = posLogData.Min(d => d.DateTime);
+                StartTime = posLogData.Min(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {
@@ -89,7 +89,7 @@ namespace UgCSPPK.Models
         {
             try
             {
-                EndTime = posLogData.Max(d => d.DateTime);
+                EndTime = posLogData.Max(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {

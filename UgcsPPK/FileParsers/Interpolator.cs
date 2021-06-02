@@ -19,8 +19,8 @@ namespace FileParsers
                 foreach (var c in psfCoordinates)
                     c.TimeInMs += timeOffset;
             }
-            var min = psfCoordinates.First().TimeInMs;
-            var max = psfCoordinates.Last().TimeInMs;
+            var min = psfCoordinates.Min(c => c.TimeInMs);
+            var max = psfCoordinates.Max(c => c.TimeInMs);
             var countOfReplacedLines = 0;
             foreach (var coordinates in ftuCoordinates)
             {
@@ -34,9 +34,17 @@ namespace FileParsers
                 var rightBorderIndex = leftBorderIndex + 1;
                 if (psfCoordinates[rightBorderIndex].TimeInMs - psfCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
                     continue;
-                coordinates.Latitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Latitude, psfCoordinates[rightBorderIndex].Latitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
-                coordinates.Longitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Longitude, psfCoordinates[rightBorderIndex].Longitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
-                coordinates.Altitude = Interpolate(coordinates.TimeInMs, psfCoordinates[leftBorderIndex].Altitude, psfCoordinates[rightBorderIndex].Altitude, psfCoordinates[rightBorderIndex].TimeInMs, psfCoordinates[leftBorderIndex].TimeInMs);
+                if (coordinates.TimeInMs.HasValue && psfCoordinates[leftBorderIndex].Latitude.HasValue && psfCoordinates[rightBorderIndex].Latitude.HasValue
+                    && coordinates.TimeInMs.HasValue && psfCoordinates[leftBorderIndex].Longitude.HasValue && psfCoordinates[rightBorderIndex].Longitude.HasValue && psfCoordinates[rightBorderIndex].TimeInMs.HasValue && psfCoordinates[leftBorderIndex].TimeInMs.HasValue)
+                {
+                    coordinates.Latitude = Interpolate(coordinates.TimeInMs.Value, psfCoordinates[leftBorderIndex].Latitude.Value, psfCoordinates[rightBorderIndex].Latitude.Value, psfCoordinates[leftBorderIndex].TimeInMs.Value, psfCoordinates[rightBorderIndex].TimeInMs.Value);
+                    coordinates.Longitude = Interpolate(coordinates.TimeInMs.Value, psfCoordinates[leftBorderIndex].Longitude.Value, psfCoordinates[rightBorderIndex].Longitude.Value, psfCoordinates[leftBorderIndex].TimeInMs.Value, psfCoordinates[rightBorderIndex].TimeInMs.Value);
+                }
+                else
+                    continue;
+                    
+                if (coordinates.TimeInMs.HasValue && psfCoordinates[leftBorderIndex].Altitude.HasValue && psfCoordinates[rightBorderIndex].Altitude.HasValue && psfCoordinates[leftBorderIndex].TimeInMs.HasValue && psfCoordinates[rightBorderIndex].TimeInMs.HasValue)
+                    coordinates.Altitude = Interpolate(coordinates.TimeInMs.Value, psfCoordinates[leftBorderIndex].Altitude.Value, psfCoordinates[rightBorderIndex].Altitude.Value, psfCoordinates[leftBorderIndex].TimeInMs.Value, psfCoordinates[rightBorderIndex].TimeInMs.Value);
                 correctedTraces.Add(coordinates);
                 countOfReplacedLines++;
                 if (countOfReplacedLines % 100 == 0)

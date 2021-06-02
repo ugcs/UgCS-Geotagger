@@ -46,7 +46,7 @@ namespace FileParsers.CSV
                     var lat = ParseDouble(Template.DataMapping.Latitude, data[(int)Template.DataMapping.Latitude.Index]);
                     var lon = ParseDouble(Template.DataMapping.Longitude, data[(int)Template.DataMapping.Longitude.Index]);
                     var alt = Template.DataMapping.Altitude?.Index != null &&
-                        Template.DataMapping.Altitude?.Index != -1 && !string.IsNullOrEmpty(data[(int)Template.DataMapping.Altitude.Index]) ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : 0.00;
+                        Template.DataMapping.Altitude?.Index != -1 && !string.IsNullOrEmpty(data[(int)Template.DataMapping.Altitude.Index]) ? ParseDouble(Template.DataMapping.Altitude, data[(int)Template.DataMapping.Altitude.Index]) : null;
                     var traceNumber = Template.DataMapping?.TraceNumber != null && Template.DataMapping.TraceNumber?.Index != -1 ?
                         ParseInt(Template.DataMapping.TraceNumber, data[(int)Template.DataMapping.TraceNumber.Index]) : traceCount;
                     traceCount++;
@@ -105,10 +105,10 @@ namespace FileParsers.CSV
                         var coordinateFound = dict.TryGetValue(traceNumber, out IGeoCoordinates coordinate);
                         if (coordinateFound)
                         {
-                            data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude.ToString(format);
-                            data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude.ToString(format);
+                            data[(int)Template.DataMapping.Longitude.Index] = dict[traceNumber].Longitude?.ToString(format);
+                            data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude?.ToString(format);
                             if (Template.DataMapping.Altitude?.Index != null && Template.DataMapping.Altitude.Index != -1)
-                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude.ToString(format);
+                                data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude?.ToString(format);
                             ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }

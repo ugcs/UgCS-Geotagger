@@ -15,7 +15,6 @@ namespace UgCSPPK.Models
 {
     public class FileToUpdate : DataFile
     {
-        private readonly bool isAltitudeSet = false;
         private CoveringStatus _coveringStatus = CoveringStatus.NotCovered;
 
         public CoveringStatus CoveringStatus
@@ -36,8 +35,7 @@ namespace UgCSPPK.Models
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
-            isAltitudeSet = template.DataMapping?.Altitude?.Index != -1;
-            SegyParser = new SegYLogParser(template, isAltitudeSet);
+            SegyParser = new SegYLogParser(template);
         }
 
         public SegYLogParser SegyParser { get; private set; }
