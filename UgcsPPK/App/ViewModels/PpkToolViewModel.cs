@@ -40,28 +40,6 @@ namespace UgCSPPK.ViewModels
         public DataGridCollectionView PositionSolutionFiles { get; }
         public DataGridCollectionView Messages { get; }
 
-        private PositioningSolutionFile _selectedPositioningSolutionFile;
-
-        public PositioningSolutionFile SelectedPositioningSolutionFile
-        {
-            get => _selectedPositioningSolutionFile;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _selectedPositioningSolutionFile, value);
-            }
-        }
-
-        private FileToUpdate _selectedFileToUpdate;
-
-        public FileToUpdate SelectedFileToUpdate
-        {
-            get => _selectedFileToUpdate;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _selectedFileToUpdate, value);
-            }
-        }
-
         private bool _isProcessFiles = false;
 
         public bool IsProcessFiles
@@ -176,15 +154,19 @@ namespace UgCSPPK.ViewModels
 
         private void RemovePositioningSolutionFile()
         {
-            if (PositionSolutionFiles.Contains(SelectedPositioningSolutionFile))
+            foreach (var psf in positioningSolutionFiles.ToList())
             {
-                foreach (var f in filesToUpdate)
+                if (psf.IsSelected)
                 {
-                    if (f.CoverageFiles.Contains(SelectedPositioningSolutionFile))
-                        f.UnsetCoverageFile(SelectedPositioningSolutionFile);
+                    foreach (var ftu in filesToUpdate)
+                    {
+                        if (ftu.CoverageFiles.Contains(psf))
+                            ftu.UnsetCoverageFile(psf);
+                    }
+                    PositionSolutionFiles.Remove(psf);
                 }
-                PositionSolutionFiles.Remove(SelectedPositioningSolutionFile);
             }
+
             foreach (var f in filesToUpdate)
             {
                 f.CheckCoveringStatus(positioningSolutionFiles.ToList());
@@ -193,8 +175,9 @@ namespace UgCSPPK.ViewModels
 
         private void RemoveFileToUpdate()
         {
-            if (FilesToUpdate.Contains(SelectedFileToUpdate))
-                FilesToUpdate.Remove(SelectedFileToUpdate);
+            foreach (var ftu in filesToUpdate.ToList())
+                if (ftu.IsSelected)
+                    FilesToUpdate.Remove(ftu);
         }
 
         private void Clear()

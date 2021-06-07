@@ -5,6 +5,7 @@ using FileParsers.FixedColumnWidth;
 using FileParsers.SegYLog;
 using FileParsers.Yaml;
 using log4net;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,17 @@ namespace UgCSPPK.Models
         public bool IsValid { get; protected set; }
         public Parser Parser { get; protected set; }
         public FileType Type { get; protected set; }
+
+        private bool _isSelected = false;
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isSelected, value);
+            }
+        }
 
         protected DataFile(string filePath, Template template)
         {
