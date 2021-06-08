@@ -11,7 +11,7 @@ namespace FileParsers
 
         public static event Action<int> OnOneHundredLinesReplaced;
 
-        public static List<IGeoCoordinates> CreatePpkCorrectedCoordinates(List<IGeoCoordinates> ftuCoordinates, List<IGeoCoordinates> psfCoordinates, int timeOffset, CancellationTokenSource token)
+        public static List<IGeoCoordinates> CreateCorrectedCoordinates(List<IGeoCoordinates> ftuCoordinates, List<IGeoCoordinates> psfCoordinates, int timeOffset, CancellationTokenSource token)
         {
             var correctedTraces = new List<IGeoCoordinates>();
             if (timeOffset != 0)

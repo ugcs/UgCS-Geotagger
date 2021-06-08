@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace UgCSPPK.Models
+namespace UgCSGeotagger.Models
 {
     public class DataFile : ViewModelBase, IDataFile
     {

@@ -11,7 +11,7 @@
         Background="{DynamicResource MainWindowColor}"
         BorderBrush="{DynamicResource MainWindowColor}"
         Height="600"
-        Icon="avares://ugcs-ppk/Assets/ugcs-logo-32.ico"
+        Icon="avares://ugcs-geotagger/Assets/ugcs-logo-32.ico"
         Title="UgCS Geotagger">
   <UserControl  Content="{Binding Content}"></UserControl>
 </Window>

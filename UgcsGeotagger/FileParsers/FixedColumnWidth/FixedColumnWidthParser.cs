@@ -47,7 +47,7 @@ namespace FileParsers.FixedColumnWidth
             return coordinates;
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreateFileWithCorrectedCoordinates(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             return new Result();
         }

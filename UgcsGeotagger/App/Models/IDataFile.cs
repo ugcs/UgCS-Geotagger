@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UgCSPPK.Models
+namespace UgCSGeotagger.Models
 {
     public interface IDataFile
     {

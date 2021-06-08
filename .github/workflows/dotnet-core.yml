@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      SOLUTION_FOLDER: UgcsPPK
+      SOLUTION_FOLDER: UgcsGeotagger
       APP_FOLDER: App
       APP_NAME: ugcs-geotagger
       TESTS_FOLDER: Tests
@@ -50,24 +50,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: UgcsPPK/App/*.zip
-
-  build_documentation:
-    runs-on: ubuntu-latest
-    container: docker://ugcs/doker:latest 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Creating documentation
-      run: |
-        chmod +x ./Documentation/scripts/install-fonts.sh
-        ./Documentation/scripts/install-fonts.sh
-        chmod +x ./Documentation/scripts/generate-pdf.sh
-        ./Documentation/scripts/generate-pdf.sh
-    - name: Uploading artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ugcs-ppk-documentation
-        path: Documentation/pdf/*.pdf
+        path: UgcsGeotagger/App/*.zip
     
 
 

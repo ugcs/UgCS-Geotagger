@@ -14,15 +14,15 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using UgCSPPK.Models;
-using UgCSPPK.Views;
+using UgCSGeotagger.Models;
+using UgCSGeotagger.Views;
 using YamlDotNet.Serialization;
 
-namespace UgCSPPK.ViewModels
+namespace UgCSGeotagger.ViewModels
 {
-    public class PpkToolViewModel : ViewModelBase
+    public class GeotaggerToolViewModel : ViewModelBase
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(PpkToolViewModel));
+        private static readonly ILog log = LogManager.GetLogger(typeof(GeotaggerToolViewModel));
         private const string PositioningSolutionFilesTemplatesFolder = "./Mapping/PSFTemplates";
         private const string FilesToUpdateTemplatesFolder = "./Mapping/FTUTemplates";
         private string lastOpenedFolder = "";
@@ -106,7 +106,7 @@ namespace UgCSPPK.ViewModels
             }
         }
 
-        public PpkToolViewModel()
+        public GeotaggerToolViewModel()
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
             var dataGridSortDescription = DataGridSortDescription.FromPath("StartTime");

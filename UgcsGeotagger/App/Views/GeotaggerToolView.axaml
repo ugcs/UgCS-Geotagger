@@ -2,15 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:conv="clr-namespace:UgCSPPK.Converters;assembly=ugcs-ppk"
-             xmlns:model="clr-namespace:UgCSPPK.Models;assembly=ugcs-ppk"
+             xmlns:conv="clr-namespace:UgCSGeotagger.Converters;assembly=ugcs-geotagger"
+             xmlns:model="clr-namespace:UgCSGeotagger.Models;assembly=ugcs-geotagger"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="{DynamicResource MainWindowColor}"
              BorderBrush="{DynamicResource MainWindowColor}"
              FontFamily="/Fonts/Roboto-Regular.ttf#Roboto"      
              FontWeight="Regular"
              FontStyle="Normal"
-             x:Class="UgCSPPK.Views.PpkToolView"
+             x:Class="UgCSGeotagger.Views.GeotaggerToolView"
             >
   <UserControl.Resources>
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />

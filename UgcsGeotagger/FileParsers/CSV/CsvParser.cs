@@ -66,7 +66,7 @@ namespace FileParsers.CSV
             dateFromNameOfFile = DateTime.ParseExact(m.Value, Template.DataMapping.Date.Format, CultureInfo.InvariantCulture);
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreateFileWithCorrectedCoordinates(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
                 throw new FileNotFoundException("File {oldFile} does not exist");
@@ -80,17 +80,17 @@ namespace FileParsers.CSV
             var traceCount = 0;
             CountOfReplacedLines = 0;
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
-            using (StreamWriter ppkFile = new StreamWriter(newFile))
+            using (StreamWriter correctedFile = new StreamWriter(newFile))
             {
                 if (Template.SkipLinesTo != null)
                 {
                     line = SkipLines(reader);
-                    ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                    correctedFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
                 }
                 if (Template.Format.HasHeader)
                 {
                     line = reader.ReadLine();
-                    ppkFile.WriteLine(Regex.Replace(line, @"\s", ""));
+                    correctedFile.WriteLine(Regex.Replace(line, @"\s", ""));
                 }
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -109,7 +109,7 @@ namespace FileParsers.CSV
                             data[(int)Template.DataMapping.Latitude.Index] = dict[traceNumber].Latitude?.ToString(format);
                             if (Template.DataMapping.Altitude?.Index != null && Template.DataMapping.Altitude.Index != -1)
                                 data[(int)Template.DataMapping.Altitude.Index] = dict[traceNumber].Altitude?.ToString(format);
-                            ppkFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
+                            correctedFile.WriteLine(Regex.Replace(string.Join(Template.Format.Separator, data), @"\s", ""));
                             result.CountOfReplacedLines++;
                         }
                     }

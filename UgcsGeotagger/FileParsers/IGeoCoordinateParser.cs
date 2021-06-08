@@ -7,6 +7,6 @@ namespace FileParsers
     {
         List<IGeoCoordinates> Parse(string path);
 
-        Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token);
+        Result CreateFileWithCorrectedCoordinates(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token);
     }
 }
