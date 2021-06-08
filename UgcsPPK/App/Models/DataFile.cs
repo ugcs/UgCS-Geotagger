@@ -2,8 +2,10 @@
 using FileParsers;
 using FileParsers.CSV;
 using FileParsers.FixedColumnWidth;
+using FileParsers.SegYLog;
 using FileParsers.Yaml;
 using log4net;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +17,7 @@ namespace UgCSPPK.Models
     {
         private readonly CSVParsersFactory cSVParsersFactory = new CSVParsersFactory();
         protected static ILog log = LogManager.GetLogger(typeof(DataFile));
-        public const string PPK = "PPK";
+        public const string Precise = "precise";
         public const string PositionSolutionFileAbbr = "PSF";
         public const string FileToUpdateAbbr = "FTU";
         public List<IGeoCoordinates> Coordinates { get; }
@@ -26,6 +28,18 @@ namespace UgCSPPK.Models
         public DateTime EndTime { get; protected set; }
         public bool IsValid { get; protected set; }
         public Parser Parser { get; protected set; }
+        public FileType Type { get; protected set; }
+
+        private bool _isSelected = false;
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isSelected, value);
+            }
+        }
 
         protected DataFile(string filePath, Template template)
         {
@@ -42,6 +56,7 @@ namespace UgCSPPK.Models
                         SetTypeOfFile(template);
                         SetStartTime(Coordinates);
                         SetEndTime(Coordinates);
+                        Type = template.FileType;
                         IsValid = true;
                     }
                     else
@@ -60,6 +75,7 @@ namespace UgCSPPK.Models
             {
                 FileType.ColumnsFixedWidth => new FixedColumnWidthParser(template),
                 FileType.CSV => cSVParsersFactory.CreateCSVParser(template),
+                FileType.Segy => new SegYLogParser(template),
                 _ => null,
             };
         }
@@ -73,7 +89,7 @@ namespace UgCSPPK.Models
         {
             try
             {
-                StartTime = posLogData.Min(d => d.DateTime);
+                StartTime = posLogData.Min(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {
@@ -85,7 +101,7 @@ namespace UgCSPPK.Models
         {
             try
             {
-                EndTime = posLogData.Max(d => d.DateTime);
+                EndTime = posLogData.Max(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {

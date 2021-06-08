@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data.Converters;
+using Avalonia.Input;
 using System;
 using System.Globalization;
 using System.IO;
@@ -52,6 +53,24 @@ namespace UgCSPPK.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (bool)value ? "Cancel" : "Process Files";
+        }
+    }
+
+    public class DateTimeFormatConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var dateTime = (DateTime)value;
+            return dateTime.ToString("dd.MM.yyyy HH:mm:ss.fff");
+        }
+    }
+
+
+    public class CursorConverter : Converter
+    {
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? new Cursor(StandardCursorType.Wait) : new Cursor(StandardCursorType.Arrow);
         }
     }
 }

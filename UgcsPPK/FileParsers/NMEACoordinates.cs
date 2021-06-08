@@ -84,8 +84,8 @@ namespace FileParsers
 
         public void SetNewNmeaCoordinates()
         {
-            NMEALatitude = ConvertToNMEACoordringates(Latitude);
-            NMEALongitude = ConvertToNMEACoordringates(Longitude);
+            NMEALatitude = ConvertToNMEACoordringates(Latitude.Value);
+            NMEALongitude = ConvertToNMEACoordringates(Longitude.Value);
             NorthOrSouth = Latitude > 0 ? North : South;
             EastOrWest = Longitude > 0 ? East : West;
         }

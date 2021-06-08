@@ -44,8 +44,8 @@ namespace Tests
                 NorthOrSouth = "N",
                 EastOrWest = "E"
             };
-            var latitude = double.Parse(nmeaCoordinate.ConvertToNMEACoordringates(nmeaCoordinate.Latitude), format);
-            var longitude = double.Parse(nmeaCoordinate.ConvertToNMEACoordringates(nmeaCoordinate.Longitude), format);
+            var latitude = double.Parse(nmeaCoordinate.ConvertToNMEACoordringates(nmeaCoordinate.Latitude.Value), format);
+            var longitude = double.Parse(nmeaCoordinate.ConvertToNMEACoordringates(nmeaCoordinate.Longitude.Value), format);
             Assert.IsTrue(latitude - 5651.7446 < Delta && longitude - 2406.7933 < Delta);
         }
 

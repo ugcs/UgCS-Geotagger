@@ -5,12 +5,19 @@
              xmlns:conv="clr-namespace:UgCSPPK.Converters;assembly=ugcs-ppk"
              xmlns:model="clr-namespace:UgCSPPK.Models;assembly=ugcs-ppk"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="{DynamicResource MainWindowColor}"
+             BorderBrush="{DynamicResource MainWindowColor}"
+             FontFamily="/Fonts/Roboto-Regular.ttf#Roboto"      
+             FontWeight="Regular"
+             FontStyle="Normal"
              x:Class="UgCSPPK.Views.PpkToolView"
             >
   <UserControl.Resources>
     <conv:CoveringStatusConverter x:Key="CoveringStatusConverter" />
     <conv:FileNameConverter x:Key="FileNameConverter" />
     <conv:ProcessFilesButtonTextConverter x:Key="ProcessFilesButtonTextConverter" />
+    <conv:DateTimeFormatConverter x:Key="DateTimeFormatConverter" />
+    <conv:CursorConverter x:Key="CursorConverter" />
   </UserControl.Resources>
   <UserControl.Styles>
     <Style Selector="Button">
@@ -29,60 +36,115 @@
       <Setter Property="FontSize" Value="14"/>
       <Setter Property="TextAlignment" Value="Left"/>
     </Style>
+
+     <Style Selector="TextBlock.RowContent">
+      <Setter Property="Margin" Value="6 6 0 0"/>
+    </Style>
     <Style Selector="Button.Add">
       <Setter Property="Content" Value="Add"/>
-      <Setter Property="Margin" Value="12 6 6 6"/>
+      <Setter Property="Margin" Value="12 6 6 0"/>
     </Style>
     <Style Selector="Button.Remove">
       <Setter Property="Content" Value="Remove"/>
-      <Setter Property="Margin" Value="0 6 6 6"/>
+      <Setter Property="Margin" Value="0 6 6 0"/>
     </Style>
+
     <Style Selector="DataGrid">
-      <Setter Property="Margin" Value="12 6 6 6"/>
+      <Setter Property="Background" Value="{DynamicResource MainWindowColor}"/>
+      <Setter Property="RowBackground" Value="{DynamicResource MainWindowColor}"/>
+      <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DividerLineColor}" />
+      <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
     </Style>
-  </UserControl.Styles>
+
+    <Style Selector="Border.Divider">
+      <Setter Property="BorderBrush" Value="{DynamicResource DividerLineColor}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Height" Value="1"/>
+      <Setter Property="VerticalAlignment" Value="Top"/>
+    </Style>
+
+     <Style Selector="DataGridColumnHeader">
+      <Setter Property="Background" Value="{DynamicResource MainWindowColor}"/>
+    </Style>
+
+    <Style Selector="ScrollViewer">
+      <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+    </Style>
+    
+    <Style Selector="DataGrid.Files">
+      <Setter Property="Margin" Value="12 0 12 0"/>
+      <Setter Property="RowHeight" Value="24"/>
+      <Setter Property="Height" Value="150"/>
+      <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+    </Style>
+      </UserControl.Styles>
+  
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="200" />
+      <RowDefinition Height="150" />
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="200" />
-      <RowDefinition Height="*"/>
+      <RowDefinition Height="150" />
+      <RowDefinition Height="0.5*"/>
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
-    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="200" Background="Transparent" Name="{x:Static model:DataFile.PositionSolutionFileAbbr}">  
-    <DataGrid Items="{Binding PositionSolutionFiles}" SelectedItem="{Binding SelectedPositioningSolutionFile, Mode=TwoWay}">
+    <Border Grid.Row="1" Classes="Divider" Grid.Column="0" Grid.ColumnSpan="1" Margin="12 0 12 0"> </Border>
+    <Border Grid.Row="1" Classes="Divider" Grid.Column="0" Grid.ColumnSpan="1" Margin="12 24 12 0"> </Border>
+    <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="150" Background="Transparent" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">  
+    <DataGrid Classes="Files" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Background="Transparent" Items="{Binding PositionSolutionFiles}"
+              >
+    <DataGrid.Styles>
+    <Style Selector="Grid">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.PositionSolutionFileAbbr}"/>
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.PositionSolutionFileAbbr}"/>
+    </Style>
+    </DataGrid.Styles>
+
       <DataGrid.Columns>
-        <DataGridTemplateColumn  Header="Name" Width="0.3*">
+
+        <DataGridTemplateColumn  Width="0.03*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding FileName}"/>
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="6 6 0 0"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTemplateColumn Header="Type" Width="0.2*">
+        <DataGridTemplateColumn  Header="Name" Width="0.27*" >
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding TypeOfFile}" Margin="0 0 0 12"/>
+              <TextBlock Classes="RowContent" Text="{Binding FileName}"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="0.2*" Header="Type" >
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock Classes="RowContent" Text="{Binding TypeOfFile}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="Start Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding StartTime}" Margin="0 0 0 12"/>
+              <TextBlock Classes="RowContent" Text="{Binding StartTime, Converter={StaticResource DateTimeFormatConverter}}" />
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="End Time" Width="0.25*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding EndTime}" Margin="0 0 0 12"/>
+              <TextBlock Classes="RowContent" Text="{Binding EndTime, Converter={StaticResource DateTimeFormatConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -98,52 +160,74 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding ChooseFiles}" IsEnabled="{Binding !IsProcessFiles}" CommandParameter="{x:Static model:DataFile.PositionSolutionFileAbbr}"></Button>
+      <Button Grid.Row="0" Grid.Column="0" Classes="Add" Command="{Binding ChooseFiles}" IsEnabled="{Binding !IsProcessFiles}" CommandParameter="{x:Static model:DataFile.PositionSolutionFileAbbr}" ></Button>
       <Button Grid.Row="0" Grid.Column="1" Classes="Remove" Command="{Binding RemovePositioningSolutionFile}" IsEnabled="{Binding !IsProcessFiles}"></Button>
     </Grid>
     <TextBlock Grid.Row="3" Grid.Column="0" Classes="Header">Files to Update:</TextBlock>
-    <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Name="{x:Static model:DataFile.FileToUpdateAbbr}">
-    <DataGrid Items="{Binding FilesToUpdate}" SelectedItem="{Binding SelectedFileToUpdate, Mode=TwoWay}">
+
+    <Border Classes="Divider" Grid.Row="4"  Grid.Column="0" Grid.ColumnSpan="1" Margin="12 0 12 0"> </Border>
+    <Border Classes="Divider" Grid.Row="4"  Grid.Column="0" Grid.ColumnSpan="1" Margin="12 24 12 0"> </Border>
+    <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Tag="{x:Static model:DataFile.FileToUpdateAbbr}" Height="150">
+    <DataGrid Classes="Files" Grid.Row="4" Items="{Binding FilesToUpdate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+        <DataGrid.Styles>
+    <Style Selector="Grid">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.FileToUpdateAbbr}"/>
+    </Style>
+    <Style Selector="TextBlock">
+      <Setter
+        Property="Tag"
+        Value="{x:Static model:DataFile.FileToUpdateAbbr}"/>
+    </Style>
+    </DataGrid.Styles>
       <DataGrid.Columns>
-        <DataGridTemplateColumn  Header="Name" Width="0.2*">
+        <DataGridTemplateColumn  Width="0.03*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding FileName}"/>
+              <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="6 6 0 0"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn  Header="Name" Width="0.17*">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock Classes="RowContent" Text="{Binding FileName}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn Header="Type" Width="0.1*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding TypeOfFile}"/>
+              <TextBlock Classes="RowContent" Text="{Binding TypeOfFile}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn Header="Linked File" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding LinkedFile, Converter={StaticResource FileNameConverter}}"/>
+              <TextBlock Classes="RowContent" Text="{Binding LinkedFile, Converter={StaticResource FileNameConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="Start Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding StartTime}"/>
+              <TextBlock Classes="RowContent" Text="{Binding StartTime, Converter={StaticResource DateTimeFormatConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="End Time" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding EndTime}"/>
+              <TextBlock Classes="RowContent" Text="{Binding EndTime, Converter={StaticResource DateTimeFormatConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
         <DataGridTemplateColumn  Header="Coverage Status" Width="0.2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding CoveringStatus, Converter={StaticResource CoveringStatusConverter}}"/>
+              <TextBlock Classes="RowContent" Text="{Binding CoveringStatus, Converter={StaticResource CoveringStatusConverter}}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -171,14 +255,16 @@
       <Button Grid.Row="1" Grid.Column="1" Classes="Remove" Command="{Binding Clear}" IsEnabled="{Binding !IsProcessFiles}">Clear</Button>
       <TextBlock Grid.Row="1" Grid.Column="3" Margin="0 6 6 6" FontSize="18" VerticalAlignment="Center">Time Offset, ms:</TextBlock>
       <TextBox Grid.Row="1" Grid.Column="4" Margin="0 6 6 6" Width="100" Text="{Binding TimeOffset}" FontSize="14"></TextBox>
-      <Button Grid.Row="1" Grid.Column="5" Classes="Add" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
+      <Button Grid.Row="1" Grid.Column="5" Margin="0 6 6 6" Background="#0089cf" Command="{Binding ProcessFiles}" Content="{Binding IsProcessFiles, Converter={StaticResource ProcessFilesButtonTextConverter}}"></Button>
       <ProgressBar  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="12 0 0 0"  Value="{Binding UpdatingFileProgressBarValue}"  IsVisible="{Binding IsProcessFiles}"></ProgressBar>
-      <DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Items="{Binding Messages}" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0 0 0 12">
+      <DataGrid Grid.Row="3" Grid.Column="0"
+                Grid.ColumnSpan="6" Items="{Binding Messages}" IsReadOnly="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0 0 0 12">
         <DataGrid.Columns>
-          <DataGridTemplateColumn  Header="Messages" Width="*" IsReadOnly="True"> 
+          <DataGridTemplateColumn  Header="Messages" Width="*" IsReadOnly="True" > 
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding .}"/>
+                <TextBlock Classes="RowContent" Text="{Binding .}"/>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

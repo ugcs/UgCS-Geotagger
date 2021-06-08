@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using UgCSPPK.Models;
@@ -21,11 +23,13 @@ namespace UgCSPPK.Views
 
         private void OnDrop(object sender, DragEventArgs e)
         {
-            if (e.Source is StackPanel dragDropPanel)
+            var dragDropPanel = e.Source as Control;
+            var nameOfPanel = dragDropPanel?.Tag;
+            if (nameOfPanel != null)
             {
                 var files = e.Data.GetFileNames();
                 var dataContext = DataContext as PpkToolViewModel;
-                switch (dragDropPanel.Name)
+                switch (nameOfPanel)
                 {
                     case DataFile.PositionSolutionFileAbbr:
                         dataContext.AddFiles(files, DataFile.PositionSolutionFileAbbr);
@@ -36,7 +40,7 @@ namespace UgCSPPK.Views
                         break;
 
                     default:
-                        return;
+                        break;
                 }
             }
         }

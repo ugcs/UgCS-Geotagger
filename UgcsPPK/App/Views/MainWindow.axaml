@@ -5,7 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="App.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="UgCS-PPK">
+        FontFamily="/Fonts/Roboto-Regular.ttf#Roboto"      
+        FontWeight="Regular"
+        FontStyle="Normal"
+        Background="{DynamicResource MainWindowColor}"
+        BorderBrush="{DynamicResource MainWindowColor}"
+        Height="600"
+        Icon="avares://ugcs-ppk/Assets/ugcs-logo-32.ico"
+        Title="UgCS Geotagger">
   <UserControl  Content="{Binding Content}"></UserControl>
 </Window>

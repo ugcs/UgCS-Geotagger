@@ -58,6 +58,7 @@ namespace FileParsers.Yaml
     {
         CSV,
         ColumnsFixedWidth,
-        Unknown
+        Unknown,
+        Segy
     };
 }

@@ -34,33 +34,11 @@ namespace UgCSPPK.ViewModels
         private readonly List<Template> ftuTemplates = new List<Template>();
         private readonly ObservableCollection<string> messages = new ObservableCollection<string>();
         private CancellationTokenSource source;
-        private int fileToUpdateTotalLines;
+        private int totalProgressBarValue;
         public DataGridCollectionView FilesToUpdate { get; }
 
         public DataGridCollectionView PositionSolutionFiles { get; }
         public DataGridCollectionView Messages { get; }
-
-        private PositioningSolutionFile _selectedPositioningSolutionFile;
-
-        public PositioningSolutionFile SelectedPositioningSolutionFile
-        {
-            get => _selectedPositioningSolutionFile;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _selectedPositioningSolutionFile, value);
-            }
-        }
-
-        private FileToUpdate _selectedFileToUpdate;
-
-        public FileToUpdate SelectedFileToUpdate
-        {
-            get => _selectedFileToUpdate;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _selectedFileToUpdate, value);
-            }
-        }
 
         private bool _isProcessFiles = false;
 
@@ -70,6 +48,17 @@ namespace UgCSPPK.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _isProcessFiles, value);
+            }
+        }
+
+        private bool _isLongProcess = false;
+
+        public bool IsLongProcess
+        {
+            get => _isLongProcess;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isLongProcess, value);
             }
         }
 
@@ -98,7 +87,10 @@ namespace UgCSPPK.ViewModels
         public PpkToolViewModel()
         {
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
+            var dataGridSortDescription = DataGridSortDescription.FromPath("StartTime");
+            PositionSolutionFiles.SortDescriptions.Add(dataGridSortDescription);
             FilesToUpdate = new DataGridCollectionView(filesToUpdate);
+            FilesToUpdate.SortDescriptions.Add(dataGridSortDescription);
             Messages = new DataGridCollectionView(messages);
             CreateTemplates();
         }
@@ -109,7 +101,7 @@ namespace UgCSPPK.ViewModels
                 return;
             isDialogOpen = true;
             OpenFileDialog openDialog = new OpenFileDialog() { AllowMultiple = true, Directory = lastOpenedFolder };
-            openDialog.Filters.Add(new FileDialogFilter() { Name = "Data files", Extensions = { "pos", "csv", "log" } });
+            openDialog.Filters.Add(new FileDialogFilter() { Name = "Data files", Extensions = { "pos", "csv", "log", "sgy" } });
             openDialog.Filters.Add(new FileDialogFilter() { Name = "All", Extensions = { "*" } });
             var chosenFiles = await openDialog.ShowAsync(new Window());
             AddFiles(chosenFiles, type);
@@ -120,6 +112,7 @@ namespace UgCSPPK.ViewModels
         {
             if (files != null)
             {
+                IsLongProcess = true;
                 foreach (var file in files)
                 {
                     Template template = fileType switch
@@ -152,23 +145,28 @@ namespace UgCSPPK.ViewModels
                         }
                     }
                     else
-                        messages.Add($"Template for {file} was not found");
+                        messages.Add($"Template for {file} was not found or {file} being used by another process");
                 }
                 GetLastOpenedDirectory(files.FirstOrDefault() ?? "");
+                IsLongProcess = false;
             }
         }
 
         private void RemovePositioningSolutionFile()
         {
-            if (PositionSolutionFiles.Contains(SelectedPositioningSolutionFile))
+            foreach (var psf in positioningSolutionFiles.ToList())
             {
-                foreach (var f in filesToUpdate)
+                if (psf.IsSelected)
                 {
-                    if (f.CoverageFiles.Contains(SelectedPositioningSolutionFile))
-                        f.UnsetCoverageFile(SelectedPositioningSolutionFile);
+                    foreach (var ftu in filesToUpdate)
+                    {
+                        if (ftu.CoverageFiles.Contains(psf))
+                            ftu.UnsetCoverageFile(psf);
+                    }
+                    PositionSolutionFiles.Remove(psf);
                 }
-                PositionSolutionFiles.Remove(SelectedPositioningSolutionFile);
             }
+
             foreach (var f in filesToUpdate)
             {
                 f.CheckCoveringStatus(positioningSolutionFiles.ToList());
@@ -177,8 +175,9 @@ namespace UgCSPPK.ViewModels
 
         private void RemoveFileToUpdate()
         {
-            if (FilesToUpdate.Contains(SelectedFileToUpdate))
-                FilesToUpdate.Remove(SelectedFileToUpdate);
+            foreach (var ftu in filesToUpdate.ToList())
+                if (ftu.IsSelected)
+                    FilesToUpdate.Remove(ftu);
         }
 
         private void Clear()
@@ -192,6 +191,7 @@ namespace UgCSPPK.ViewModels
             if (isDialogOpen)
                 return;
             isDialogOpen = true;
+            IsLongProcess = true;
             OpenFolderDialog openDialog = new OpenFolderDialog
             {
                 Directory = ""
@@ -241,6 +241,7 @@ namespace UgCSPPK.ViewModels
                 }
                 GetLastOpenedDirectory(folder);
             }
+            IsLongProcess = false;
             isDialogOpen = false;
         }
 
@@ -316,6 +317,7 @@ namespace UgCSPPK.ViewModels
                     nonValidTemplates.Add(file);
                 }
             }
+            ftuTemplates.Add(CreateSegyTemplate());
             messages.Add($"Valid Templates: {ftuTemplates.Count + psfTemplates.Count}, Invalid Templates: {nonValidTemplates.Count}");
             foreach (var t in nonValidTemplates)
                 messages.Add($"Template {t} is not valid");
@@ -323,6 +325,8 @@ namespace UgCSPPK.ViewModels
 
         public Template FindTemplate(List<Template> templates, string file)
         {
+            if (file.EndsWith(".sgy"))
+                return templates.First(t => t.FileType == FileType.Segy);
             foreach (var t in templates)
             {
                 try
@@ -372,17 +376,17 @@ namespace UgCSPPK.ViewModels
                 UpdatingFileProgressBarValue = 0.00;
                 IsProcessFiles = true;
                 source = new CancellationTokenSource();
-                fileToUpdateTotalLines = 0;
+                totalProgressBarValue = 0;
                 foreach (var ftu in filesToUpdate)
                 {
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
-                        fileToUpdateTotalLines += ftu.CalculateCountOfLines();
+                        totalProgressBarValue += ftu.CalculateCountOfLines();
                 }
                 foreach (var ftu in filesToUpdate)
                 {
                     if (ftu.CoveringStatus != CoveringStatus.NotCovered)
                     {
-                        fileToUpdateTotalLines = ftu.Coordinates.Count;
+                        totalProgressBarValue = ftu.Coordinates.Count;
                         ftu.Parser.OnOneHundredLinesReplaced += UpdateProgressbar;
                         Interpolator.OnOneHundredLinesReplaced += UpdateProgressbar;
                         ftu.SegyParser.OnOneHundredLinesReplaced += UpdateProgressbar;
@@ -407,9 +411,19 @@ namespace UgCSPPK.ViewModels
             });
         }
 
-        private void UpdateProgressbar(int lines)
+        private void UpdateProgressbar(int value)
         {
-            UpdatingFileProgressBarValue = lines / (double)fileToUpdateTotalLines * 100;
+            UpdatingFileProgressBarValue = value / (double)totalProgressBarValue * 100;
+        }
+
+        private Template CreateSegyTemplate()
+        {
+            return new Template()
+            {
+                Code = "Segy",
+                FileType = FileType.Segy,
+                Name = "Segy"
+            };
         }
 
         public void CancelProcessing()

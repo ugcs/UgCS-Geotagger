@@ -35,12 +35,15 @@ namespace UgCSPPK.Models
         public FileToUpdate(string filePath, Template template) : base(filePath, template)
         {
             FindLinkedFile(filePath);
+            SegyParser = new SegYLogParser(template);
         }
 
-        public SegYLogParser SegyParser { get; } = new SegYLogParser();
+        public SegYLogParser SegyParser { get; private set; }
 
         private void FindLinkedFile(string filePath)
         {
+            if (Type == FileType.Segy || Type == FileType.Unknown)
+                return;
             try
             {
                 var directory = Path.GetDirectoryName(filePath);
@@ -72,13 +75,15 @@ namespace UgCSPPK.Models
         {
             if (psfFiles.Count == 0)
                 return;
-            var minTime = psfFiles.Min(f => f.StartTime);
-            var maxTime = psfFiles.Max(f => f.EndTime);
+
             foreach (var f in psfFiles)
             {
                 if ((f.StartTime <= StartTime && f.EndTime >= EndTime) || (f.StartTime <= EndTime && EndTime <= f.EndTime) || (f.StartTime <= StartTime && StartTime <= f.EndTime) || (StartTime <= f.StartTime && f.EndTime <= EndTime))
                     CoverageFiles.Add(f);
             }
+
+            var minTime = CoverageFiles.Count > 0 ? CoverageFiles.Min(f => f.StartTime) : DateTime.Now;
+            var maxTime = CoverageFiles.Count > 0 ? CoverageFiles.Max(f => f.EndTime) : DateTime.Now;
             if (CoverageFiles.Count > 0 && minTime <= StartTime && maxTime >= EndTime)
                 CoveringStatus = CoveringStatus.Covered;
             else if (CoverageFiles.Count > 0)
@@ -107,7 +112,7 @@ namespace UgCSPPK.Models
             try
             {
                 correctedCoordinates = Interpolator.CreatePpkCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
-                var ppkCorrectedFile = CreateFileWithPpkSuffix(FilePath);
+                var ppkCorrectedFile = CreateFileWithPreciseSuffix(FilePath);
                 var result = Parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates, source);
                 message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";
                 log.Info(message);
@@ -132,7 +137,7 @@ namespace UgCSPPK.Models
                     watch.Start();
                     OnProcessingStatus?.Invoke($"Start Processing {Path.GetFileName(LinkedFile)}");
                     SegyParser.Parse(LinkedFile);
-                    var ppkCorrectedSegyFile = CreateFileWithPpkSuffix(LinkedFile);
+                    var ppkCorrectedSegyFile = CreateFileWithPreciseSuffix(LinkedFile);
                     var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
                     message += $"\n{Path.GetFileName(LinkedFile)}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
                     log.Info(message);
@@ -159,11 +164,11 @@ namespace UgCSPPK.Models
                 CoveringStatus = CoveringStatus.NotCovered;
         }
 
-        private string CreateFileWithPpkSuffix(string fullPath)
+        private string CreateFileWithPreciseSuffix(string fullPath)
         {
             if (!File.Exists(fullPath))
                 throw new FileNotFoundException($"File {fullPath} does not exist");
-            var newName = $"{fullPath.Insert(fullPath.LastIndexOf("."), $"-{PPK.ToLower()}")}";
+            var newName = $"{fullPath.Insert(fullPath.LastIndexOf("."), $"-{Precise.ToLower()}")}";
             if (File.Exists(newName))
                 File.Delete(newName);
             return newName;

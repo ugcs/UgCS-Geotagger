@@ -66,29 +66,47 @@ namespace FileParsers
             return null;
         }
 
-        protected double ParseDouble(BaseData data, string column)
+        protected double? ParseDouble(BaseData data, string column)
         {
+            double result;
             if (!string.IsNullOrEmpty(data.Regex))
             {
                 var match = FindByRegex(data.Regex, column);
                 if (match.Success)
-                    return double.Parse(match.Value, NumberStyles.Float, format);
+                {
+                    if (double.TryParse(match.Value, NumberStyles.Float, format, out result))
+                        return result;
+                    else
+                        return null;
+                }
             }
-            return double.Parse(column, NumberStyles.Float, format);
+            if (double.TryParse(column, NumberStyles.Float, format, out result))
+                return result;
+            else
+                return null;
         }
 
-        protected int ParseInt(BaseData data, string column)
+        protected int? ParseInt(BaseData data, string column)
         {
+            int result;
             if (!string.IsNullOrEmpty(data.Regex))
             {
                 var match = FindByRegex(data.Regex, column);
                 if (match.Success)
-                    return int.Parse(match.Value);
+                {
+                    if (int.TryParse(match.Value, out result))
+                        return result;
+                    else
+                        return null;
+                }
             }
-            return int.Parse(column);
+            if (int.TryParse(column, out result))
+                return result;
+            else
+                return null;
         }
 
-        protected System.DateTime ParseDateTime(string[] data)
+        protected System.DateTime? ParseDateTime(string[] data)
         {
             if (Template.DataMapping.DateTime != null && Template.DataMapping.DateTime?.Index != -1)
             {
@@ -102,14 +120,14 @@ namespace FileParsers
             {
                 var date = ParseDateAndTime(Template.DataMapping.Date, data[(int)Template.DataMapping.Date.Index]);
                 var time = ParseDateAndTime(Template.DataMapping.Time, data[(int)Template.DataMapping.Time.Index]);
-                var totalMS = CalculateTotalMS(time);
-                var dateTime = date.AddMilliseconds(totalMS);
+                var totalMS = CalculateTotalMS(time.Value);
+                var dateTime = date?.AddMilliseconds(totalMS);
                 return dateTime;
             }
             else if (Template.DataMapping.Time != null && Template.DataMapping.Time?.Index != -1 && dateFromNameOfFile != null)
             {
                 var time = ParseDateAndTime(Template.DataMapping.Time, data[(int)Template.DataMapping.Time.Index]);
-                var totalMS = CalculateTotalMS(time);
+                var totalMS = CalculateTotalMS(time.Value);
                 var dateTime = dateFromNameOfFile.Value.AddMilliseconds(totalMS);
                 return dateTime;
             }
@@ -129,15 +147,24 @@ namespace FileParsers
             return time;
         }
 
-        private System.DateTime ParseDateAndTime(Yaml.Data.DateTime data, string column)
+        private System.DateTime? ParseDateAndTime(Yaml.Data.DateTime data, string column)
         {
+            System.DateTime result;
             if (!string.IsNullOrEmpty(data.Regex))
             {
                 var match = FindByRegex(data.Regex, column);
                 if (match.Success)
-                    return System.DateTime.ParseExact(match.Value, data.Format, CultureInfo.InvariantCulture);
+                {
+                    if (System.DateTime.TryParseExact(match.Value, data.Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                        return result;
+                    else
+                        return null;
+                }
             }
-            return System.DateTime.ParseExact(column, data.Format, CultureInfo.InvariantCulture);
+            if (System.DateTime.TryParseExact(column, data.Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                return result;
+            else
+                return null;
         }
 
         private int CalculateTotalMS(System.DateTime time)
