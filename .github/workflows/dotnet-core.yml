@@ -13,12 +13,12 @@ jobs:
     env:
       SOLUTION_FOLDER: UgcsPPK
       APP_FOLDER: App
-      APP_NAME: ugcs-ppk
+      APP_NAME: ugcs-geotagger
       TESTS_FOLDER: Tests
       PUBLISH_FOLDER: output
-      ARTIFACT_NAME: ugcs-ppk
+      ARTIFACT_NAME: ugcs-geotagger
       VIEWS_FOLDER: Views
-      DISPLAY_NAME: UgCS-PPK
+      DISPLAY_NAME: UgCS Geotagger
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core

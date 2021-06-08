@@ -6,19 +6,22 @@
         x:Class="UgCSPPK.Views.MessageBoxView"
         FontFamily="/Fonts/Roboto-Regular.ttf#Roboto"      
         FontWeight="Regular"
-        FontStyle="Normal"
+        FontStyle="Normal"  
         Background="{DynamicResource MainWindowColor}"
         BorderBrush="{DynamicResource MainWindowColor}"
         Icon="avares://ugcs-ppk/Assets/ugcs-logo-32.ico"
-        Title="Info" SizeToContent="WidthAndHeight" CanResize="False" WindowStartupLocation="CenterScreen">
-  <StackPanel HorizontalAlignment="Center">
-    <TextBlock HorizontalAlignment="Center" Name="Text"/>
-    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Name="Buttons">
-      <StackPanel.Styles>
-        <Style Selector="Button">
-          <Setter Property="Margin" Value="5"/>
-        </Style>
-      </StackPanel.Styles>
-    </StackPanel>
-  </StackPanel>
+        Title="Info" SizeToContent="WidthAndHeight" CanResize="False" WindowStartupLocation="CenterOwner">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="42"/>
+    </Grid.RowDefinitions>
+    <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"  BorderBrush="White" BorderThickness="5"></Border>
+    <TextBlock Grid.Row="0" Grid.Column="0" TextAlignment="Left" TextWrapping="Wrap" Margin="18" Foreground="White" Name="DialogText" VerticalAlignment="Center">
+    </TextBlock>
+    <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"  Width="60" Margin="12 6 12 12" Name="Ok">Ok</Button>
+  </Grid>
 </Window>

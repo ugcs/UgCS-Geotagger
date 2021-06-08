@@ -62,6 +62,28 @@ namespace UgCSPPK.ViewModels
             }
         }
 
+        private bool _isPsfFilesEmpty = true;
+
+        public bool IsPsfFilesEmpty
+        {
+            get => _isPsfFilesEmpty;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isPsfFilesEmpty, value);
+            }
+        }
+
+        private bool _isFtuFilesEmpty = true;
+
+        public bool IsFtuFilesEmpty
+        {
+            get => _isFtuFilesEmpty;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isFtuFilesEmpty, value);
+            }
+        }
+
         private double _updatingFileProgressBarValue = 0.00;
 
         public double UpdatingFileProgressBarValue
@@ -89,10 +111,22 @@ namespace UgCSPPK.ViewModels
             PositionSolutionFiles = new DataGridCollectionView(positioningSolutionFiles);
             var dataGridSortDescription = DataGridSortDescription.FromPath("StartTime");
             PositionSolutionFiles.SortDescriptions.Add(dataGridSortDescription);
+            positioningSolutionFiles.CollectionChanged += OnPsfFilesChanged;
+            filesToUpdate.CollectionChanged += OnFtuFilesChanged;
             FilesToUpdate = new DataGridCollectionView(filesToUpdate);
             FilesToUpdate.SortDescriptions.Add(dataGridSortDescription);
             Messages = new DataGridCollectionView(messages);
             CreateTemplates();
+        }
+
+        private void OnPsfFilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsPsfFilesEmpty = positioningSolutionFiles.Count == 0;
+        }
+
+        private void OnFtuFilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsFtuFilesEmpty = filesToUpdate.Count == 0;
         }
 
         private async void ChooseFiles(string type)

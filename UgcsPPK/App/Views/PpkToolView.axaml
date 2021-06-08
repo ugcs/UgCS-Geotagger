@@ -40,6 +40,15 @@
      <Style Selector="TextBlock.RowContent">
       <Setter Property="Margin" Value="6 6 0 0"/>
     </Style>
+
+    <Style Selector="TextBlock.DragDropText">
+      <Setter Property="FontSize" Value="25"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Foreground" Value="Red"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    
     <Style Selector="Button.Add">
       <Setter Property="Content" Value="Add"/>
       <Setter Property="Margin" Value="12 6 6 0"/>
@@ -95,6 +104,7 @@
     <TextBlock Grid.Row="0" Grid.Column="0" Classes="Header">Position Solutions Files:</TextBlock>
     <Border Grid.Row="1" Classes="Divider" Grid.Column="0" Grid.ColumnSpan="1" Margin="12 0 12 0"> </Border>
     <Border Grid.Row="1" Classes="Divider" Grid.Column="0" Grid.ColumnSpan="1" Margin="12 24 12 0"> </Border>
+    <TextBlock Grid.Row="1" Grid.Column="0" Classes="DragDropText" IsVisible="{Binding IsPsfFilesEmpty}">Drop POS files here</TextBlock>
     <StackPanel  Grid.Row="1" Grid.Column="0"  DragDrop.AllowDrop="True" Height="150" Background="Transparent" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Cursor="{Binding IsLongProcess, Converter={StaticResource CursorConverter}}">  
     <DataGrid Classes="Files" Tag="{x:Static model:DataFile.PositionSolutionFileAbbr}" Background="Transparent" Items="{Binding PositionSolutionFiles}"
               >
@@ -167,6 +177,7 @@
 
     <Border Classes="Divider" Grid.Row="4"  Grid.Column="0" Grid.ColumnSpan="1" Margin="12 0 12 0"> </Border>
     <Border Classes="Divider" Grid.Row="4"  Grid.Column="0" Grid.ColumnSpan="1" Margin="12 24 12 0"> </Border>
+    <TextBlock Grid.Row="4" Grid.Column="0" Classes="DragDropText" IsVisible="{Binding IsFtuFilesEmpty}">Drop data files here</TextBlock>
     <StackPanel Grid.Row="4" Grid.Column="0" DragDrop.AllowDrop="True" Background="Transparent" Tag="{x:Static model:DataFile.FileToUpdateAbbr}" Height="150">
     <DataGrid Classes="Files" Grid.Row="4" Items="{Binding FilesToUpdate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
         <DataGrid.Styles>
