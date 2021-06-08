@@ -3,9 +3,9 @@ using Avalonia.Input;
 using System;
 using System.Globalization;
 using System.IO;
-using UgCSPPK.Models;
+using UgCSGeotagger.Models;
 
-namespace UgCSPPK.Converters
+namespace UgCSGeotagger.Converters
 {
     public abstract class Converter : IValueConverter
     {

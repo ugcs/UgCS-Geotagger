@@ -1,16 +1,14 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using UgCSPPK.Models;
-using UgCSPPK.ViewModels;
+using UgCSGeotagger.Models;
+using UgCSGeotagger.ViewModels;
 
-namespace UgCSPPK.Views
+namespace UgCSGeotagger.Views
 {
-    public class PpkToolView : UserControl
+    public class GeotaggerToolView : UserControl
     {
-        public PpkToolView()
+        public GeotaggerToolView()
         {
             this.InitializeComponent();
         }
@@ -28,7 +26,7 @@ namespace UgCSPPK.Views
             if (nameOfPanel != null)
             {
                 var files = e.Data.GetFileNames();
-                var dataContext = DataContext as PpkToolViewModel;
+                var dataContext = DataContext as GeotaggerToolViewModel;
                 switch (nameOfPanel)
                 {
                     case DataFile.PositionSolutionFileAbbr:

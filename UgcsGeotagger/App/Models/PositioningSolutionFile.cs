@@ -1,6 +1,6 @@
 ﻿using FileParsers.Yaml;
 
-namespace UgCSPPK.Models
+namespace UgCSGeotagger.Models
 {
     public class PositioningSolutionFile : DataFile
     {

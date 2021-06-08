@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UgCSPPK.Models
+namespace UgCSGeotagger.Models
 {
     public class FileToUpdate : DataFile
     {
@@ -111,9 +111,9 @@ namespace UgCSPPK.Models
             var elapsedMs = watch.ElapsedMilliseconds;
             try
             {
-                correctedCoordinates = Interpolator.CreatePpkCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
-                var ppkCorrectedFile = CreateFileWithPreciseSuffix(FilePath);
-                var result = Parser.CreatePpkCorrectedFile(FilePath, ppkCorrectedFile, correctedCoordinates, source);
+                correctedCoordinates = Interpolator.CreateCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
+                var correctedFile = CreateFileWithPreciseSuffix(FilePath);
+                var result = Parser.CreateFileWithCorrectedCoordinates(FilePath, correctedFile, correctedCoordinates, source);
                 message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";
                 log.Info(message);
             }
@@ -137,8 +137,8 @@ namespace UgCSPPK.Models
                     watch.Start();
                     OnProcessingStatus?.Invoke($"Start Processing {Path.GetFileName(LinkedFile)}");
                     SegyParser.Parse(LinkedFile);
-                    var ppkCorrectedSegyFile = CreateFileWithPreciseSuffix(LinkedFile);
-                    var result = SegyParser.CreatePpkCorrectedFile(LinkedFile, ppkCorrectedSegyFile, correctedCoordinates, source);
+                    var correctedSegyFile = CreateFileWithPreciseSuffix(LinkedFile);
+                    var result = SegyParser.CreateFileWithCorrectedCoordinates(LinkedFile, correctedSegyFile, correctedCoordinates, source);
                     message += $"\n{Path.GetFileName(LinkedFile)}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced";
                     log.Info(message);
                     return Task.FromResult(message);

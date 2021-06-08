@@ -50,7 +50,7 @@ namespace FileParsers.CSV
             return coordinates;
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreateFileWithCorrectedCoordinates(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             if (!File.Exists(oldFile))
                 throw new FileNotFoundException("File {oldFile} does not exist");
@@ -63,17 +63,17 @@ namespace FileParsers.CSV
             string line;
             var traceCount = 0;
             var dict = coordinates.ToDictionary(k => k.TraceNumber);
-            using (StreamWriter ppkFile = new StreamWriter(newFile))
+            using (StreamWriter correctedFile = new StreamWriter(newFile))
             {
                 if (Template.SkipLinesTo != null)
                 {
                     line = SkipLines(reader);
-                    ppkFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
+                    correctedFile.WriteLine(skippedLines.ToString().TrimEnd(new char[] { '\n' }));
                 }
                 if (Template.Format.HasHeader)
                 {
                     line = reader.ReadLine();
-                    ppkFile.WriteLine(Regex.Replace(line, @"\s", ""));
+                    correctedFile.WriteLine(Regex.Replace(line, @"\s", ""));
                 }
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -92,7 +92,7 @@ namespace FileParsers.CSV
                             nmeaCoordinate.SetNewNmeaCoordinates();
                             var checksum = nmeaCoordinate.CalculateCheckSum();
                             data[(int)Template.DataMapping.Longitude.Index] = nmeaCoordinate.CreateNMEAMessage(checksum.ToString("X"));
-                            ppkFile.WriteLine(string.Join(Template.Format.Separator, data));
+                            correctedFile.WriteLine(string.Join(Template.Format.Separator, data));
                             result.CountOfReplacedLines++;
                         }
                     }

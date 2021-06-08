@@ -129,7 +129,7 @@ namespace FileParsers.SegYLog
             return BitConverter.ToInt32(data, i);
         }
 
-        public override Result CreatePpkCorrectedFile(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
+        public override Result CreateFileWithCorrectedCoordinates(string oldFile, string newFile, IEnumerable<IGeoCoordinates> coordinates, CancellationTokenSource token)
         {
             var result = new Result();
             var startPosition = HeadersOffset;

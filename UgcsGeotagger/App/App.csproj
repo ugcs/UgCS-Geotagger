@@ -2,8 +2,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>ugcs-ppk</AssemblyName>
-    <RootNamespace>UgCSPPK</RootNamespace>
+    <AssemblyName>ugcs-geotagger</AssemblyName>
+    <RootNamespace>UgCSGeotagger</RootNamespace>
     <ApplicationIcon>Assets\ugcs-logo-32.ico</ApplicationIcon>
     <Company>UgCS</Company>
     <Version>1.0.2</Version>
@@ -38,6 +38,9 @@
     <Content Include="Assets\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Update="Views\GeotaggerToolView.axaml.cs">
+      <DependentUpon>GeotaggerToolView.axaml</DependentUpon>
+    </Compile>
     <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

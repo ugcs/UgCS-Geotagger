@@ -1,5 +1,5 @@
 ﻿using ReactiveUI;
-using UgCSPPK.ViewModels;
+using UgCSGeotagger.ViewModels;
 
 namespace App.ViewModels
 {
@@ -15,7 +15,7 @@ namespace App.ViewModels
 
         public MainWindowViewModel()
         {
-            Content = new PpkToolViewModel();
+            Content = new GeotaggerToolViewModel();
         }
     }
 }
