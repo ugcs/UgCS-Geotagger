@@ -19,6 +19,7 @@ namespace FileParsers
                 foreach (var c in psfCoordinates)
                     c.TimeInMs += timeOffset;
             }
+            psfCoordinates.Sort((x, y) => x.TimeInMs.Value.CompareTo(y.TimeInMs.Value));
             var min = psfCoordinates.Min(c => c.TimeInMs);
             var max = psfCoordinates.Max(c => c.TimeInMs);
             var countOfReplacedLines = 0;
