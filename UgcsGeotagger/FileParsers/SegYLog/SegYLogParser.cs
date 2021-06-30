@@ -67,6 +67,8 @@ namespace FileParsers.SegYLog
                 var data = reader.ReadBytes((int)reader.BaseStream.Length).Skip(HeadersOffset - SamplesFormatOffset).ToArray();
                 for (int i = 0; i < data.Length; i += TraceHeaderOffset + TracesLength * SampleFormatBytes)
                 {
+                    if (i + TraceHeaderOffset > data.Length)
+                        break;
                     GeoCoordinates coordinate = PayloadType switch
                     {
                         Gpr => CreateGprCoordinates(data, i),
@@ -149,6 +151,8 @@ namespace FileParsers.SegYLog
                     switch (PayloadType)
                     {
                         case Gpr:
+                            if (i + TraceHeaderOffset > bytes.Length)
+                                break;
                             if (coordinate.Longitude.HasValue)
                             {
                                 lonToBytes = BitConverter.GetBytes(ConvertToGrpFormat(coordinate.Longitude.Value));

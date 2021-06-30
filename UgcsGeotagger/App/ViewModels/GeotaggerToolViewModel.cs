@@ -411,10 +411,18 @@ namespace UgCSGeotagger.ViewModels
                 IsProcessFiles = true;
                 source = new CancellationTokenSource();
                 totalProgressBarValue = 0;
-                foreach (var ftu in filesToUpdate)
+                try
                 {
-                    if (ftu.CoveringStatus != CoveringStatus.NotCovered)
-                        totalProgressBarValue += ftu.CalculateCountOfLines();
+                    foreach (var ftu in filesToUpdate)
+                    {
+                        if (ftu.CoveringStatus != CoveringStatus.NotCovered)
+                            totalProgressBarValue += ftu.CalculateCountOfLines();
+                    }
+                }
+                catch (Exception e)
+                {
+                    await MessageBoxView.Show(App.App.CurrentWindow, e.Message, "Error", MessageBoxView.MessageBoxButtons.Ok);
+                    return;
                 }
                 foreach (var ftu in filesToUpdate)
                 {
