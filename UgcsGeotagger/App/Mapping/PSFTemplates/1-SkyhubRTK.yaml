@@ -23,6 +23,8 @@
       header: Latitude RTK
     longitude:
       header: Longitude RTK
+    altitude:
+      header: 'ALT:Altitude'      
     time:
       header: Time
       format: 'HH:mm:ss.fff'
