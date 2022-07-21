@@ -32,18 +32,30 @@ namespace UgCSGeotagger.Models
 
         public event Action<string> OnProcessingStatus;
 
-        public FileToUpdate(string filePath, Template template) : base(filePath, template)
+        public FileToUpdate(string filePath, Template template, string linkedFile) : base(filePath, template)
         {
-            FindLinkedFile(filePath);
+            LinkedFile = linkedFile;
             SegyParser = new SegYLogParser(template);
         }
 
         public SegYLogParser SegyParser { get; private set; }
 
-        private void FindLinkedFile(string filePath)
+        public static List<FileToUpdate> GetFilesToUpdate(string filePath, Template template)
         {
+            List<FileToUpdate> filesToUpdate = new List<FileToUpdate>();
+            var linkedFiles = FileToUpdate.FindLinkedFiles(filePath, template.FileType);
+            linkedFiles.ForEach(lf => filesToUpdate.Add(new FileToUpdate(filePath, template, lf)));
+            return filesToUpdate;
+        }
+
+        private static List<string> FindLinkedFiles(string filePath, FileType Type)
+        {
+            List<string> filesList = new List<string>();
             if (Type == FileType.Segy || Type == FileType.Unknown)
-                return;
+            {
+                filesList.Add(filePath);
+                return filesList;
+            }
             try
             {
                 var directory = Path.GetDirectoryName(filePath);
@@ -59,8 +71,7 @@ namespace UgCSGeotagger.Models
                         var linkedFileDate = DateTime.ParseExact(m.Value, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                         if (linkedFileDate == csvFileDate)
                         {
-                            LinkedFile = f;
-                            break;
+                            filesList.Add(f);
                         }
                     }
                 }
@@ -69,6 +80,7 @@ namespace UgCSGeotagger.Models
             {
                 log.Error(e.Message);
             }
+            return filesList;
         }
 
         public void CheckCoveringStatus(List<PositioningSolutionFile> psfFiles)
@@ -108,10 +120,13 @@ namespace UgCSGeotagger.Models
             OnProcessingStatus?.Invoke($"Start Processing {FileName}");
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
+            // Remove coordinates with no values
+            List<IGeoCoordinates> cleanCoverageCoordinates = coverageCoordinates.Where(cc => cc.Latitude != null && cc.Longitude != null).ToList();
+
             var elapsedMs = watch.ElapsedMilliseconds;
             try
             {
-                correctedCoordinates = Interpolator.CreateCorrectedCoordinates(Coordinates, coverageCoordinates, timeOffset, source);
+                correctedCoordinates = Interpolator.CreateCorrectedCoordinates(Coordinates, cleanCoverageCoordinates, timeOffset, source);
                 var correctedFile = CreateFileWithPreciseSuffix(FilePath);
                 var result = Parser.CreateFileWithCorrectedCoordinates(FilePath, correctedFile, correctedCoordinates, source);
                 message = $"{FileName}: {result.CountOfReplacedLines} of {result.CountOfLines} were replaced;";
