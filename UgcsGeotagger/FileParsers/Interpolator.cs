@@ -20,19 +20,31 @@ namespace FileParsers
                     c.TimeInMs += timeOffset;
             }
             psfCoordinates.Sort((x, y) => x.TimeInMs.Value.CompareTo(y.TimeInMs.Value));
-            var min = psfCoordinates.Min(c => c.TimeInMs);
-            var max = psfCoordinates.Max(c => c.TimeInMs);
             var countOfReplacedLines = 0;
+
+            // Don't run with no coodrinates at all
+            if (psfCoordinates.Count < 1)
+                return correctedTraces;
+
             foreach (var coordinates in ftuCoordinates)
             {
                 if (token.IsCancellationRequested)
                     break;
-                if (coordinates.TimeInMs < min || coordinates.TimeInMs > max)
-                    continue;
-                var leftValue = psfCoordinates.Last(c => c.TimeInMs <= coordinates.TimeInMs);
+
+                // Get left coordinate, if any
+                var leftValue = psfCoordinates.LastOrDefault(c => c.TimeInMs <= coordinates.TimeInMs);
+                // If not, use first in the list (this can happen if we have data before the first RTK record)
+                if (leftValue == null)
+                    leftValue = psfCoordinates.First();
                 var leftBorderIndex = psfCoordinates.IndexOf(leftValue);
-                leftBorderIndex -= leftBorderIndex == psfCoordinates.Count - 1 ? 1 : 0;
-                var rightBorderIndex = leftBorderIndex + 1;
+
+                // Get right coordinate, again, if any
+                var rightValue = psfCoordinates.FirstOrDefault(c => c.TimeInMs > coordinates.TimeInMs);
+                // If not, use what we have as a left coordinate (we're at the end of the list)
+                if (rightValue == null)
+                    rightValue = leftValue;
+                var rightBorderIndex = psfCoordinates.IndexOf(rightValue);
+
                 if (psfCoordinates[rightBorderIndex].TimeInMs - psfCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
                     continue;
                 if (coordinates.TimeInMs.HasValue && psfCoordinates[leftBorderIndex].Latitude.HasValue && psfCoordinates[rightBorderIndex].Latitude.HasValue

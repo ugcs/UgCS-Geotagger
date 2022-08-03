@@ -161,8 +161,7 @@ namespace UgCSGeotagger.ViewModels
                         switch (fileType)
                         {
                             case DataFile.FileToUpdateAbbr:
-                                dataFile = new FileToUpdate(file, template);
-                                filesToUpdate.Add(dataFile as FileToUpdate);
+                                FileToUpdate.GetFilesToUpdate(file, template).ForEach(ftu => filesToUpdate.Add(ftu));
                                 break;
 
                             case DataFile.PositionSolutionFileAbbr:
@@ -256,8 +255,7 @@ namespace UgCSGeotagger.ViewModels
                         }
                         else if (template?.FileType == FileType.CSV)
                         {
-                            var ftu = new FileToUpdate(file, template);
-                            filesToUpdate.Add(ftu);
+                            FileToUpdate.GetFilesToUpdate(file, template).ForEach(ftu => filesToUpdate.Add(ftu));
                         }
                         else
                         {
