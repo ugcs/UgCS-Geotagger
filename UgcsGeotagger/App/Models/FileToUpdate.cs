@@ -45,6 +45,10 @@ namespace UgCSGeotagger.Models
             List<FileToUpdate> filesToUpdate = new List<FileToUpdate>();
             var linkedFiles = FileToUpdate.FindLinkedFiles(filePath, template.FileType);
             linkedFiles.ForEach(lf => filesToUpdate.Add(new FileToUpdate(filePath, template, lf)));
+
+            // If we didn't find any linked files, just go with the one provided
+            if (filesToUpdate.Count == 0)
+                filesToUpdate.Add(new FileToUpdate(filePath, template, null));
             return filesToUpdate;
         }
 
@@ -53,7 +57,6 @@ namespace UgCSGeotagger.Models
             List<string> filesList = new List<string>();
             if (Type == FileType.Segy || Type == FileType.Unknown)
             {
-                filesList.Add(filePath);
                 return filesList;
             }
             try

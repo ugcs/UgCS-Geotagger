@@ -33,16 +33,16 @@ namespace FileParsers
 
                 // Get left coordinate, if any
                 var leftValue = psfCoordinates.LastOrDefault(c => c.TimeInMs <= coordinates.TimeInMs);
-                // If not, use first in the list (this can happen if we have data before the first RTK record)
+                // If not, we cannot interpolate
                 if (leftValue == null)
-                    leftValue = psfCoordinates.First();
+                    continue;
                 var leftBorderIndex = psfCoordinates.IndexOf(leftValue);
 
                 // Get right coordinate, again, if any
                 var rightValue = psfCoordinates.FirstOrDefault(c => c.TimeInMs > coordinates.TimeInMs);
-                // If not, use what we have as a left coordinate (we're at the end of the list)
+                // If not, we cannot interpolate
                 if (rightValue == null)
-                    rightValue = leftValue;
+                    continue;
                 var rightBorderIndex = psfCoordinates.IndexOf(rightValue);
 
                 if (psfCoordinates[rightBorderIndex].TimeInMs - psfCoordinates[leftBorderIndex].TimeInMs > MaxTimeDifferenceMs)
