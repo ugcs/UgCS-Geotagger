@@ -2,9 +2,9 @@
   # Displayable name of Template
   name: "MagArrow"
   # Code of template
-  code: "magarrow" 
+  code: "magarrow"
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
-  file-type: CSV 
+  file-type: CSV
   # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
     ^\s*Counter,Date

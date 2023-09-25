@@ -18,9 +18,9 @@ namespace FileParsers.CSV
         public override List<IGeoCoordinates> Parse(string logPath)
         {
             if (!File.Exists(logPath))
-                throw new FileNotFoundException("File {logPath} does not exist");
+                throw new FileNotFoundException($"File {logPath} does not exist");
             if (Template == null)
-                throw new NullReferenceException($"Template is not set");
+                throw new NullReferenceException("Template is not set");
             if (Template.DataMapping.Date?.Source == Yaml.Data.Source.FileName)
                 ParseDateFromNameOfFile(logPath);
             var coordinates = new List<IGeoCoordinates>();

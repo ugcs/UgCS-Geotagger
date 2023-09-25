@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30524.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{531EF916-1584-46B0-8645-5B83B21A6F73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileParsers", "FileParsers\FileParsers.csproj", "{902A2FCC-9FF7-4DBE-8402-6AF5B0E4AD6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{DA1CA45C-DB2B-4EBC-BE85-0AF4A76D034A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F3736D1-BC09-4835-ABAA-01DF742364C9}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+		UgcsGeotagger.lutconfig = UgcsGeotagger.lutconfig
+		UgcsGeotagger.sln.DotSettings = UgcsGeotagger.sln.DotSettings
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

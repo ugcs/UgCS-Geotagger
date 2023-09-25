@@ -1,174 +1,170 @@
-using FileParsers.Yaml;
-using NUnit.Framework;
-using System.IO;
-using YamlDotNet.Core;
-
 namespace Tests
 {
+    using FileParsers.Yaml;
+    using NUnit.Framework;
+    using System.IO;
+    using YamlDotNet.Core;
+
     public class YamlTests : Test
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
-        public void TestUnknownType()
+        public void UnknownTypeTest()
         {
-            var path = YamlTestDataFolder + "UnknownTypeTemplate.yaml";
+            const string path = YamlTestDataFolder + "UnknownTypeTemplate.yaml";
             var file = File.ReadAllText(path);
             try
             {
-                var template = deserializer.Deserialize<Template>(file);
+                _ = _deserializer.Deserialize<Template>(file);
             }
             catch (YamlException)
             {
                 Assert.Pass(TestPassed);
             }
+
             Assert.Fail(TestFailed);
         }
 
         [Test]
-        public void TestWrongRegex()
+        public void WrongRegexTest()
         {
-            var path = YamlTestDataFolder + "WrongRegexTemplate.yaml";
+            const string path = YamlTestDataFolder + "WrongRegexTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestDecimalSeparator()
+        public void DecimalSeparatorTest()
         {
-            var path = YamlTestDataFolder + "MissDecimalSeparatorTemplate.yaml";
+            const string path = YamlTestDataFolder + "MissDecimalSeparatorTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestSeparator()
+        public void SeparatorTest()
         {
-            var path = YamlTestDataFolder + "MissSeparatorTemplate.yaml";
+            const string path = YamlTestDataFolder + "MissSeparatorTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.Format.Separator == null);
         }
 
         [Test]
-        public void TestCommentPrefix()
+        public void CommentPrefixTest()
         {
-            var path = YamlTestDataFolder + "MissCommentPrefixTemplate.yaml";
+            const string path = YamlTestDataFolder + "MissCommentPrefixTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.Format.CommentPrefix == null);
         }
 
         [Test]
-        public void TestName()
+        public void NameTest()
         {
-            var path = YamlTestDataFolder + "MissNameTemplate.yaml";
+            const string path = YamlTestDataFolder + "MissNameTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(string.IsNullOrWhiteSpace(template.Name));
         }
 
         [Test]
-        public void TestCode()
+        public void CodeTest()
         {
-            var path = YamlTestDataFolder + "MissCodeTemplate.yaml";
+            const string path = YamlTestDataFolder + "MissCodeTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(string.IsNullOrWhiteSpace(template.Code));
         }
 
         [Test]
-        public void TestValidCsvTemplate()
+        public void ValidCsvTemplateTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestNoHeadersWhenSetTemplate()
+        public void NoHeadersWhenSetTemplateTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "NoHeadersWhenSetTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "NoHeadersWhenSetTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestMissedColumnTemplate()
+        public void MissedColumnTemplateTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "MissedColumnTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "MissedColumnTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestNoIndexesWhenNoHeadersSetTemplate()
+        public void NoIndexesWhenNoHeadersSetTemplateTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "NoIndexesWhenNoHeadersSetTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "NoIndexesWhenNoHeadersSetTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestIndexesAndHeadersTohetherTemplate()
+        public void IndexesAndHeadersTemplateTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "HeadersAndIndexesTogetherTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "HeadersAndIndexesTogetherTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestIndexesAndHeadersTohetherSecondCaseTemplate()
+        public void TestIndexesAndHeadersSecondCaseTemplate()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + "HeadersAndIndexesTogetherTemplateSecondCase.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + "HeadersAndIndexesTogetherTemplateSecondCase.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestMissedColumnWidthsTemplate()
+        public void MissedColumnWidthsTemplateTest()
         {
-            var path = YamlTestDataFolder + ColumnFixedWidthFolder + "MissedColumnWidths.yaml";
+            const string path = YamlTestDataFolder + ColumnFixedWidthFolder + "MissedColumnWidths.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsFalse(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestFixedColumnValidTemplate()
+        public void FixedColumnValidTemplateTest()
         {
-            var path = YamlTestDataFolder + ColumnFixedWidthFolder + "ValidTemplate.yaml";
+            const string path = YamlTestDataFolder + ColumnFixedWidthFolder + "ValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestValidMagDrone()
+        public void ValidMagDroneTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneValidTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
 
         [Test]
-        public void TestValidNmea()
+        public void ValidNmeaTest()
         {
-            var path = YamlTestDataFolder + YamlCsvFolder + YamlNmeaFolder + "NmeaValidTemplate.yaml";
+            const string path = YamlTestDataFolder + YamlCsvFolder + YamlNmeaFolder + "NmeaValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             Assert.IsTrue(template.IsTemplateValid());
         }
     }

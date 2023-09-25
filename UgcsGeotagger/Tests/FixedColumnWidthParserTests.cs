@@ -18,7 +18,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + ColumnFixedWidthFolder + "ValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new FixedColumnWidthParser(template);
             try
             {
@@ -28,16 +28,16 @@ namespace Tests
             {
                 Assert.Fail(e.Message);
             }
+            
             Assert.Pass(TestPassed);
         }
-
 
         [Test]
         public void TestInvalidColumnsLengths()
         {
             var path = YamlTestDataFolder + ColumnFixedWidthFolder + "InvalidColumnsLengthsTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new FixedColumnWidthParser(template);
             try
             {
@@ -47,6 +47,7 @@ namespace Tests
             {
                 Assert.Pass(e.Message);
             }
+
             Assert.Fail(TestFailed);
         }
     }

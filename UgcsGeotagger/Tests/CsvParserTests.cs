@@ -19,7 +19,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -37,7 +37,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -59,7 +59,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -81,7 +81,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplateWithoutHeaders.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -99,7 +99,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + "ValidCsvTemplateWithoutHeaders.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -117,7 +117,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new MagDroneCsvParser(template);
             try
             {
@@ -135,7 +135,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + YamlMagdroneFolder + "MagDroneInvalidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new MagDroneCsvParser(template);
             try
             {
@@ -153,7 +153,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + YamlMagarrowFolder + "MagArrowValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new CsvParser(template);
             try
             {
@@ -171,7 +171,7 @@ namespace Tests
         {
             var path = YamlTestDataFolder + YamlCsvFolder + YamlNmeaFolder + "NmeaValidTemplate.yaml";
             var file = File.ReadAllText(path);
-            var template = deserializer.Deserialize<Template>(file);
+            var template = _deserializer.Deserialize<Template>(file);
             var parser = new NmeaCsvParser(template);
             try
             {
@@ -181,6 +181,7 @@ namespace Tests
             {
                 Assert.Fail(e.Message);
             }
+
             Assert.Pass(TestPassed);
         }
     }
