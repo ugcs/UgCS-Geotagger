@@ -50,13 +50,19 @@
     <None Update="Mapping\FTUTemplates\10-SkyhubWithExternalGNSS.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTK.yaml">
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTKOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\30-SkyhubWithDateInName.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnZGprTrace.yaml">
+    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnZGprTraceOn.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnZGprTraceOff.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnTrace.yaml">
