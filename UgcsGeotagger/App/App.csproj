@@ -50,31 +50,31 @@
     <None Update="Mapping\FTUTemplates\10-SkyhubWithExternalGNSS.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTKOff.yaml">
+    <None Update="Mapping\FTUTemplates\50-SkyhubWithDateInColumnRTKOff.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTKOn.yaml">
+    <None Update="Mapping\FTUTemplates\50-SkyhubWithDateInColumnRTKOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\30-SkyhubWithDateInName.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnZGprTraceOn.yaml">
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnZGprTraceOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnZGprTraceOff.yaml">
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnZGprTraceOff.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnTrace.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-MagArrow.yaml">
+    <None Update="Mapping\FTUTemplates\60-MagArrow.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-MagDrone.yaml">
+    <None Update="Mapping\FTUTemplates\60-MagDrone.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-Pergam.yaml">
+    <None Update="Mapping\FTUTemplates\60-Pergam.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\10-SkyhubWithExternalGNSS.yaml">

@@ -55,7 +55,7 @@
                 var traceCount = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line.StartsWith(Template.Format.CommentPrefix))
+                    if (line.StartsWith(Template.Format.CommentPrefix) || string.IsNullOrWhiteSpace(line))
                     {
                         continue;
                     }

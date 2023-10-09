@@ -1,8 +1,8 @@
   # Mapping for positioning solution file
   # Displayable name of Template
-  name: "SkyHub RTK OFF"
+  name: "SkyHub RTK OFF Trace"
   # Code of template
-  code: "skyhub-rtk-off"
+  code: "skyhub-rtk-off-trace"
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV
   # Applies to the first 10 not empty lines of the file to detect template
