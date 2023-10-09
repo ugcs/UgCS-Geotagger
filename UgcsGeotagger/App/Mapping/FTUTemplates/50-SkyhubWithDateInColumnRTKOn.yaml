@@ -24,7 +24,7 @@
     longitude:
       header: Longitude RTK
     altitude:
-      header: Altitude
+      header: Altitude RTK
     time:
       header: Time
       format: 'HH:mm:ss.fff'
