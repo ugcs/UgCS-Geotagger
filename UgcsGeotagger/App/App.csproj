@@ -68,6 +68,9 @@
     <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnTrace.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\60-MagArrowOld.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\60-MagArrow.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
