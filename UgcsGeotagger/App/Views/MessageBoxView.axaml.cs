@@ -54,9 +54,19 @@ namespace UgCSGeotagger.Views
 
             var tcs = new TaskCompletionSource<MessageBoxResult>();
             msgbox.Closed += delegate { tcs.TrySetResult(res); };
+
             if (parent != null)
+            {
+                parent.WindowState = WindowState.Normal;
+                parent.Activate();
+                parent.Show();
                 msgbox.ShowDialog(parent);
-            else msgbox.Show();
+            }
+            else
+            {
+                msgbox.Show();
+            }
+
             return tcs.Task;
         }
     }
