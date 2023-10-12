@@ -1,13 +1,13 @@
   # Mapping for positioning solution file
   # Displayable name of Template
-  name: "SkyHub with external GNSS"
+  name: "SkyHub external GNSS"
   # Code of template
   code: "skyhub-ext-gnss"
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV
   # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
-    ^\s*Elapsed,Date,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,Velocity,RTK Status,Latitude RTK,Longitude RTK,Altitude RTK,ALT:Altitude,ALT:Filtered Altitude,GNSS:Date,GNSS:Time,GNSS:Latitude,GNSS:Longitude
+    ^\s*Elapsed,Date,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,Velocity,RTK Status.*,GNSS:Date,GNSS:Time,GNSS:Latitude,GNSS:Longitude
   file-format:
   # Applies to CSV type. 'true' if file has headers, otherwise false
     has-header: true
@@ -24,8 +24,8 @@
     longitude:
       header: GNSS:Longitude
     time:
-      header: Time
-      format: 'HH:mm:ss.fff'
+      header: GNSS:Time
+      format: 'H:mm:ss.fff'
     date:
-      header: Date
+      header: GNSS:Date
       format: 'yyyy/MM/dd'

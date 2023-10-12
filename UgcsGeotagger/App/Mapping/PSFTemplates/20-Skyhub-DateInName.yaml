@@ -1,13 +1,13 @@
   # Mapping for positioning solution file
   # Displayable name of Template
-  name: "SkyHub RTK OFF zGPR"
+  name: "SkyHub Date in Name"
   # Code of template
-  code: "skyhub-rtk-off-zgpr"
+  code: "skyhub-date-in-name"
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
   file-type: CSV
   # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
-    (^\s*Elapsed,Date,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude,Velocity,RTK Status,Latitude RTK,Longitude RTK,Altitude RTK,ALT:Altitude,ALT:Filtered Altitude,SF:RawF,SF:FiltF,SF:SgthF,SF:RawL,SF:FiltL,SF:SgthL,SF:Noise,SF:Temp,zGPR:Trace).*?(,OFF,).*?
+    ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude
   file-format:
   # Applies to CSV type. 'true' if file has headers, otherwise false
     has-header: true
@@ -27,9 +27,11 @@
       header: Altitude
     time:
       header: Time
-      format: 'HH:mm:ss.fff'
+      format: 'H:mm:ss.fff'
     date:
-      header: Date
-      format: 'yyyy/MM/dd'
+    # Source to parse date. Avaliable values are FileName and Column. Column is default value
+      source: FileName
+      regex: '\d{4}-\d{2}-\d{2}'
+      format: 'yyyy-MM-dd'
     trace-number:
-      header: "zGPR:Trace"
+      header: "GPR:Trace"

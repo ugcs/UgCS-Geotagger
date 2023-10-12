@@ -27,7 +27,7 @@
       header: 'Altitude'
     time:
       header: 'Time'
-      format: 'HH:mm:ss.fff' # Format to parse time from column;
+      format: 'H:mm:ss.fff' # Format to parse time from column;
     date:
       header: 'Date'
       format: 'yyyy/MM/dd' # Format to parse date from column;
