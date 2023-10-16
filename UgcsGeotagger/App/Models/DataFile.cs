@@ -89,7 +89,7 @@ namespace UgCSGeotagger.Models
         {
             try
             {
-                StartTime = posLogData.Min(d => d.DateTime.Value);
+                StartTime = posLogData.Where(d => d.DateTime.HasValue).Min(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {
@@ -101,7 +101,7 @@ namespace UgCSGeotagger.Models
         {
             try
             {
-                EndTime = posLogData.Max(d => d.DateTime.Value);
+                EndTime = posLogData.Where(d => d.DateTime.HasValue).Max(d => d.DateTime.Value);
             }
             catch (ArgumentNullException e)
             {

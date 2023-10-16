@@ -1,7 +1,7 @@
-﻿using YamlDotNet.Serialization;
-
-namespace Tests
+﻿namespace Tests
 {
+    using YamlDotNet.Serialization;
+
     public class Test
     {
         protected const string TestPassed = "Test Passed";
@@ -12,11 +12,12 @@ namespace Tests
         protected const string YamlMagdroneFolder = "MagDrone/";
         protected const string YamlMagarrowFolder = "MagArrow/";
         protected const string ColumnFixedWidthFolder = "ColumnFixedWidth/";
-        protected const string FTUTemplatesFolder = "FileToUpdates/";
-        protected const string PSFTemplatesFolder = "PSF/";
+        protected const string FTUTemplatesFolder = "./Mapping/FTUTemplates/";
+        protected const string PSFTemplatesFolder = "./Mapping/PSFTemplates/";
+        protected const string TemplatesFolder = "./Mapping/";
         protected const string SegyTestDataFolder = "./TestData/Parsers/Segy/";
         protected const string CSVTestDataFolder = "./TestData/Parsers/CSV/";
         protected const string FCWTestDataFolder = "./TestData/Parsers/FixedColumnWidth/";
-        protected readonly Deserializer deserializer = new Deserializer();
+        protected readonly Deserializer _deserializer = new Deserializer();
     }
 }

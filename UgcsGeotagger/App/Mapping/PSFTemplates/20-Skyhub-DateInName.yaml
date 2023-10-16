@@ -1,10 +1,10 @@
   # Mapping for positioning solution file
   # Displayable name of Template
-  name: "SkyHub"
+  name: "SkyHub Date in Name"
   # Code of template
-  code: "skyhub" 
+  code: "skyhub-date-in-name"
   # Type of template for parsing data. Options are CSV and ColumnsFixedWidth
-  file-type: CSV 
+  file-type: CSV
   # Applies to the first 10 not empty lines of the file to detect template
   match-regex: >-
     ^\s*Elapsed,Time,Pitch,Roll,Yaw,Latitude,Longitude,Altitude
@@ -27,7 +27,7 @@
       header: Altitude
     time:
       header: Time
-      format: 'HH:mm:ss.fff'  
+      format: 'H:mm:ss.fff'
     date:
     # Source to parse date. Avaliable values are FileName and Column. Column is default value
       source: FileName

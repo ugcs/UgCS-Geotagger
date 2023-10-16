@@ -13,7 +13,7 @@
     decimal-separator: '.'
   # Applies to ColumnsFixedWidth files. The length of every data column to parse information
     column-lengths: [15, 15, 17, 10, 4, 4, 9, 9, 9, 9, 9, 9, 7]
-  data-mapping:     
+  data-mapping:
     latitude:
       index: 1
     longitude:

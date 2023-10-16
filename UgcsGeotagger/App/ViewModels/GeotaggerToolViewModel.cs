@@ -358,17 +358,20 @@ namespace UgCSGeotagger.ViewModels
         public Template FindTemplate(List<Template> templates, string file)
         {
             if (file.EndsWith(".sgy"))
+            {
                 return templates.First(t => t.FileType == FileType.Segy);
+            }
+
+            var firstNonEmptyLines = string.Join(Environment.NewLine, File.ReadLines(file).Take(10));
             foreach (var t in templates)
             {
                 try
                 {
-                    var firstNonEmptyLines = File.ReadLines(file).Take(10).ToList();
-                    foreach (var l in firstNonEmptyLines)
+                    var regex = new Regex(t.MatchRegex, RegexOptions.Multiline | RegexOptions.Singleline);
+
+                    if (regex.IsMatch(firstNonEmptyLines))
                     {
-                        var regex = new Regex(t.MatchRegex);
-                        if (regex.IsMatch(l))
-                            return t;
+                        return t;
                     }
                 }
                 catch (Exception e)
@@ -376,6 +379,7 @@ namespace UgCSGeotagger.ViewModels
                     log.Error(e.Message);
                 }
             }
+
             return null;
         }
 

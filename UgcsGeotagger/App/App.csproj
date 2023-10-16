@@ -17,8 +17,8 @@
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.12" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
-    <PackageReference Include="log4net" Version="2.0.12" />
-    <PackageReference Include="YamlDotNet" Version="8.1.2" />
+    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="YamlDotNet" Version="13.3.1" />
       <PackageReference Include="NSubsys" Version="1.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -47,25 +47,64 @@
     <None Update="Assets\ugcs-logo-32.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\10-Skyhub-ExternalGNSS.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\10-SkyhubWithExternalGNSS.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnRTK.yaml">
+    <None Update="Mapping\FTUTemplates\20-Skyhub-ZGprTraceRTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\20-Skyhub-ZGprTraceRTKOn.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\40-Skyhub-Trace.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\50-Skyhub-RTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\50-Skyhub-RTKOn.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\50-SkyhubWithDateInColumnRTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\50-SkyhubWithDateInColumnRTKOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\30-SkyhubWithDateInName.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumn.yaml">
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnZGprTraceOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-MagArrow.yaml">
+    <None Update="Mapping\FTUTemplates\20-SkyhubWithDateInColumnZGprTraceOff.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-MagDrone.yaml">
+    <None Update="Mapping\FTUTemplates\40-SkyhubWithDateInColumnTrace.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\FTUTemplates\50-Pergam.yaml">
+    <None Update="Mapping\FTUTemplates\60-MagArrowOld.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\60-MagArrow.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\60-MagDrone.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\60-Pergam.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\10-Skyhub-ExternalGNSS.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\10-Skyhub-RTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\10-Skyhub-RTKOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\10-SkyhubWithExternalGNSS.yaml">
@@ -74,10 +113,22 @@
     <None Update="Mapping\PSFTemplates\20-RTKLib.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\PSFTemplates\20-Skyhub-DateInName.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\PSFTemplates\20-SkyhubRTK.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Mapping\PSFTemplates\30-RTKLibKlau.yaml">
+    <None Update="Mapping\PSFTemplates\30-RTKLib.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\60-RTKLibEmlidStudioUTC.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\50-RTKLibEmlidStudioGPTS.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\PSFTemplates\70-RTKLibKlau.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\PSFTemplates\30-SkyhubWithDateInName.yaml">

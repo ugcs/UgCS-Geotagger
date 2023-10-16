@@ -102,7 +102,7 @@ namespace FileParsers.SegYLog
             var seconds = BitConverter.ToInt16(data, i + SecondOffset);
             var mSeconds = BitConverter.ToInt16(data, i + MSecondOffset);
             if (IsTimeParameterValid(year, 0, DateTime.Now.Year + 1) && IsTimeParameterValid(dayOfYear, 0, 367)
-                && IsTimeParameterValid(hours, -1, 24) && IsTimeParameterValid(minutes, -1, 59) && IsTimeParameterValid(seconds, -1, 59)
+                && IsTimeParameterValid(hours, -1, 24) && IsTimeParameterValid(minutes, -1, 59) && IsTimeParameterValid(seconds, -1, 60)
                 && IsTimeParameterValid(mSeconds, -1, 1000))
             {
                 var date = new DateTime(year, 1, 1);

@@ -26,7 +26,9 @@ namespace FileParsers
             {
                 _countOfReplacedLines = value;
                 if (CountOfReplacedLines % 100 == 0)
+                {
                     OnOneHundredLinesReplaced?.Invoke(CountOfReplacedLines);
+                }
             }
         }
 
@@ -52,17 +54,21 @@ namespace FileParsers
                     skippedLines.Append(line + "\n");
                     var regex = new Regex(Template.SkipLinesTo.MatchRegex);
                     if (regex.IsMatch(line))
+                    {
                         break;
+                    }
                 }
+
                 if (Template.SkipLinesTo.SkipMatchedLine)
                 {
                     line = reader.ReadLine();
                     skippedLines.Append(line + "\n");
                     return line;
                 }
-                else
-                    return line;
+
+                return line;
             }
+
             return null;
         }
 
@@ -75,15 +81,20 @@ namespace FileParsers
                 if (match.Success)
                 {
                     if (double.TryParse(match.Value, NumberStyles.Float, format, out result))
+                    {
                         return result;
-                    else
-                        return null;
+                    }
+
+                    return null;
                 }
             }
+
             if (double.TryParse(column, NumberStyles.Float, format, out result))
+            {
                 return result;
-            else
-                return null;
+            }
+
+            return null;
         }
 
         protected int? ParseInt(BaseData data, string column)
@@ -95,15 +106,20 @@ namespace FileParsers
                 if (match.Success)
                 {
                     if (int.TryParse(match.Value, out result))
+                    {
                         return result;
-                    else
-                        return null;
+                    }
+
+                    return null;
                 }
             }
+
             if (int.TryParse(column, out result))
+            {
                 return result;
-            else
-                return null;
+            }
+
+            return null;
         }
 
         protected System.DateTime? ParseDateTime(string[] data)
@@ -116,7 +132,8 @@ namespace FileParsers
                     _ => ParseDateAndTime(Template.DataMapping.DateTime, data[(int)Template.DataMapping.DateTime.Index]),
                 };
             }
-            else if (Template.DataMapping.Time != null && Template.DataMapping.Time.Index != -1 && Template.DataMapping?.Date != null && Template.DataMapping.Date?.Index != null)
+
+            if (Template.DataMapping.Time != null && Template.DataMapping.Time.Index != -1 && Template.DataMapping?.Date != null && Template.DataMapping.Date?.Index != null)
             {
                 var date = ParseDateAndTime(Template.DataMapping.Date, data[(int)Template.DataMapping.Date.Index]);
                 var time = ParseDateAndTime(Template.DataMapping.Time, data[(int)Template.DataMapping.Time.Index]);
@@ -124,15 +141,17 @@ namespace FileParsers
                 var dateTime = date?.AddMilliseconds(totalMS);
                 return dateTime;
             }
-            else if (Template.DataMapping.Time != null && Template.DataMapping.Time?.Index != -1 && dateFromNameOfFile != null)
+            
+            if (Template.DataMapping.Time != null && Template.DataMapping.Time?.Index != -1 && dateFromNameOfFile != null)
             {
                 var time = ParseDateAndTime(Template.DataMapping.Time, data[(int)Template.DataMapping.Time.Index]);
                 var totalMS = CalculateTotalMS(time.Value);
                 var dateTime = dateFromNameOfFile.Value.AddMilliseconds(totalMS);
                 return dateTime;
             }
-            else
-                throw new IncorrectDateFormatException("Cannot parse DateTime form file");
+
+
+            throw new IncorrectDateFormatException("Cannot parse DateTime form file");
         }
 
         // TODO: Add tests for new format
@@ -156,15 +175,21 @@ namespace FileParsers
                 if (match.Success)
                 {
                     if (System.DateTime.TryParseExact(match.Value, data.Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                    {
                         return result;
-                    else
-                        return null;
+                    }
+
+
+                    return null;
                 }
             }
+
             if (System.DateTime.TryParseExact(column, data.Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            {
                 return result;
-            else
-                return null;
+            }
+
+            return null;
         }
 
         private int CalculateTotalMS(System.DateTime time)
