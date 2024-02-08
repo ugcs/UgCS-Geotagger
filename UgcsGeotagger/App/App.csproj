@@ -6,7 +6,7 @@
     <RootNamespace>UgCSGeotagger</RootNamespace>
     <ApplicationIcon>Assets\ugcs-logo-32.ico</ApplicationIcon>
     <Company>UgCS</Company>
-    <Version>1.0.7</Version>
+    <Version>1.0.8</Version>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\*" />
@@ -53,7 +53,13 @@
     <None Update="Mapping\FTUTemplates\10-SkyhubWithExternalGNSS.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Mapping\FTUTemplates\20-Skyhub-GprTraceRTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Mapping\FTUTemplates\20-Skyhub-ZGprTraceRTKOff.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Mapping\FTUTemplates\20-Skyhub-GprTraceRTKOn.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Mapping\FTUTemplates\20-Skyhub-ZGprTraceRTKOn.yaml">
